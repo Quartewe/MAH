@@ -21,8 +21,8 @@ version = len(sys.argv) > 1 and sys.argv[1] or "v0.0.1"
 
 # the first parameter is self name
 if sys.argv.__len__() < 4:
-    print("Usage: python install.py <version> <os> <arch>")
-    print("Example: python install.py v1.0.0 win x86_64")
+    print("[DEBUG] Usage: python install.py <version> <os> <arch>")
+    print("[DEBUG] Example: python install.py v1.0.0 win x86_64")
     sys.exit(1)
 
 os_name = sys.argv[2]
@@ -44,11 +44,11 @@ def get_dotnet_platform_tag():
     elif os_name == "linux" and arch == "aarch64":
         platform_tag = "linux-arm64"
     else:
-        print("Unsupported OS or architecture.")
-        print("available parameters:")
-        print("version: e.g., v1.0.0")
-        print("os: [win, macos, linux, android]")
-        print("arch: [aarch64, x86_64]")
+        print("[DEBUG] Unsupported OS or architecture.")
+        print("[DEBUG] available parameters:")
+        print("[DEBUG] version: e.g., v1.0.0")
+        print("[DEBUG] os: [win, macos, linux, android]")
+        print("[DEBUG] arch: [aarch64, x86_64]")
         sys.exit(1)
 
     return platform_tag
@@ -56,8 +56,8 @@ def get_dotnet_platform_tag():
 
 def install_deps():
     if not (working_dir / "deps" / "bin").exists():
-        print('Please download the MaaFramework to "deps" first.')
-        print('请先下载 MaaFramework 到 "deps"。')
+        print('[DEBUG] Please download the MaaFramework to "deps" first.')
+        print('[DEBUG] 请先下载 MaaFramework 到 "deps"。')
         sys.exit(1)
 
     if os_name == "android":
@@ -147,4 +147,4 @@ if __name__ == "__main__":
     install_chores()
     install_agent()
 
-    print(f"Install to {install_path} successfully.")
+    print(f"[DEBUG] Install to {install_path} successfully.")

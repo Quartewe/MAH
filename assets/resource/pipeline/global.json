@@ -1,0 +1,82 @@
+{
+    "Global.GoBackToHomePage": {
+    "pre_wait_freezes": 1000,
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "roi": [
+          0,
+          0,
+          150,
+          150
+        ],
+        "template": [
+          "returnhome.png"
+        ]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "next": [
+      "Global.HomePage",
+      "Global.LoginReward"
+    ]
+  },
+    "Global.HomePage": {
+        "anchor": "HOMEPAGE",
+        "recognition": "FeatureMatch",
+        "template": "homepage/homepage.png",
+        "roi": [
+          680,
+          520,
+          600,
+          200
+        ],
+        "post_wait_freezes": 2000,
+        "action": "DoNothing"
+    },
+    "Global.LoginReward": {
+    "post_wait_freezes": {
+      "time": 2000,
+      "timeout": 300000
+    },
+    "timeout": 300000,
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "登录奖励",
+        "roi": [
+          200,
+          50,
+          350,
+          100
+        ]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "on_error": [
+      "[JumpBack]Global.NetworkError"
+    ],
+    "next": [
+      "ResourceRecord.Entry"
+    ]
+  },
+    "Global.NetworkError": {
+        "recognition": "OCR",
+        "expected": "Unable to complete SSL connection",
+        "action": "DoNothing",
+        "next": [
+            "Global.GetRidOfNetworkError"
+        ]
+    },
+    "Global.GetRidOfNetworkError": {
+        "recognition": "OCR",
+        "expected": "CLOSE",
+        "action": "Click"
+    }
+}

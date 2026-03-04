@@ -1,0 +1,19 @@
+{
+    "NativeADBCommand.Proxy": {
+        "action": "Shell",
+        "cmd": "settings put global http_proxy 10.0.2.2:7890"
+        //"cmd": "settings put global http_proxy 10.0.2.2:${http_proxy_addr}"
+    },
+    "NativeADBCommand.ClearProxy": {
+        "action": "Shell",
+        "cmd": "settings put global http_proxy :0"
+    },
+    "NativeADBCommand.Back": {
+        "action": "Shell",
+        "cmd": "input keyevent 4"
+    },
+    "NativeADBCommand.Home": {
+        "action": "Shell",
+        "cmd": "input keyevent 3"
+    }
+}

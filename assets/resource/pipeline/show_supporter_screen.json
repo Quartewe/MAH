@@ -1,0 +1,84 @@
+{
+  "ShowSupporterScreen.Entry": {
+    "action": {
+      "type": "Custom",
+      "param": {
+        "custom_action": "MissionLogic"
+      }
+    },
+    "on_error": [
+      "Global.GoBackToHomePage",
+      "Global.HomePage"
+    ],
+    "next": [
+      "ShowSupporterScreen.Open"
+    ]
+  },
+  "ShowSupporterScreen.Open": {
+    "post_wait_freezes": 1000,
+    "recognition": {
+      "type": "FeatureMatch",
+      "param": {
+        "roi": [
+          680,
+          520,
+          600,
+          200
+        ],
+        "template": [
+          "homepage/team_off.png"
+        ]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "next": [
+      "ShowSupporterScreen.Completed"
+    ]
+  },
+  "ShowSupporterScreen.Completed": {
+    "pre_wait_freezes": 1000,
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": [
+          "支援队伍"
+        ]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "next": [
+      "ShowSupporterScreen.GoBack"
+    ]
+  },
+  "ShowSupporterScreen.GoBack": {
+    "pre_wait_freezes": 1000,
+    "post_wait_freezes": 1000,
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": [
+          "team_goback.png"
+        ],
+        "roi": [
+          250,
+          100,
+          0,
+          0
+        ]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "next": [
+      "Global.GoBackToHomePage"
+    ]
+  }
+}

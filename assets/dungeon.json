@@ -1,0 +1,361 @@
+{
+    "$__mpe_config_dungeon": {
+        "$__mpe_code": {
+            "filename": "dungeon",
+            "prefix": "",
+            "savedViewport": {
+                "x": -1291,
+                "y": 291,
+                "zoom": 1
+            },
+            "version": "v1.2.0"
+        }
+    },
+    "$__mpe_external_DefaultStage_dungeon": {
+        "$__mpe_code": {
+            "position": {
+                "x": 1621,
+                "y": 150
+            }
+        }
+    },
+    "$__mpe_external_Global.GoBackToHomePage_dungeon": {
+        "$__mpe_code": {
+            "position": {
+                "x": 778,
+                "y": 420
+            }
+        }
+    },
+    "$__mpe_external_Global.HomePage_dungeon": {
+        "$__mpe_code": {
+            "position": {
+                "x": 777,
+                "y": 272
+            }
+        }
+    },
+    "Dungeon.Aoyama.Choice": {
+        "$__mpe_code": {
+            "position": {
+                "x": 2324,
+                "y": 301
+            }
+        },
+        "action": {
+            "param": {},
+            "type": "Click"
+        },
+        "pre_wait_freezes": 1000,
+        "recognition": {
+            "param": {
+                "template": [
+                    "map/aoyama.png"
+                ]
+            },
+            "type": "FeatureMatch"
+        }
+    },
+    "Dungeon.Aoyama.Entry": {
+        "$__mpe_code": {
+            "position": {
+                "x": 1924,
+                "y": 323
+            }
+        },
+        "action": {
+            "param": {
+                "custom_action": ""
+            },
+            "type": "Custom"
+        },
+        "next": [
+            "Dungeon.Aoyama.Choice"
+        ],
+        "pre_wait_freezes": 1000
+    },
+    "Dungeon.Change1": {
+        "$__mpe_code": {
+            "position": {
+                "x": 721,
+                "y": -191
+            }
+        },
+        "action": {
+            "param": {},
+            "type": "Click"
+        },
+        "next": [
+            "Dungeon.Change2"
+        ],
+        "pre_wait_freezes": 1000,
+        "recognition": {
+            "param": {
+                "roi": [
+                    680,
+                    520,
+                    600,
+                    200
+                ],
+                "template": [
+                    "homepage/quest_off.png.png"
+                ]
+            },
+            "type": "FeatureMatch"
+        }
+    },
+    "Dungeon.Change2": {
+        "$__mpe_code": {
+            "position": {
+                "x": 1035,
+                "y": -117
+            }
+        },
+        "action": {
+            "param": {},
+            "type": "Click"
+        },
+        "next": [
+            "Dungeon.Change3"
+        ],
+        "pre_wait_freezes": 1000,
+        "recognition": {
+            "param": {
+                "roi": [
+                    1100,
+                    400,
+                    200,
+                    300
+                ],
+                "template": [
+                    "map/changemap.png"
+                ]
+            },
+            "type": "FeatureMatch"
+        }
+    },
+    "Dungeon.Change3": {
+        "$__mpe_code": {
+            "position": {
+                "x": 1354,
+                "y": 94
+            }
+        },
+        "action": {
+            "param": {
+                "begin": [
+                    250,
+                    600,
+                    50,
+                    50
+                ],
+                "end": [
+                    [
+                        250,
+                        200,
+                        50,
+                        50
+                    ]
+                ]
+            },
+            "type": "Swipe"
+        },
+        "next": [
+            "DefaultStage"
+        ],
+        "recognition": {
+            "param": {
+                "expected": [
+                    "请选择目的地"
+                ],
+                "roi": [
+                    0,
+                    0,
+                    300,
+                    100
+                ]
+            },
+            "type": "OCR"
+        }
+    },
+    "Dungeon.Entry": {
+        "$__mpe_code": {
+            "position": {
+                "x": 433,
+                "y": 34
+            }
+        },
+        "action": {
+            "param": {
+                "custom_action": "MissionLogic"
+            },
+            "type": "Custom"
+        },
+        "next": [
+            "Dungeon.Change1",
+            "Dungeon.Change2",
+            "Dungeon.Change3"
+        ],
+        "on_error": [
+            "Global.HomePage",
+            "Global.GoBackToHomePage"
+        ]
+    },
+    "Dungeon.Kamuyado.Choice": {
+        "$__mpe_code": {
+            "position": {
+                "x": 2329,
+                "y": -234
+            }
+        },
+        "action": {
+            "param": {},
+            "type": "Click"
+        },
+        "next": [
+            "Dungeon.Kamuyado.Explore"
+        ],
+        "pre_wait_freezes": 1000,
+        "recognition": {
+            "param": {
+                "template": [
+                    "map/kamuyado.png"
+                ]
+            },
+            "type": "FeatureMatch"
+        }
+    },
+    "Dungeon.Kamuyado.Entry": {
+        "$__mpe_code": {
+            "position": {
+                "x": 1881,
+                "y": -229
+            }
+        },
+        "action": {
+            "param": {
+                "custom_action": ""
+            },
+            "type": "Custom"
+        },
+        "next": [
+            "Dungeon.Kamuyado.Choice"
+        ],
+        "pre_wait_freezes": 1000
+    },
+    "Dungeon.Kamuyado.Episode": {
+        "$__mpe_code": {
+            "position": {
+                "x": 2969,
+                "y": -272
+            }
+        },
+        "action": {
+            "param": {},
+            "type": "Click"
+        },
+        "on_error": [
+            "Dungeon.Kamuyado.EpisodeSwipe"
+        ],
+        "recognition": {
+            "param": {
+                "expected": [
+                    "探索超级"
+                ]
+            },
+            "type": "OCR"
+        }
+    },
+    "Dungeon.Kamuyado.EpisodeSwipe": {
+        "$__mpe_code": {
+            "position": {
+                "x": 3240,
+                "y": -129
+            }
+        },
+        "action": {
+            "param": {
+                "begin": [
+                    850,
+                    590,
+                    50,
+                    10
+                ],
+                "end": [
+                    [
+                        850,
+                        400,
+                        50,
+                        10
+                    ]
+                ]
+            },
+            "type": "Swipe"
+        },
+        "next": [
+            "Dungeon.Kamuyado.Episode"
+        ]
+    },
+    "Dungeon.Kamuyado.Explore": {
+        "$__mpe_code": {
+            "position": {
+                "x": 2647,
+                "y": -273
+            }
+        },
+        "action": {
+            "param": {},
+            "type": "Click"
+        },
+        "next": [
+            "Dungeon.Kamuyado.Episode"
+        ],
+        "recognition": {
+            "param": {
+                "template": [
+                    "map/dungeon_exploration.png"
+                ]
+            },
+            "type": "TemplateMatch"
+        }
+    },
+    "Dungeon.Lkebukuro.Choice": {
+        "$__mpe_code": {
+            "position": {
+                "x": 2314,
+                "y": 2
+            }
+        },
+        "action": {
+            "param": {},
+            "type": "Click"
+        },
+        "pre_wait_freezes": 1000,
+        "recognition": {
+            "param": {
+                "template": [
+                    "map/Ikebukuro.png"
+                ]
+            },
+            "type": "FeatureMatch"
+        }
+    },
+    "Dungeon.Lkebukuro.Entry": {
+        "$__mpe_code": {
+            "position": {
+                "x": 1915,
+                "y": 7
+            }
+        },
+        "action": {
+            "param": {
+                "custom_action": ""
+            },
+            "type": "Custom"
+        },
+        "next": [
+            "Dungeon.Lkebukuro.Choice"
+        ],
+        "pre_wait_freezes": 1000
+    }
+}

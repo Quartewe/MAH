@@ -1,0 +1,45 @@
+{
+    "UtilsOCR": {
+        "recognition": {
+            "type": "OCR",
+            "param": {
+                "expected": [
+                    ""
+                ]
+            }
+        }
+    },
+    "UtilsTemplateMatch": {
+        "recognition": {
+            "type": "TemplateMatch",
+            "param": {
+                "template": ""
+            }
+        }
+    },
+    "UtilsFeatureMatch": {
+        "recognition": {
+            "type": "FeatureMatch",
+            "param": {
+                "template": ""
+            }
+        }
+    },
+    "Utils.ColorMatch": {
+        "recognition": {
+            "type": "ColorMatch",
+            "param": {
+                "lower": [
+                    0,
+                    0,
+                    0
+                ],
+                "upper": [
+                    255,
+                    255,
+                    255
+                ]
+            }
+        }
+    }
+}

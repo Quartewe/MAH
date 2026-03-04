@@ -1,0 +1,5 @@
+1. 写一个agent使用指南
+
+2. 对2.2集成接口一览 
+MaaContextRunRecognition - 用于运行 pipeline 中定义的节点（可以是自定义识别器）
+MaaContextRunRecognitionDirect - 只用于内置识别类型（OCR、TemplateMatch 等），直接传识别类型和参数，不需要 pipeline 节点

@@ -1,0 +1,138 @@
+{
+  "Startup.Entry": {
+    "recognition": "DirectHit",
+    "action": {
+      "type": "Custom",
+      "param": {
+        "custom_action": "WeeklyMission"
+      }
+    },
+    "next": [
+      "[JumpBack]Global.NetworkError",
+      "Global.LoginReward",
+      "Startup.HomePage",
+      "Startup.Login",
+      "Startup.OpenGame"
+    ]
+  },
+  "Startup.Login": {
+    "rate_limit": 5000,
+    "timeout": 600000,
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "重新获取游戏数据",
+        "roi": [
+          900,
+          630,
+          380,
+          90
+        ]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target_offset": [
+          -604,
+          -119,
+          285,
+          41
+        ]
+      }
+    },
+    "next": [
+      "[JumpBack]Global.NetworkError",
+      "Startup.Login_1"
+    ]
+  },
+  "Startup.Login_1": {
+    "rate_limit": 10000,
+    "timeout": 600000,
+    "focus": [
+      1140,
+      596,
+      139,
+      123
+    ],
+    "post_wait_freezes": {
+      "rate_limit": 700,
+      "threshold": 0.98,
+      "time": 2000,
+      "timeout": 300000
+    },
+    "pre_delay": 2000,
+    "on_error": [
+      "[JumpBack]Global.NetworkError"
+    ],
+    "next": [
+      "Global.LoginReward",
+      "Startup.HomePage"
+    ]
+  },
+  "Startup.OpenGame": {
+    "rate_limit": 5000,
+    "timeout": 300000,
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "housamo"
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "next": [
+      "[JumpBack]Global.NetworkError",
+      "Startup.Update",
+      "Startup.Login"
+    ]
+  },
+  "Startup.Update": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "游戏数据更新"
+      }
+    },
+    "next": [
+      "[JumpBack]Global.NetworkError",
+      "Startup.Update_1"
+    ]
+  },
+  "Startup.Update_1": {
+    "rate_limit": 20000,
+    "timeout": 300000,
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "OK"
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "next": [
+      "[JumpBack]Global.NetworkError",
+      "Startup.Login"
+    ]
+  },
+  "Startup.HomePage": {
+      "anchor": "HOMEPAGE",
+      "recognition": "FeatureMatch",
+      "template": "homepage/homepage.png",
+      "roi": [
+        680,
+        520,
+        600,
+        200
+      ],
+      "post_wait_freezes": 2000,
+      "action": "DoNothing",
+      "next": [
+        "ResourceRecord.Entry"
+      ]
+  }
+}

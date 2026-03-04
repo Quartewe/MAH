@@ -1,0 +1,46 @@
+{
+    "Debug.OCR": {
+        "recognition": "OCR",
+        "roi": [
+            895,
+            15,
+            100,
+            100
+        ],
+        "expected": "\\d+",
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "Debug"
+            }
+        }
+    },
+    "Debug.Match": {
+        "recognition": {
+            "type": "Custom",
+            "param": {
+                "custom_recognition": "GroupAvatarInfo",
+                "custom_recognition_param": {
+                    "name": "kyouma",
+                    "id": 2,
+                    "Level": 70,
+                    "S.A.Lv": 1,
+                    "Skill": 100,
+                    "ATK": 0,
+                    "HP": 0,
+                    "AR": {
+                        "name": null,
+                        "matched": false
+                    },
+                    "iffriend": true
+                }
+            }
+        },
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "Debug"
+            }
+        }
+    }
+}

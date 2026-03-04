@@ -1,0 +1,23 @@
+对 D:\Code\MHA\assets\resource\image\ar 下的所有的png文件我需要你生成一个py文件使得json字典,格式如下
+{
+    (pngname):{
+        "jp_rawname":(jp_rawname)
+        "rarity": (rarity)
+        "tag":[(tagA),(tagB)...]
+        "path":"ar\(pngname)"
+    }
+}
+"tag"的获取:
+    所有的png满足以下格式:
+    ar_tagA_tagB_(...).png
+    其中tag的数量至少大于等于2
+    从文件名中获取
+"rarity"的获取:
+    这部分要用图像识别对比相似度,我将给你一个用rarity分好类的文件夹:"D:\Code\patch\ar_match",以及每个星级对应的url如下:
+    https://wikiwiki.jp/housamo/AR%E8%A3%85%E5%82%99/%E2%98%86%EF%BC%95 : D:\Code\patch\ar_match\5star
+    https://wikiwiki.jp/housamo/AR%E8%A3%85%E5%82%99/%E2%98%86%EF%BC%94 : D:\Code\patch\ar_match\4star
+    https://wikiwiki.jp/housamo/AR%E8%A3%85%E5%82%99/%E2%98%86%EF%BC%93 : D:\Code\patch\ar_match\3star
+    其中从url里获取每张图片的"对应的名字"用于填充"jp_rawname",
+    如果遇到无法匹配的通过终端输出ar下png文件名给我,我自己手动匹配,
+    如果出现url内文件重名的将其"jp_rawname"输出给我,
+我建议你先通过本地图像识别确定谁是谁,再从url里创造对应的pngname和"jp_rawname"映射,有问题先问我
