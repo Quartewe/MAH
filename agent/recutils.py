@@ -2,6 +2,7 @@ from maa.agent.agent_server import AgentServer
 from maa.custom_recognition import CustomRecognition
 from maa.context import Context
 import json
+import re
 from pathlib import Path
 from actutils import data_io
 from actutils import match_mgr
@@ -19,7 +20,6 @@ class TraverseMatch(CustomRecognition):
         context: Context,
         argv: CustomRecognition.AnalyzeArg,
     ) -> CustomRecognition.AnalyzeResult:
-        
         # 处理 custom_recognition_param，MAA 框架会自动转换为 JSON 字符串或字典
         param_raw = argv.custom_recognition_param
         param = {}
@@ -70,27 +70,112 @@ class TraverseMatch(CustomRecognition):
         match_detail = None
         template = None
 
+        def extract_skin_from_template(template_str: str) -> str:
+            stem = Path(template_str).stem
+            match = re.search(r"(skin\d+|default)$", stem, re.IGNORECASE)
+            if match:
+                return match.group(1).lower()
+            for part in reversed(stem.split("_")):
+                if re.fullmatch(r"skin\d+|default", part, re.IGNORECASE):
+                    return part.lower()
+            return stem
+
         if template_path and template_path.exists() and not ar_mode:
-            for template in template_path.rglob("*.png"):
-                template = template.relative_to(self.BASE_PATH)
-                print(f"[DEBUG] Finging Character: {template}")
-                match_detail = context.run_recognition(
+            # 辅助函数：判断两个 box 位置是否近似（中心点距离在阈值内视为同一对象）
+            def _boxes_similar(box_a, box_b, threshold=10):
+                cx_a, cy_a = box_a[0] + box_a[2] / 2, box_a[1] + box_a[3] / 2
+                cx_b, cy_b = box_b[0] + box_b[2] / 2, box_b[1] + box_b[3] / 2
+                return abs(cx_a - cx_b) < threshold and abs(cy_a - cy_b) < threshold
+
+            # 第一步：遍历全部模板，收集所有 filtered_results 中的 (box, count, template) 
+            all_hits = []
+            for tpl_file in template_path.rglob("*.png"):
+                tpl_rel = tpl_file.relative_to(self.BASE_PATH)
+                print(f"[DEBUG] Finding Character: {tpl_rel}")
+                reco_result = context.run_recognition(
                     "UtilsFeatureMatch",
                     argv.image,
                     pipeline_override={
                         "UtilsFeatureMatch": {
                             "recognition": {
-                                "param": {"template": str(template)}
+                                "param": {"template": str(tpl_rel)}
                             }
                         }
                     }
                 )
-  
-                if match_detail.box:
-                    print(f"[DEBUG] Found Character: {template}，Location: {match_detail.box}")
-                    break
+
+                if reco_result and reco_result.hit and reco_result.filtered_results:
+                    for fr in reco_result.filtered_results:
+                        box = [fr.box[0], fr.box[1], fr.box[2], fr.box[3]]
+                        count = fr.count if hasattr(fr, 'count') else 0
+                        print(f"[DEBUG] Hit: {tpl_rel}，Box: {box}, Count: {count}")
+                        all_hits.append({
+                            "template": str(tpl_rel),
+                            "skin": extract_skin_from_template(str(tpl_rel)),
+                            "box": box,
+                            "count": count,
+                        })
                 else:
-                    print("[DEBUG] 未找到匹配项")
+                    print(f"[DEBUG] 未找到匹配项: {tpl_rel}")
+
+            if all_hits:
+                # 第二步：按 box 位置聚类，近似的 box 归为同一个对象位置
+                clusters = []  # 每个 cluster 是一组 box 近似的 hits
+                for hit in all_hits:
+                    placed = False
+                    for cluster in clusters:
+                        # 用 cluster 中第一个 hit 的 box 作为参考点
+                        if _boxes_similar(cluster[0]["box"], hit["box"]):
+                            cluster.append(hit)
+                            placed = True
+                            break
+                    if not placed:
+                        clusters.append([hit])
+
+                print(f"[DEBUG] Distinct object positions: {len(clusters)}")
+
+                # 第三步：每个 cluster（对象位置）内选 count 最高的 template 作为该 res
+                results = []
+                for cluster in clusters:
+                    best_hit = max(cluster, key=lambda x: x["count"])
+                    results.append(best_hit)
+
+                # 按 count 降序排列
+                results.sort(key=lambda x: x["count"], reverse=True)
+
+                if len(results) > 1:
+                    # 图片中有多个不同位置的对象
+                    multi_detail = {}
+                    for idx, r in enumerate(results):
+                        multi_detail[f"res_{idx}"] = {
+                            "skin": r["skin"],
+                            "path": r["template"],
+                            "box": r["box"],
+                            "name": char_name,
+                            "id": char_id,
+                            "count": r["count"],
+                            "iffriend": False
+                        }
+                    return CustomRecognition.AnalyzeResult(
+                        box=[0, 0, 0, 0],
+                        detail=multi_detail
+                    )
+                else:
+                    # 图片中只有一个对象位置
+                    r = results[0]
+                    return CustomRecognition.AnalyzeResult(
+                        box=r["box"],
+                        detail={
+                            "skin": r["skin"],
+                            "path": r["template"],
+                            "name": char_name,
+                            "id": char_id,
+                            "iffriend": False
+                        }
+                    )
+            else:
+                print("[DEBUG] 未找到任何匹配项")
+
         elif template_path and template_path.exists() and ar_mode:
             template = template_path.relative_to(self.BASE_PATH)
             print(f"[DEBUG] Finding AR: {template}")
@@ -109,13 +194,8 @@ class TraverseMatch(CustomRecognition):
         return CustomRecognition.AnalyzeResult(
             box=match_detail.box if match_detail and match_detail.box else None, 
             detail={"path": str(template),
-                    "name": char_name,
-                    "id": char_id,
-                    "iffriend": False
-                    } if match_detail and match_detail.box and not ar_mode else 
-                    {"path": str(template),
                     "name": ar_name,
-                     } if match_detail and match_detail.box else None
+                     } if match_detail and match_detail.box and ar_mode else None
         )
     
 @AgentServer.custom_recognition("GroupAvatarInfo")
@@ -221,18 +301,178 @@ class GroupAvatarInfo(CustomRecognition):
         )
         print(f"[DEBUG] avatar: {avatar}")
         
-        if not avatar or not avatar.box:
+        if not avatar or not avatar.hit:
             print(f"[DEBUG] Failed to find character: {param['name']} {param['id']}")
             return CustomRecognition.AnalyzeResult(box=None, detail={})
         
-        # 获取详细信息，best_result.detail 包含识别结果
+        # 获取详细信息，best_result.detail 可能是 dict 或 JSON 字符串
         detail_dict = {}
         if avatar.best_result and avatar.best_result.detail:
-            try:
-                detail_dict = json.loads(avatar.best_result.detail)
-            except (json.JSONDecodeError, TypeError):
-                detail_dict = {}
+            raw_detail = avatar.best_result.detail
+            if isinstance(raw_detail, dict):
+                detail_dict = raw_detail
+            elif isinstance(raw_detail, str):
+                try:
+                    detail_dict = json.loads(raw_detail)
+                except (json.JSONDecodeError, TypeError):
+                    detail_dict = {}
+            print(f"[DEBUG] detail_dict keys: {list(detail_dict.keys())}")
         
+        # 判断是否为多结果（特征：box 为 [0,0,0,0]）
+        is_multi = (avatar.box[0] == 0 and avatar.box[1] == 0
+                    and avatar.box[2] == 0 and avatar.box[3] == 0)
+
+        # ===== 内部辅助函数：对单个 ROI 执行 OCR 并填充结果到 entry =====
+        def _fill_ocr(entry, ROI):
+            if template_type == "A":
+                res = context.run_recognition(
+                    "UtilsOCR",
+                    argv.image,
+                    pipeline_override={
+                        "UtilsOCR": {
+                            "recognition": {
+                                "param": {
+                                    "roi": ROI,
+                                    "expect": "\\d+"
+                                }
+                            }
+                        }
+                    }
+                )
+
+                texts  = res.all_results
+                nums = res.filtered_results
+
+                for text in texts:
+                    if match_mgr.fuzzy_match(text.text, "Level", 0.8):
+                        for num in nums:
+                            if (num.box[0] - text.box[0]) in range(90,105) and (num.box[1] - text.box[1]) in range(-5,5):
+                                levres = [int(temp) for temp in num.text.split("/")]
+                                entry["Level"] = levres[0]
+                                print(f"Found Level: {levres[0]} for character {param['name']} {param['id']}")
+                                break
+                        continue
+                    elif match_mgr.fuzzy_match(text.text, ["Skill/S.A.Lv", "SkilI/S.A.Lv"], 0.8):
+                        for num in nums:
+                            if (num.box[0] - text.box[0]) in range(90,105) and (num.box[1] - text.box[1]) in range(-5,5):
+                                skillres = [int(temp) for temp in num.text.split("/")]
+                                entry["Skill"] = skillres[0]
+                                entry["S.A.Lv"] = skillres[1]
+                                print(f"Found Skill: {skillres[0]} and S.A.Lv: {skillres[1]} for character {param['name']} {param['id']}")
+                                break
+                        continue
+                    elif match_mgr.fuzzy_match(text.text, "HP", 0.8):
+                        for num in nums:
+                            if (num.box[0] - text.box[0]) in range(90,105) and (num.box[1] - text.box[1]) in range(-5,5):
+                                hpres = int(num.text)
+                                entry["HP"] = hpres
+                                print(f"Found HP: {hpres} for character {param['name']} {param['id']}")
+                                break
+                        continue
+                    elif match_mgr.fuzzy_match(text.text, "ATK", 0.8):
+                        for num in nums:
+                            if (num.box[0] - text.box[0]) in range(90,105) and (num.box[1] - text.box[1]) in range(-5,5):
+                                atkres = int(num.text)
+                                entry["ATK"] = atkres
+                                print(f"Found ATK: {atkres} for character {param['name']} {param['id']}")
+                                break
+                        continue
+
+            if template_type == "B":
+                res = context.run_recognition(
+                    "UtilsOCR",
+                    argv.image,
+                    pipeline_override={
+                        "UtilsOCR": {
+                            "recognition": {
+                                "param": {
+                                    "roi": [ROI[0]+895, ROI[1]+15, ROI[2]-895, ROI[3]-15],
+                                    "expect": "\\d+"
+                                }
+                            }
+                        }
+                    }
+                )
+                texts = res.filtered_results
+                texts = sorted(texts, key=lambda x: x.box[1])
+                entry["SLevel"] = int(texts[0].text)
+                print(f"[DEBUG] Found Seed Level: {texts[0].text} for character {param['name']} {param['id']}")
+                entry["SSkill"] = int(texts[1].text)
+                print(f"[DEBUG] Found Seed Skill: {texts[1].text} for character {param['name']} {param['id']}")
+                entry["SHP"] = int(texts[2].text)
+                print(f"[DEBUG] Found Seed HP: {texts[2].text} for character {param['name']} {param['id']}")
+                entry["SATK"] = int(texts[3].text)
+                print(f"[DEBUG] Found Seed ATK: {texts[3].text} for character {param['name']} {param['id']}")
+
+        def _fill_ar(entry):
+            if param.get("AR").get("name") is not None:
+                ar_name = param.get("AR")
+                ar_result = context.run_recognition(
+                    "TraverseMatch",
+                    argv.image,
+                    pipeline_override={
+                        "TraverseMatch": {
+                            "recognition": {
+                                "type": "Custom",
+                                "param": {
+                                    "custom_recognition": "TraverseMatch",
+                                    "custom_recognition_param": {
+                                        "AR": {
+                                            "name": ar_name
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                )
+                entry["AR"] = {
+                    "name": ar_name,
+                    "matched": bool(ar_result and ar_result.box)
+                }
+                print(f"[DEBUG] AR recognition for {ar_name}: {'matched' if ar_result and ar_result.box else 'not matched'}")
+            else:
+                print("[DEBUG] No AR specified, skipping AR recognition.")
+
+        # ===== 多结果模式 =====
+        if is_multi:
+            multi_output = {}
+            for res_key in sorted(detail_dict.keys()):
+                if not res_key.startswith("res_"):
+                    continue
+                res_val = detail_dict[res_key]
+                res_box = res_val.get("box", [0, 0, 0, 0])
+                ROI = [res_box[0] - self.ROI[0], res_box[1] - self.ROI[1], self.ROI[2], self.ROI[3]]
+                print(f"[DEBUG] Multi-result {res_key}: ROI={ROI}, box={res_box}")
+
+                # 格式: charname/id/res_\d/entry
+                entry = {
+                    "Level": param.get("Level", self.DEAFAULT_PARAM_A["Level"] if template_type == "A" else None),
+                    "SLevel": param.get("SLevel", self.DEAFAULT_PARAM_B["SLevel"] if template_type == "B" else None),
+                    "Skill": param.get("Skill", self.DEAFAULT_PARAM_A["Skill"] if template_type == "A" else None),
+                    "SSkill": param.get("SSkill", self.DEAFAULT_PARAM_B["SSkill"] if template_type == "B" else None),
+                    "S.A.Lv": param.get("S.A.Lv", self.DEAFAULT_PARAM_B["S.A.Lv"] if template_type == "B" else self.DEAFAULT_PARAM_A["S.A.Lv"]),
+                    "ATK": param.get("ATK", self.DEAFAULT_PARAM_A["ATK"] if template_type == "A" else None),
+                    "SATK": param.get("SATK", self.DEAFAULT_PARAM_B["SATK"] if template_type == "B" else None),
+                    "HP": param.get("HP", self.DEAFAULT_PARAM_A["HP"] if template_type == "A" else None),
+                    "SHP": param.get("SHP", self.DEAFAULT_PARAM_B["SHP"] if template_type == "B" else None),
+                    "AR": {"name": param.get("AR", None), "matched": True},
+                    "iffriend": True,
+                    "path": res_val.get("path"),
+                    "skin": res_val.get("skin"),
+                    "box": res_box,
+                }
+
+                _fill_ocr(entry, ROI)
+                _fill_ar(entry)
+                multi_output[res_key] = entry
+
+            return CustomRecognition.AnalyzeResult(
+                box=[0, 0, 0, 0],
+                detail={param["name"]: {param["id"]: multi_output}}
+            )
+
+        # ===== 单结果模式（保留原有逻辑）=====
         output[param["name"]][param["id"]]["path"] = detail_dict.get("path") if detail_dict else None
         
         if detail_dict:
@@ -243,117 +483,8 @@ class GroupAvatarInfo(CustomRecognition):
         else:
             return CustomRecognition.AnalyzeResult(box=None, detail=param)
         
-        # Level and Skill and ATK HP
-        if template_type == "A":
-            res = context.run_recognition(
-                "UtilsOCR",
-                argv.image,
-                pipeline_override={
-                    "UtilsOCR": {
-                        "recognition": {
-                            "param": {
-                                "roi": ROI,
-                                "expect": "\\d+"
-                            }
-                        }
-                    }
-                }
-            )
-
-            texts  = res.all_results
-            nums = res.filtered_results
-
-            for text in texts:
-                if match_mgr.fuzzy_match(text.text, "Level", 0.8):
-                    for num in nums:
-                        if (num.box[0] - text.box[0]) in range(90,105) and (num.box[1] - text.box[1]) in range(-5,5):
-                            levres = [int(temp) for temp in num.text.split("/")]
-                            output[param["name"]][param["id"]]["Level"] = levres[0]
-                            print(f"Found Level: {levres[0]} for character {param['name']} {param['id']}")
-                            break
-                    continue
-                elif match_mgr.fuzzy_match(text.text, ["Skill/S.A.Lv", "SkilI/S.A.Lv"], 0.8):
-                    for num in nums:
-                        if (num.box[0] - text.box[0]) in range(90,105) and (num.box[1] - text.box[1]) in range(-5,5):
-                            skillres = [int(temp) for temp in num.text.split("/")]
-                            output[param["name"]][param["id"]]["Skill"] = skillres[0]
-                            output[param["name"]][param["id"]]["S.A.Lv"] = skillres[1]
-                            print(f"Found Skill: {skillres[0]} and S.A.Lv: {skillres[1]} for character {param['name']} {param['id']}")
-                            break
-                    continue
-                elif match_mgr.fuzzy_match(text.text, "HP", 0.8):
-                    for num in nums:
-                        if (num.box[0] - text.box[0]) in range(90,105) and (num.box[1] - text.box[1]) in range(-5,5):
-                            hpres = int(num.text)
-                            output[param["name"]][param["id"]]["HP"] = hpres
-                            print(f"Found HP: {hpres} for character {param['name']} {param['id']}")
-                            break
-                    continue
-                elif match_mgr.fuzzy_match(text.text, "ATK", 0.8):
-                    for num in nums:
-                        if (num.box[0] - text.box[0]) in range(90,105) and (num.box[1] - text.box[1]) in range(-5,5):
-                            atkres = int(num.text)
-                            output[param["name"]][param["id"]]["ATK"] = atkres
-                            print(f"Found ATK: {atkres} for character {param['name']} {param['id']}")
-                            break
-                    continue
-
-
-        if template_type == "B":
-            res = context.run_recognition(
-                "UtilsOCR",
-                argv.image,
-                pipeline_override={
-                    "UtilsOCR": {
-                        "recognition": {
-                            "param": {
-                                "roi": [ROI[0]+895, ROI[1]+15, ROI[2]-895, ROI[3]-15],
-                                "expect": "\\d+"
-                            }
-                        }
-                    }
-                }
-            )
-            texts = res.filtered_results
-            texts = sorted(texts, key=lambda x: x.box[1])
-            output[param["name"]][param["id"]]["SLevel"] = int(texts[0].text)
-            print(f"[DEBUG] Found Seed Level: {texts[0].text} for character {param['name']} {param['id']}")
-            output[param["name"]][param["id"]]["SSkill"] = int(texts[1].text)
-            print(f"[DEBUG] Found Seed Skill: {texts[1].text} for character {param['name']} {param['id']}")
-            output[param["name"]][param["id"]]["SHP"] = int(texts[2].text)
-            print(f"[DEBUG] Found Seed HP: {texts[2].text} for character {param['name']} {param['id']}")
-            output[param["name"]][param["id"]]["SATK"] = int(texts[3].text)
-            print(f"[DEBUG] Found Seed ATK: {texts[3].text} for character {param['name']} {param['id']}")
-
-        if param.get("AR").get("name") is not None:
-            ar_name = param.get("AR")
-            ar_result = context.run_recognition(
-                "TraverseMatch",
-                argv.image,
-                pipeline_override={
-                    "TraverseMatch": {
-                        "recognition": {
-                            "type": "Custom",
-                            "param": {
-                                "custom_recognition": "TraverseMatch",
-                                "custom_recognition_param": {
-                                    "AR": {
-                                        "name": ar_name
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            )
-            
-            # AR 结果：嵌套字典包含 name 和 matched 状态
-            output[param["name"]][param["id"]]["AR"] = {
-                "name": ar_name,
-                "matched": bool(ar_result and ar_result.box)
-            }
-            print(f"[DEBUG] AR recognition for {ar_name}: {'matched' if ar_result and ar_result.box else 'not matched'}")
-        else: print("[DEBUG] No AR specified, skipping AR recognition.")
+        _fill_ocr(output[param["name"]][param["id"]], ROI)
+        _fill_ar(output[param["name"]][param["id"]])
         
         return CustomRecognition.AnalyzeResult(
             box=ROI if avatar and avatar.box else None,
