@@ -394,6 +394,49 @@ class ActUtils:
     DEFAULT_BEGIN = [330, 530, 10, 10]
     DEFAULT_END = [330, 15, 10, 10]
 
+    @staticmethod
+    def merge_res_dicts(existing: dict, new: dict) -> dict:
+        """
+        合并字典：将 new 中的 res_* 键重新编号后追加到 existing
+        
+        Args:
+            existing: 已有的结果字典，可能包含 res_0, res_1 等
+            new:      新的结果字典，包含 res_0, res_1 等
+            
+        Returns:
+            合并后的字典，new 的键被重编号为 res_2, res_3 等
+        """
+        if not existing:
+            return new
+        if not new:
+            return existing
+        
+        # 找出 existing 中已有的最大 res 索引
+        max_idx = -1
+        for key in existing.keys():
+            if isinstance(key, str) and key.startswith("res_"):
+                try:
+                    idx = int(key.split("_")[1])
+                    max_idx = max(max_idx, idx)
+                except (ValueError, IndexError):
+                    pass
+        
+        # new_start_idx 是新编号的起始位置
+        new_start_idx = max_idx + 1
+        
+        # 遍历 new 中的 res_* 键，重新编号后加入 existing
+        merged = {**existing}  # 拷贝 existing
+        for key, val in new.items():
+            if isinstance(key, str) and key.startswith("res_"):
+                try:
+                    old_idx = int(key.split("_")[1])
+                    new_key = f"res_{new_start_idx + old_idx}"
+                    merged[new_key] = val
+                except (ValueError, IndexError):
+                    pass  # 跳过无效的键
+        
+        return merged
+
     @classmethod
     def swipe(cls, context, begin_box: list = DEFAULT_BEGIN, end_box: list = DEFAULT_END, 
               duration: float = 0.5, contact: int = 0, pressure: int = 128,
@@ -552,6 +595,7 @@ class ActUtils:
         
         return intervals.tolist()
     
+
 act_mgr = ActUtils
 
 class TimeoutUtils:

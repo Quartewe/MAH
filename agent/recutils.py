@@ -6,10 +6,47 @@ import re
 from pathlib import Path
 from actutils import data_io
 from actutils import match_mgr
+from actutils import match_mgr
 
 
 @AgentServer.custom_recognition("TraverseMatch")
 class TraverseMatch(CustomRecognition):
+    """
+    遍历文件夹下的所有png模板, 支持输出所有匹配对象以及其对应的最可能模板
+    
+    Args:
+        pipeline输入参数要求:
+        {
+            对角色识别:至少包含"name":str "id":int 键
+            对AR识别:至少包含"AR":{"name":str} 键
+        }
+    Returns:
+    若为单对象则box返回为对应的位置，detail返回为该对象最可能的模板路径
+    {
+        box=[x,y,w,h],
+        detail={
+            "skin": r["skin"],
+            "path": r["template"],
+            "name": char_name,
+            "id": char_id,
+            "iffriend": False
+        }
+    }
+
+    若为多对象则box返回[0,0,0,0]，detail返回为一个字典，包含每个对象的位置信息和最可能的模板路径
+     {
+        "box": [0, 0, 0, 0],
+        "detail": {
+            "res_0": {
+            "template": str(tpl_rel),
+            "skin": extract_skin_from_template(str(tpl_rel)),
+            "box": box,
+            "count": count
+            }
+        }
+    }
+    若未识别到则box返回[-1,-1,-1,-1],detail返回None
+    """
     def __init__(self):
         super().__init__()
         self.BASE_PATH = Path("assets/resource/image")
@@ -192,7 +229,7 @@ class TraverseMatch(CustomRecognition):
             print(f"[DEBUG] Template path does not exist: {template_path}")
         
         return CustomRecognition.AnalyzeResult(
-            box=match_detail.box if match_detail and match_detail.box else None, 
+            box=match_detail.box if match_detail and match_detail.box else [-1, -1, -1, -1], 
             detail={"path": str(template),
                     "name": ar_name,
                      } if match_detail and match_detail.box and ar_mode else None
@@ -200,6 +237,74 @@ class TraverseMatch(CustomRecognition):
     
 @AgentServer.custom_recognition("GroupAvatarInfo")
 class GroupAvatarInfo(CustomRecognition):
+    """
+    助战界面识别对应的角色信息并打包输出,支持同画面有多个角色
+
+    Args:
+        pipeline输入参数要求:
+        {
+            "template_type": str, #模板类型，A或B，决定默认参数的使用, A为常规界面，B为种子界面
+            "name": str, #角色名 (若不输入默认为物部匡真)
+            "id": int,   #角色id (若不输入默认为2，即匡真2卡)
+            "Level": int, #角色等级（可选，默认为70）
+            "SLevel": int, #种子等级（可选，默认为0，表示不识别种子）
+            "S.A.Lv": int, #宝具等级（可选，默认为1）
+            "Skill": int, #技能等级（可选，默认为100）
+            "SSkill": int, #种子技能等级（可选，默认为0，表示不识别种子）
+            "ATK": int, #攻击力（可选，默认为0，表示不识别）
+            "SATK": int, #种子攻击力（可选，默认为0，表示不识别种子）
+            "HP": int, #生命值（可选，默认为0，表示不识别）
+            "SHP": int, #种子生命值（可选，默认为0，表示不识别种子）
+            "AR": {       #如果要求对应ar识别则输入AR字段
+                "name": str
+            }
+        }
+        
+    Returns:
+        若为单对象则box返回为对应的位置，detail返回为该对象的识别信息
+        {
+            "box": [x, y, w, h],
+            detail={
+                param["name"]: {
+                    param["id"]: {
+                        "Level": param.get("Level", self.DEAFAULT_PARAM_A["Level"] if template_type == "A" else None),
+                        "SLevel": param.get("SLevel", self.DEAFAULT_PARAM_B["SLevel"] if template_type == "B" else None),
+                        "Skill": param.get("Skill", self.DEAFAULT_PARAM_A["Skill"]  if template_type == "A" else None),
+                        "SSkill": param.get("SSkill", self.DEAFAULT_PARAM_B["SSkill"] if template_type == "B" else None),
+                        "S.A.Lv": param.get("S.A.Lv", self.DEAFAULT_PARAM_B["S.A.Lv"] if template_type == "B" else self.DEAFAULT_PARAM_A["S.A.Lv"]),
+                        "ATK": param.get("ATK", self.DEAFAULT_PARAM_A["ATK"] if template_type == "A" else None),
+                        "SATK": param.get("SATK", self.DEAFAULT_PARAM_B["SATK"] if template_type == "B" else None),
+                        "HP": param.get("HP", self.DEAFAULT_PARAM_A["HP"] if template_type == "A" else None),
+                        "SHP": param.get("SHP", self.DEAFAULT_PARAM_B["SHP"] if template_type == "B" else None),
+                        "AR": {
+                            "name": param.get("AR", None),
+                            "matched": True
+                        },
+                        "iffriend": True,
+                        "path": None
+                    }
+                }
+            }
+        }
+
+        若为多对象则box返回[0,0,0,0]，detail返回为一个字典，包含每个对象的位置信息和识别信息
+        {
+            "box": [0, 0, 0, 0],
+            "detail": {
+                param["name"]: {
+                    param["id"]: {
+                        "res_0": {
+                            同单对象detail的结构
+                        },
+                        "res_1": {
+                            同单对象detail的结构
+                        }
+                    }
+                }
+            }
+        }
+        若未识别到则box返回[-1,-1,-1,-1], detail返回None
+    """
     def __init__(self):
         super().__init__()
         self.ROI = [456, 21 , 965, 155] #块
@@ -301,9 +406,17 @@ class GroupAvatarInfo(CustomRecognition):
         )
         print(f"[DEBUG] avatar: {avatar}")
         
-        if not avatar or not avatar.hit:
+        # 统一处理 avatar.box：转换为 list 格式
+        avatar_box = None
+        if avatar and avatar.hit and avatar.box:
+            try:
+                avatar_box = [avatar.box[0], avatar.box[1], avatar.box[2], avatar.box[3]]
+            except (IndexError, TypeError):
+                avatar_box = None
+        
+        if not avatar or not avatar.hit or avatar_box == [-1, -1, -1, -1] or avatar_box is None:
             print(f"[DEBUG] Failed to find character: {param['name']} {param['id']}")
-            return CustomRecognition.AnalyzeResult(box=None, detail={})
+            return CustomRecognition.AnalyzeResult(box=[-1, -1, -1, -1], detail=None)
         
         # 获取详细信息，best_result.detail 可能是 dict 或 JSON 字符串
         detail_dict = {}
@@ -319,8 +432,8 @@ class GroupAvatarInfo(CustomRecognition):
             print(f"[DEBUG] detail_dict keys: {list(detail_dict.keys())}")
         
         # 判断是否为多结果（特征：box 为 [0,0,0,0]）
-        is_multi = (avatar.box[0] == 0 and avatar.box[1] == 0
-                    and avatar.box[2] == 0 and avatar.box[3] == 0)
+        is_multi = (avatar_box[0] == 0 and avatar_box[1] == 0
+                    and avatar_box[2] == 0 and avatar_box[3] == 0)
 
         # ===== 内部辅助函数：对单个 ROI 执行 OCR 并填充结果到 entry =====
         def _fill_ocr(entry, ROI):
@@ -437,7 +550,7 @@ class GroupAvatarInfo(CustomRecognition):
         # ===== 多结果模式 =====
         if is_multi:
             multi_output = {}
-            for res_key in sorted(detail_dict.keys()):
+            for res_key in detail_dict.keys():
                 if not res_key.startswith("res_"):
                     continue
                 res_val = detail_dict[res_key]
@@ -459,8 +572,8 @@ class GroupAvatarInfo(CustomRecognition):
                     "AR": {"name": param.get("AR", None), "matched": True},
                     "iffriend": True,
                     "path": res_val.get("path"),
-                    "skin": res_val.get("skin"),
-                    "box": res_box,
+                    "skin": res_val.get("skin")
+                    # ,"box": res_box
                 }
 
                 _fill_ocr(entry, ROI)
@@ -473,20 +586,34 @@ class GroupAvatarInfo(CustomRecognition):
             )
 
         # ===== 单结果模式（保留原有逻辑）=====
-        output[param["name"]][param["id"]]["path"] = detail_dict.get("path") if detail_dict else None
+        single_entry = {
+            "Level": output[param["name"]][param["id"]]["Level"],
+            "SLevel": output[param["name"]][param["id"]]["SLevel"],
+            "Skill": output[param["name"]][param["id"]]["Skill"],
+            "SSkill": output[param["name"]][param["id"]]["SSkill"],
+            "S.A.Lv": output[param["name"]][param["id"]]["S.A.Lv"],
+            "ATK": output[param["name"]][param["id"]]["ATK"],
+            "SATK": output[param["name"]][param["id"]]["SATK"],
+            "HP": output[param["name"]][param["id"]]["HP"],
+            "SHP": output[param["name"]][param["id"]]["SHP"],
+            "AR": output[param["name"]][param["id"]]["AR"],
+            "iffriend": output[param["name"]][param["id"]]["iffriend"],
+            "path": detail_dict.get("path") if detail_dict else None
+        }
         
         if detail_dict:
-            print(f"[DEBUG] found character: {detail_dict.get('name')} {detail_dict.get('id')} at {avatar.box}, path: {detail_dict.get('path')}")
-        if avatar.box:
-            ROI = [avatar.box[0]-self.ROI[0], avatar.box[1]-self.ROI[1], self.ROI[2], self.ROI[3]] # 块
-            print(f"[DEBUG] ROI for character {param['name']} {param['id']}: {ROI}")
-        else:
-            return CustomRecognition.AnalyzeResult(box=None, detail=param)
+            print(f"[DEBUG] found character: {detail_dict.get('name')} {detail_dict.get('id')} at {avatar_box}, path: {detail_dict.get('path')}")
         
-        _fill_ocr(output[param["name"]][param["id"]], ROI)
-        _fill_ar(output[param["name"]][param["id"]])
+        # 用 avatar_box 计算 ROI
+        ROI = [avatar_box[0]-self.ROI[0], avatar_box[1]-self.ROI[1], self.ROI[2], self.ROI[3]]
+        print(f"[DEBUG] ROI for character {param['name']} {param['id']}: {ROI}")
         
+        _fill_ocr(single_entry, ROI)
+        _fill_ar(single_entry)
+        
+        output[param["name"]][param["id"]] = {"res_0": single_entry}
+
         return CustomRecognition.AnalyzeResult(
-            box=ROI if avatar and avatar.box else None,
-            detail=output if avatar and avatar.box else None
+            box=ROI,
+            detail=output
         )
