@@ -573,7 +573,7 @@ class GroupAvatarInfo(CustomRecognition):
                     "iffriend": True,
                     "path": res_val.get("path"),
                     "skin": res_val.get("skin")
-                    # ,"box": res_box
+                    ,"box": res_box
                 }
 
                 _fill_ocr(entry, ROI)

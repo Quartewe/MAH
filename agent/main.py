@@ -14,8 +14,8 @@ if MissionLogic:
 from resource_record import ResourceRecord
 if ResourceRecord:
     print("[DEBUG] ResourceRecord 导入成功")
-from recutils import TraverseMatch, GroupAvatarInfo
-if TraverseMatch and GroupAvatarInfo:
+import recutils
+if recutils.TraverseMatch and recutils.GroupAvatarInfo:
     print("[DEBUG] TraverseMatch 和 GroupAvatarInfo 导入成功")
 
 def main():
