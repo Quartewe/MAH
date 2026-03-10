@@ -1,0 +1,96 @@
+{
+    "ResourceRecord.Stone": {
+        "recognition": {
+            "type": "OCR",
+            "param": {
+                "roi": [
+                    140,
+                    592,
+                    100,
+                    28
+                ]
+            }
+        },
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "ResourceRecord"
+            }
+        },
+        "next": [
+            "ResourceRecord.RF"
+        ]
+    },
+    "ResourceRecord.RF": {
+        "recognition": {
+            "type": "OCR",
+            "param": {
+                "roi": [
+                    230,
+                    594,
+                    99,
+                    24
+                ]
+            }
+        },
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "ResourceRecord"
+            }
+        },
+        "next": [
+            "ResourceRecord.AP"
+        ]
+    },
+    "ResourceRecord.Entry": {
+        "next": [
+            "ResourceRecord.Stone"
+        ]
+    },
+    "ResourceRecord.DP": {
+        "recognition": {
+            "type": "TemplateMatch",
+            "param": {
+                "roi": [
+                    405,
+                    633,
+                    85,
+                    55
+                ],
+                "template": "user_resource/DP.png"
+            }
+        },
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "ResourceRecord"
+            }
+        },
+        "next": [
+            "Global.HomePage"
+        ]
+    },
+    "ResourceRecord.AP": {
+        "recognition": {
+            "type": "OCR",
+            "param": {
+                "roi": [
+                    324,
+                    628,
+                    69,
+                    28
+                ]
+            }
+        },
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "ResourceRecord"
+            }
+        },
+        "next": [
+            "ResourceRecord.DP"
+        ]
+    }
+}
