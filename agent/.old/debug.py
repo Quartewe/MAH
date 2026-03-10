@@ -22,6 +22,8 @@ class Debug(CustomAction):
                 # debug
                 print(f"[DEBUG] {argv.reco_detail}")
                 #
+            case "Debug.Do":    
+                context.tasker.controller.post_swipe(330,550,330,15,500).wait()
             case _:
                 # debug
                 print(f"[DEBUG] {argv.node_name}")

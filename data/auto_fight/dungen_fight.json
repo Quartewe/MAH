@@ -1,0 +1,115 @@
+{
+    "team": {
+        "LEADER": {
+            "character": "amduscias",
+            "id": 3
+        },
+        "2": {
+            "character": "sanzo",
+            "id": 2
+        },
+        "3": {
+            "character": "yig",
+            "id": 2
+        },
+        "SUPPORT": {
+            "character": "kyouma",
+            "id": 2
+        },
+        "5": {
+            "character": "maneki",
+            "id": 1
+        },
+        "6": {
+            "character": "player",
+            "id": 1
+        }
+    },
+    "fight": {
+        "SIT0": {
+            "pos": {
+                "1": [
+                    0,
+                    0
+                ],
+                "2": [
+                    1,
+                    0
+                ],
+                "3": [
+                    0,
+                    1
+                ],
+                "4": [
+                    1,
+                    1
+                ]
+            },
+            "0": {
+                "char": 4,
+                "action": [
+                    "U"
+                ]
+            },
+            "loop": {
+                "0": {
+                    "char": 1,
+                    "action": [
+                        "S"
+                    ]
+                },
+                "1": {
+                    "char": 4,
+                    "action": [
+                        "S"
+                    ]
+                }
+            }
+        },
+        "SIT1": {
+            "pos": {
+                "1": [
+                    0,
+                    0
+                ],
+                "2": [
+                    1,
+                    0
+                ],
+                "3": [
+                    -1,
+                    1
+                ],
+                "4": [
+                    0,
+                    1
+                ]
+            },
+            "0": {
+                "char": 4,
+                "action": [
+                    "L",
+                    "D",
+                    "R",
+                    "R",
+                    "U",
+                    "U"
+                ]
+            },
+            "loop": {
+                "0": {
+                    "char": 1,
+                    "action": [
+                        "S"
+                    ]
+                },
+                "1": {
+                    "char": 4,
+                    "action": [
+                        "S"
+                    ]
+                }
+            }
+        }
+    }
+}

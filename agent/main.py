@@ -1,22 +1,18 @@
 import sys
+import os
+
+# 将 agent 目录加入 sys.path，使 utils/custom 包可被导入
+agent_dir = os.path.dirname(os.path.abspath(__file__))
+if agent_dir not in sys.path:
+    sys.path.insert(0, agent_dir)
+
 from maa.agent.agent_server import AgentServer
-if AgentServer:
-    print("[DEBUG] MAA 框架导入成功")
-from debug import Debug
-if Debug:
-    print("[DEBUG] Debug 导入成功")
-from weekly_mission import WeeklyMission
-if WeeklyMission:
-    print("[DEBUG] WeeklyMission 导入成功")
-from missions_logic import MissionLogic
-if MissionLogic:
-    print("[DEBUG] MissionLogic 导入成功")
-from resource_record import ResourceRecord
-if ResourceRecord:
-    print("[DEBUG] ResourceRecord 导入成功")
-import recutils
-if recutils.TraverseMatch and recutils.GroupAvatarInfo:
-    print("[DEBUG] TraverseMatch 和 GroupAvatarInfo 导入成功")
+print("[DEBUG] MAA 框架导入成功")
+
+# 导入 custom 包，触发所有 @AgentServer 装饰器注册
+import custom  # noqa: F401
+print("[DEBUG] 所有 custom action/recognition 已注册")
+
 
 def main():
     if len(sys.argv) >= 2:

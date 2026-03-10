@@ -598,7 +598,8 @@ class GroupAvatarInfo(CustomRecognition):
             "SHP": output[param["name"]][param["id"]]["SHP"],
             "AR": output[param["name"]][param["id"]]["AR"],
             "iffriend": output[param["name"]][param["id"]]["iffriend"],
-            "path": detail_dict.get("path") if detail_dict else None
+            "path": detail_dict.get("path") if detail_dict else None,
+            "box": avatar_box
         }
         
         if detail_dict:

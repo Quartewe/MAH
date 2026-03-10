@@ -25,7 +25,7 @@
             }
         }
     },
-    "Utils.ColorMatch": {
+    "UtilsColorMatch": {
         "recognition": {
             "type": "ColorMatch",
             "param": {
@@ -38,6 +38,38 @@
                     255,
                     255,
                     255
+                ]
+            }
+        }
+    },
+    "UtilsSwipe": {
+        "recognition": "DirectHit",
+        "action": "Swipe",
+        "begin": [
+            330,
+            530,
+            5,
+            5
+        ],
+        "end": [
+            330,
+            15,
+            5,
+            5
+        ],
+        "duration": 500,
+        "end_hold": 500
+    },
+    "UtilsClick": {
+        "recognition": "DirectHit",
+        "action": {
+            "type": "Click",
+            "param": {
+                "target": [
+                    0,
+                    0,
+                    0,
+                    0
                 ]
             }
         }

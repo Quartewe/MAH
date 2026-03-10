@@ -1,5 +1,5 @@
 {
-    "Global.GoBackToHomePage": {
+  "Global.GoBackToHomePage": {
     "pre_wait_freezes": 1000,
     "recognition": {
       "type": "TemplateMatch",
@@ -24,20 +24,20 @@
       "Global.LoginReward"
     ]
   },
-    "Global.HomePage": {
-        "anchor": "HOMEPAGE",
-        "recognition": "FeatureMatch",
-        "template": "homepage/homepage.png",
-        "roi": [
-          680,
-          520,
-          600,
-          200
-        ],
-        "post_wait_freezes": 2000,
-        "action": "DoNothing"
-    },
-    "Global.LoginReward": {
+  "Global.HomePage": {
+    "anchor": "HOMEPAGE",
+    "recognition": "FeatureMatch",
+    "template": "homepage/homepage.png",
+    "roi": [
+      680,
+      520,
+      600,
+      200
+    ],
+    "post_wait_freezes": 2000,
+    "action": "DoNothing"
+  },
+  "Global.LoginReward": {
     "post_wait_freezes": {
       "time": 2000,
       "timeout": 300000
@@ -66,17 +66,18 @@
       "ResourceRecord.Entry"
     ]
   },
-    "Global.NetworkError": {
-        "recognition": "OCR",
-        "expected": "Unable to complete SSL connection",
-        "action": "DoNothing",
-        "next": [
-            "Global.GetRidOfNetworkError"
-        ]
-    },
-    "Global.GetRidOfNetworkError": {
-        "recognition": "OCR",
-        "expected": "CLOSE",
-        "action": "Click"
-    }
+  "Global.NetworkError": {
+    "recognition": "OCR",
+    "expected": "Unable to complete SSL connection",
+    "action": "DoNothing",
+    "next": [
+      "Global.GetRidOfNetworkError"
+    ]
+  },
+  "Global.GetRidOfNetworkError": {
+    "recognition": "OCR",
+    "expected": "CLOSE",
+    "action": "Click"
+  },
+  "Global.AutoFight": {}
 }
