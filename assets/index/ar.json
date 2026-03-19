@@ -1,77 +1,95 @@
 {
-    "ar_7thAnniversary_exchange.png": {
+    "ar_7thAnniversary_exchange": {
         "jp_rawname": "ラストプレイヤー・オンステージ",
         "rarity": 4,
         "tag": [
             "7thAnniversary",
             "exchange"
         ],
-        "path": "ar\\ar_7thAnniversary_exchange.png"
+        "effect": {
+            "ar": "self"
+        },
+        "path": "ar/ar_7thAnniversary_exchange.png"
     },
-    "ar_7thAnniversary_gift.png": {
+    "ar_7thAnniversary_gift": {
         "jp_rawname": "いつだってBuzz＆Dream",
         "rarity": 4,
         "tag": [
             "7thAnniversary",
             "gift"
         ],
-        "path": "ar\\ar_7thAnniversary_gift.png"
+        "effect": {
+            "point": "self"
+        },
+        "path": "ar/ar_7thAnniversary_gift.png"
     },
-    "ar_8thAnniversary_exchange.png": {
+    "ar_8thAnniversary_exchange": {
         "jp_rawname": "路地裏の事件簿",
         "rarity": 4,
         "tag": [
             "8thAnniversary",
             "exchange"
         ],
-        "path": "ar\\ar_8thAnniversary_exchange.png"
+        "effect": {
+            "flower": "self"
+        },
+        "path": "ar/ar_8thAnniversary_exchange.png"
     },
-    "ar_8thAnniversary_gift.png": {
+    "ar_8thAnniversary_gift": {
         "jp_rawname": "神宿より、あいを込めて",
         "rarity": 4,
         "tag": [
             "8thAnniversary",
             "gift"
         ],
-        "path": "ar\\ar_8thAnniversary_gift.png"
+        "effect": {
+            "community_change": "self"
+        },
+        "path": "ar/ar_8thAnniversary_gift.png"
     },
-    "ar_9thAnniversary_exchange.png": {
+    "ar_9thAnniversary_exchange": {
         "jp_rawname": "東京消防大は君を待つ！",
         "rarity": 4,
         "tag": [
             "9thAnniversary",
             "exchange"
         ],
-        "path": "ar\\ar_9thAnniversary_exchange.png"
+        "effect": {
+            "seed": "self"
+        },
+        "path": "ar/ar_9thAnniversary_exchange.png"
     },
-    "ar_9thAnniversary_gift.png": {
+    "ar_9thAnniversary_gift": {
         "jp_rawname": "未来へ続く鐘の音を",
         "rarity": 4,
         "tag": [
             "9thAnniversary",
             "gift"
         ],
-        "path": "ar\\ar_9thAnniversary_gift.png"
+        "effect": {
+            "community_update": "self"
+        },
+        "path": "ar/ar_9thAnniversary_gift.png"
     },
-    "ar_agents_ose.png": {
+    "ar_agents_ose": {
         "jp_rawname": "シークレット・エージェンツ",
         "rarity": 3,
         "tag": [
             "agents",
             "ose"
         ],
-        "path": "ar\\ar_agents_ose.png"
+        "path": "ar/ar_agents_ose.png"
     },
-    "ar_agyou_inaba.png": {
+    "ar_agyou_inaba": {
         "jp_rawname": "干支っ子たちの正月始め！",
         "rarity": 3,
         "tag": [
             "agyou",
             "inaba"
         ],
-        "path": "ar\\ar_agyou_inaba.png"
+        "path": "ar/ar_agyou_inaba.png"
     },
-    "ar_agyou_sitri_chernobog.png": {
+    "ar_agyou_sitri_chernobog": {
         "jp_rawname": "聖夜の彩り",
         "rarity": 3,
         "tag": [
@@ -79,99 +97,102 @@
             "sitri",
             "chernobog"
         ],
-        "path": "ar\\ar_agyou_sitri_chernobog.png"
+        "path": "ar/ar_agyou_sitri_chernobog.png"
     },
-    "ar_aizen_kalki.png": {
+    "ar_aizen_kalki": {
         "jp_rawname": "我が盟友の為ならば",
         "rarity": 4,
         "tag": [
             "aizen",
             "kalki"
         ],
-        "path": "ar\\ar_aizen_kalki.png"
+        "path": "ar/ar_aizen_kalki.png"
     },
-    "ar_akihagongen_catoblepas.png": {
+    "ar_akihagongen_catoblepas": {
         "jp_rawname": "必撮！コスプレ人",
         "rarity": 4,
         "tag": [
             "akihagongen",
             "catoblepas"
         ],
-        "path": "ar\\ar_akihagongen_catoblepas.png"
+        "path": "ar/ar_akihagongen_catoblepas.png"
     },
-    "ar_akihagongen_ulaanbaatar.png": {
+    "ar_akihagongen_ulaanbaatar": {
         "jp_rawname": "ホット・サマーレスキュー",
         "rarity": 5,
         "tag": [
             "akihagongen",
             "ulaanbaatar"
         ],
-        "path": "ar\\ar_akihagongen_ulaanbaatar.png"
+        "path": "ar/ar_akihagongen_ulaanbaatar.png"
     },
-    "ar_algernon_tsukuyomi.png": {
+    "ar_algernon_tsukuyomi": {
         "jp_rawname": "上級生のおもてなし",
         "rarity": 5,
         "tag": [
             "algernon",
             "tsukuyomi"
         ],
-        "path": "ar\\ar_algernon_tsukuyomi.png"
+        "path": "ar/ar_algernon_tsukuyomi.png"
     },
-    "ar_alice_jambavat.png": {
+    "ar_alice_jambavat": {
         "jp_rawname": "君と駆けた不思議の街よ",
         "rarity": 5,
         "tag": [
             "alice",
             "jambavat"
         ],
-        "path": "ar\\ar_alice_jambavat.png"
+        "effect": {
+            "community_change": "public"
+        },
+        "path": "ar/ar_alice_jambavat.png"
     },
-    "ar_alice_volos.png": {
+    "ar_alice_volos": {
         "jp_rawname": "成果は現場にあり！",
         "rarity": 5,
         "tag": [
             "alice",
             "volos"
         ],
-        "path": "ar\\ar_alice_volos.png"
+        "path": "ar/ar_alice_volos.png"
     },
-    "ar_alp_cusith.png": {
+    "ar_alp_cusith": {
         "jp_rawname": "寂しがりのプランクスター",
         "rarity": 3,
         "tag": [
             "alp",
             "cusith"
         ],
-        "path": "ar\\ar_alp_cusith.png"
+        "path": "ar/ar_alp_cusith.png"
     },
-    "ar_alp_leib.png": {
+    "ar_alp_leib": {
         "jp_rawname": "飢野学園の指導",
         "rarity": 3,
         "tag": [
             "alp",
             "leib"
         ],
-        "path": "ar\\ar_alp_leib.png"
+        "path": "ar/ar_alp_leib.png"
     },
-    "ar_alp_touji.png": {
+    "ar_alp_touji": {
         "jp_rawname": "ウェアリング・モンスター",
         "rarity": 5,
         "tag": [
             "alp",
             "touji"
         ],
-        "path": "ar\\ar_alp_touji.png"
+        "path": "ar/ar_alp_touji.png"
     },
-    "ar_amduscias_nyarlathotep.png": {
+    "ar_amduscias_nyarlathotep": {
         "jp_rawname": "バレンタイン・クラブハウス！",
         "rarity": 4,
         "tag": [
             "amduscias",
             "nyarlathotep"
         ],
-        "path": "ar\\ar_amduscias_nyarlathotep.png"
+        "path": "ar/ar_amduscias_nyarlathotep.png"
     },
-    "ar_amduscias_tomte_echo_vapula.png": {
+    "ar_amduscias_tomte_echo_vapula": {
         "jp_rawname": "ネバーセイ・ラストライブ！",
         "rarity": 3,
         "tag": [
@@ -180,288 +201,297 @@
             "echo",
             "vapula"
         ],
-        "path": "ar\\ar_amduscias_tomte_echo_vapula.png"
+        "path": "ar/ar_amduscias_tomte_echo_vapula.png"
     },
-    "ar_andvari_alberich.png": {
+    "ar_andvari_alberich": {
         "jp_rawname": "お宝目指して何処までも",
         "rarity": 4,
         "tag": [
             "andvari",
             "alberich"
         ],
-        "path": "ar\\ar_andvari_alberich.png"
+        "effect": {
+            "coin": "self"
+        },
+        "path": "ar/ar_andvari_alberich.png"
     },
-    "ar_andvari_kotarou.png": {
+    "ar_andvari_kotarou": {
         "jp_rawname": "お宝にはご用心",
         "rarity": 5,
         "tag": [
             "andvari",
             "kotarou"
         ],
-        "path": "ar\\ar_andvari_kotarou.png"
+        "path": "ar/ar_andvari_kotarou.png"
     },
-    "ar_andvari_surtr.png": {
+    "ar_andvari_surtr": {
         "jp_rawname": "夏の海にはこれ一本！",
         "rarity": 4,
         "tag": [
             "andvari",
             "surtr"
         ],
-        "path": "ar\\ar_andvari_surtr.png"
+        "path": "ar/ar_andvari_surtr.png"
     },
-    "ar_apollo_tomte.png": {
+    "ar_apollo_tomte": {
         "jp_rawname": "テイミング・アイドル",
         "rarity": 3,
         "tag": [
             "apollo",
             "tomte"
         ],
-        "path": "ar\\ar_apollo_tomte.png"
+        "path": "ar/ar_apollo_tomte.png"
     },
-    "ar_aracne_catoblepas.png": {
+    "ar_aracne_catoblepas": {
         "jp_rawname": "衣装の心得",
         "rarity": 5,
         "tag": [
             "aracne",
             "catoblepas"
         ],
-        "path": "ar\\ar_aracne_catoblepas.png"
+        "path": "ar/ar_aracne_catoblepas.png"
     },
-    "ar_aracne_suzuka.png": {
+    "ar_aracne_suzuka": {
         "jp_rawname": "腹の底から高らかに",
         "rarity": 4,
         "tag": [
             "aracne",
             "suzuka"
         ],
-        "path": "ar\\ar_aracne_suzuka.png"
+        "path": "ar/ar_aracne_suzuka.png"
     },
-    "ar_aracne_thunderbird.png": {
+    "ar_aracne_thunderbird": {
         "jp_rawname": "お腹周りは引き締めて！",
         "rarity": 3,
         "tag": [
             "aracne",
             "thunderbird"
         ],
-        "path": "ar\\ar_aracne_thunderbird.png"
+        "path": "ar/ar_aracne_thunderbird.png"
     },
-    "ar_aracne_tuaring.png": {
+    "ar_aracne_tuaring": {
         "jp_rawname": "アラクネコレクションSO24",
         "rarity": 4,
         "tag": [
             "aracne",
             "tuaring"
         ],
-        "path": "ar\\ar_aracne_tuaring.png"
+        "path": "ar/ar_aracne_tuaring.png"
     },
-    "ar_arc_harlot.png": {
+    "ar_arc_harlot": {
         "jp_rawname": "母と子と",
         "rarity": 5,
         "tag": [
             "arc",
             "harlot"
         ],
-        "path": "ar\\ar_arc_harlot.png"
+        "effect": {
+            "flower": "public"
+        },
+        "path": "ar/ar_arc_harlot.png"
     },
-    "ar_arc_kirito.png": {
+    "ar_arc_kirito": {
         "jp_rawname": "モノクロームシンドローム",
         "rarity": 4,
         "tag": [
             "arc",
             "kirito"
         ],
-        "path": "ar\\ar_arc_kirito.png"
+        "path": "ar/ar_arc_kirito.png"
     },
-    "ar_arc_player.png": {
+    "ar_arc_player": {
         "jp_rawname": "結合の誓い",
         "rarity": 5,
         "tag": [
             "arc",
             "player"
         ],
-        "path": "ar\\ar_arc_player.png"
+        "path": "ar/ar_arc_player.png"
     },
-    "ar_arc_surtr.png": {
+    "ar_arc_surtr": {
         "jp_rawname": "メルト・ファンタジア",
         "rarity": 3,
         "tag": [
             "arc",
             "surtr"
         ],
-        "path": "ar\\ar_arc_surtr.png"
+        "path": "ar/ar_arc_surtr.png"
     },
-    "ar_arslan_avarga.png": {
+    "ar_arslan_avarga": {
         "jp_rawname": "宿命のグラップル！",
         "rarity": 5,
         "tag": [
             "arslan",
             "avarga"
         ],
-        "path": "ar\\ar_arslan_avarga.png"
+        "path": "ar/ar_arslan_avarga.png"
     },
-    "ar_ashigara_barguest.png": {
+    "ar_ashigara_barguest": {
         "jp_rawname": "山の熊さんたち",
         "rarity": 3,
         "tag": [
             "ashigara",
             "barguest"
         ],
-        "path": "ar\\ar_ashigara_barguest.png"
+        "path": "ar/ar_ashigara_barguest.png"
     },
-    "ar_asterios_astaroth.png": {
+    "ar_asterios_astaroth": {
         "jp_rawname": "夢に見た力比べ",
         "rarity": 5,
         "tag": [
             "asterios",
             "astaroth"
         ],
-        "path": "ar\\ar_asterios_astaroth.png"
+        "path": "ar/ar_asterios_astaroth.png"
     },
-    "ar_asterios_taurus.png": {
+    "ar_asterios_taurus": {
         "jp_rawname": "コリーダ・デ・トーロス",
         "rarity": 5,
         "tag": [
             "asterios",
             "taurus"
         ],
-        "path": "ar\\ar_asterios_taurus.png"
+        "path": "ar/ar_asterios_taurus.png"
     },
-    "ar_avarga_jugo.png": {
+    "ar_avarga_jugo": {
         "jp_rawname": "炎天下のレッスルウォー",
         "rarity": 3,
         "tag": [
             "avarga",
             "jugo"
         ],
-        "path": "ar\\ar_avarga_jugo.png"
+        "path": "ar/ar_avarga_jugo.png"
     },
-    "ar_azathoth_nodens.png": {
+    "ar_azathoth_nodens": {
         "jp_rawname": "ドリームランドへようこそ",
         "rarity": 4,
         "tag": [
             "azathoth",
             "nodens"
         ],
-        "path": "ar\\ar_azathoth_nodens.png"
+        "path": "ar/ar_azathoth_nodens.png"
     },
-    "ar_azathoth_nyarlathotep.png": {
+    "ar_azathoth_nyarlathotep": {
         "jp_rawname": "OH，MY POPSTAR！",
         "rarity": 3,
         "tag": [
             "azathoth",
             "nyarlathotep"
         ],
-        "path": "ar\\ar_azathoth_nyarlathotep.png"
+        "path": "ar/ar_azathoth_nyarlathotep.png"
     },
-    "ar_babebunyan_korpokkur.png": {
+    "ar_babebunyan_korpokkur": {
         "jp_rawname": "ブルーランドボーイズ",
         "rarity": 4,
         "tag": [
             "babebunyan",
             "korpokkur"
         ],
-        "path": "ar\\ar_babebunyan_korpokkur.png"
+        "path": "ar/ar_babebunyan_korpokkur.png"
     },
-    "ar_babebunyan_zhurong.png": {
+    "ar_babebunyan_zhurong": {
         "jp_rawname": "夏の日の一枚",
         "rarity": 3,
         "tag": [
             "babebunyan",
             "zhurong"
         ],
-        "path": "ar\\ar_babebunyan_zhurong.png"
+        "path": "ar/ar_babebunyan_zhurong.png"
     },
-    "ar_bael_astaroth.png": {
+    "ar_bael_astaroth": {
         "jp_rawname": "悪魔式ティータイム",
         "rarity": 5,
         "tag": [
             "bael",
             "astaroth"
         ],
-        "path": "ar\\ar_bael_astaroth.png"
+        "path": "ar/ar_bael_astaroth.png"
     },
-    "ar_bael_lucifuge.png": {
+    "ar_bael_lucifuge": {
         "jp_rawname": "ゲヘナの腸",
         "rarity": 4,
         "tag": [
             "bael",
             "lucifuge"
         ],
-        "path": "ar\\ar_bael_lucifuge.png"
+        "path": "ar/ar_bael_lucifuge.png"
     },
-    "ar_balor_tezcatlipoca.png": {
+    "ar_balor_tezcatlipoca": {
         "jp_rawname": "同盟者からのサプライズ",
         "rarity": 4,
         "tag": [
             "balor",
             "tezcatlipoca"
         ],
-        "path": "ar\\ar_balor_tezcatlipoca.png"
+        "path": "ar/ar_balor_tezcatlipoca.png"
     },
-    "ar_barguest_ashigara.png": {
+    "ar_barguest_ashigara": {
         "jp_rawname": "すぺしゃるちゃんこを召し上がれ",
         "rarity": 4,
         "tag": [
             "barguest",
             "ashigara"
         ],
-        "path": "ar\\ar_barguest_ashigara.png"
+        "path": "ar/ar_barguest_ashigara.png"
     },
-    "ar_barguest_bohemio.png": {
+    "ar_barguest_bohemio": {
         "jp_rawname": "ワンダリング・ハイウェイ",
         "rarity": 5,
         "tag": [
             "barguest",
             "bohemio"
         ],
-        "path": "ar\\ar_barguest_bohemio.png"
+        "effect": {
+            "point": "public"
+        },
+        "path": "ar/ar_barguest_bohemio.png"
     },
-    "ar_barguest_kenta.png": {
+    "ar_barguest_kenta": {
         "jp_rawname": "糾える縄の如し",
         "rarity": 3,
         "tag": [
             "barguest",
             "kenta"
         ],
-        "path": "ar\\ar_barguest_kenta.png"
+        "path": "ar/ar_barguest_kenta.png"
     },
-    "ar_bathym_ikutoshi.png": {
+    "ar_bathym_ikutoshi": {
         "jp_rawname": "シューティングスターズ",
         "rarity": 4,
         "tag": [
             "bathym",
             "ikutoshi"
         ],
-        "path": "ar\\ar_bathym_ikutoshi.png"
+        "path": "ar/ar_bathym_ikutoshi.png"
     },
-    "ar_bathym_pollux.png": {
+    "ar_bathym_pollux": {
         "jp_rawname": "バーサーカーズのクリスマス！",
         "rarity": 5,
         "tag": [
             "bathym",
             "pollux"
         ],
-        "path": "ar\\ar_bathym_pollux.png"
+        "path": "ar/ar_bathym_pollux.png"
     },
-    "ar_behemoth_ryouta.png": {
+    "ar_behemoth_ryouta": {
         "jp_rawname": "神宿学園の食いしん坊番長",
         "rarity": 3,
         "tag": [
             "behemoth",
             "ryouta"
         ],
-        "path": "ar\\ar_behemoth_ryouta.png"
+        "path": "ar/ar_behemoth_ryouta.png"
     },
-    "ar_benten_aegir.png": {
+    "ar_benten_aegir": {
         "jp_rawname": "嵐を呼ぶMCバトル！",
         "rarity": 5,
         "tag": [
             "benten",
             "aegir"
         ],
-        "path": "ar\\ar_benten_aegir.png"
+        "path": "ar/ar_benten_aegir.png"
     },
-    "ar_bertro_yoritomo_mephistopheles.png": {
+    "ar_bertro_yoritomo_mephistopheles": {
         "jp_rawname": "ぼくたちのチェックメイト",
         "rarity": 5,
         "tag": [
@@ -469,207 +499,222 @@
             "yoritomo",
             "mephistopheles"
         ],
-        "path": "ar\\ar_bertro_yoritomo_mephistopheles.png"
+        "effect": {
+            "point": "public"
+        },
+        "path": "ar/ar_bertro_yoritomo_mephistopheles.png"
     },
-    "ar_boogeyman_zhurong.png": {
+    "ar_boogeyman_zhurong": {
         "jp_rawname": "放課後チョコレートマジック",
         "rarity": 4,
         "tag": [
             "boogeyman",
             "zhurong"
         ],
-        "path": "ar\\ar_boogeyman_zhurong.png"
+        "path": "ar/ar_boogeyman_zhurong.png"
     },
-    "ar_breke_cthugha.png": {
+    "ar_breke_cthugha": {
         "jp_rawname": "パイロットトレーニング",
         "rarity": 4,
         "tag": [
             "breke",
             "cthugha"
         ],
-        "path": "ar\\ar_breke_cthugha.png"
+        "path": "ar/ar_breke_cthugha.png"
     },
-    "ar_caitsith_tezcatlipoca.png": {
+    "ar_caitsith_tezcatlipoca": {
         "jp_rawname": "猫たちの憩いの場",
         "rarity": 3,
         "tag": [
             "caitsith",
             "tezcatlipoca"
         ],
-        "path": "ar\\ar_caitsith_tezcatlipoca.png"
+        "path": "ar/ar_caitsith_tezcatlipoca.png"
     },
-    "ar_chernobog_andvari.png": {
+    "ar_chernobog_andvari": {
         "jp_rawname": "魔王の温泉郷へようこそ",
         "rarity": 4,
         "tag": [
             "chernobog",
             "andvari"
         ],
-        "path": "ar\\ar_chernobog_andvari.png"
+        "path": "ar/ar_chernobog_andvari.png"
     },
-    "ar_chernobog_taromaiti.png": {
+    "ar_chernobog_taromaiti": {
         "jp_rawname": "魔王と魔王",
         "rarity": 3,
         "tag": [
             "chernobog",
             "taromaiti"
         ],
-        "path": "ar\\ar_chernobog_taromaiti.png"
+        "path": "ar/ar_chernobog_taromaiti.png"
     },
-    "ar_chernobog_zaou.png": {
+    "ar_chernobog_zaou": {
         "jp_rawname": "おお山の喜びよ",
         "rarity": 3,
         "tag": [
             "chernobog",
             "zaou"
         ],
-        "path": "ar\\ar_chernobog_zaou.png"
+        "path": "ar/ar_chernobog_zaou.png"
     },
-    "ar_chouji_ryouta.png": {
+    "ar_chouji_ryouta": {
         "jp_rawname": "思い出のXmasディナー",
         "rarity": 4,
         "tag": [
             "chouji",
             "ryouta"
         ],
-        "path": "ar\\ar_chouji_ryouta.png"
+        "path": "ar/ar_chouji_ryouta.png"
     },
-    "ar_chouji_volos.png": {
+    "ar_chouji_volos": {
         "jp_rawname": "アタックオブザウォーターメロン",
         "rarity": 4,
         "tag": [
             "chouji",
             "volos"
         ],
-        "path": "ar\\ar_chouji_volos.png"
+        "path": "ar/ar_chouji_volos.png"
     },
-    "ar_cipactli_christine.png": {
+    "ar_cipactli_christine": {
         "jp_rawname": "オペラ座の怪獣",
         "rarity": 3,
         "tag": [
             "cipactli",
             "christine"
         ],
-        "path": "ar\\ar_cipactli_christine.png"
+        "path": "ar/ar_cipactli_christine.png"
     },
-    "ar_cipactli_macroich.png": {
+    "ar_cipactli_macroich": {
         "jp_rawname": "限り無き大決戦！",
         "rarity": 5,
         "tag": [
             "cipactli",
             "macroich"
         ],
-        "path": "ar\\ar_cipactli_macroich.png"
+        "path": "ar/ar_cipactli_macroich.png"
     },
-    "ar_claude_snow.png": {
+    "ar_claude_snow": {
         "jp_rawname": "ようこそ池袋の劇場へ",
         "rarity": 3,
         "tag": [
             "claude",
             "snow"
         ],
-        "path": "ar\\ar_claude_snow.png"
+        "path": "ar/ar_claude_snow.png"
     },
-    "ar_crafters_kurogane.png": {
+    "ar_crafters_kurogane": {
         "jp_rawname": "レッツ・クラフト！",
         "rarity": 4,
         "tag": [
             "crafters",
             "kurogane"
         ],
-        "path": "ar\\ar_crafters_kurogane.png"
+        "effect": {
+            "ar": "self"
+        },
+        "path": "ar/ar_crafters_kurogane.png"
     },
-    "ar_crafters_kurogane2.png": {
+    "ar_crafters_kurogane2": {
         "jp_rawname": "放課後の工房",
         "rarity": 4,
         "tag": [
             "crafters",
             "kurogane2"
         ],
-        "path": "ar\\ar_crafters_kurogane2.png"
+        "effect": {
+            "flower": "self"
+        },
+        "path": "ar/ar_crafters_kurogane2.png"
     },
-    "ar_cthugha_nyarlathotep.png": {
+    "ar_cthugha_nyarlathotep": {
         "jp_rawname": "大宇宙おいかけっこ",
         "rarity": 5,
         "tag": [
             "cthugha",
             "nyarlathotep"
         ],
-        "path": "ar\\ar_cthugha_nyarlathotep.png"
+        "path": "ar/ar_cthugha_nyarlathotep.png"
     },
-    "ar_cusith_leib.png": {
+    "ar_cusith_leib": {
         "jp_rawname": "スウィート・ドリームス",
         "rarity": 5,
         "tag": [
             "cusith",
             "leib"
         ],
-        "path": "ar\\ar_cusith_leib.png"
+        "effect": {
+            "character_exp": "public"
+        },
+        "path": "ar/ar_cusith_leib.png"
     },
-    "ar_ded_bacchus.png": {
+    "ar_ded_bacchus": {
         "jp_rawname": "スノー＆シュガー",
         "rarity": 4,
         "tag": [
             "ded",
             "bacchus"
         ],
-        "path": "ar\\ar_ded_bacchus.png"
+        "path": "ar/ar_ded_bacchus.png"
     },
-    "ar_ded_itzamna.png": {
+    "ar_ded_itzamna": {
         "jp_rawname": "真夏のクリスマスツリー",
         "rarity": 4,
         "tag": [
             "ded",
             "itzamna"
         ],
-        "path": "ar\\ar_ded_itzamna.png"
+        "path": "ar/ar_ded_itzamna.png"
     },
-    "ar_ded_krampus.png": {
+    "ar_ded_krampus": {
         "jp_rawname": "お仕置きサンタの特訓",
         "rarity": 5,
         "tag": [
             "ded",
             "krampus"
         ],
-        "path": "ar\\ar_ded_krampus.png"
+        "path": "ar/ar_ded_krampus.png"
     },
-    "ar_ded_tanngrisnir.png": {
+    "ar_ded_tanngrisnir": {
         "jp_rawname": "次なる聖夜のために",
         "rarity": 3,
         "tag": [
             "ded",
             "tanngrisnir"
         ],
-        "path": "ar\\ar_ded_tanngrisnir.png"
+        "path": "ar/ar_ded_tanngrisnir.png"
     },
-    "ar_duo_shuuichi.png": {
+    "ar_duo_shuuichi": {
         "jp_rawname": "東方の賢者たち",
         "rarity": 5,
         "tag": [
             "duo",
             "shuuichi"
         ],
-        "path": "ar\\ar_duo_shuuichi.png"
+        "effect": {
+            "coin": "public"
+        },
+        "path": "ar/ar_duo_shuuichi.png"
     },
-    "ar_durga_aracne.png": {
+    "ar_durga_aracne": {
         "jp_rawname": "パジャマパーティー・ランウェイ",
         "rarity": 4,
         "tag": [
             "durga",
             "aracne"
         ],
-        "path": "ar\\ar_durga_aracne.png"
+        "path": "ar/ar_durga_aracne.png"
     },
-    "ar_durga_gunzou.png": {
+    "ar_durga_gunzou": {
         "jp_rawname": "青春は君をおって",
         "rarity": 5,
         "tag": [
             "durga",
             "gunzou"
         ],
-        "path": "ar\\ar_durga_gunzou.png"
+        "path": "ar/ar_durga_gunzou.png"
     },
-    "ar_durga_licho_nomad.png": {
+    "ar_durga_licho_nomad": {
         "jp_rawname": "虎たちの乾杯",
         "rarity": 4,
         "tag": [
@@ -677,395 +722,413 @@
             "licho",
             "nomad"
         ],
-        "path": "ar\\ar_durga_licho_nomad.png"
+        "path": "ar/ar_durga_licho_nomad.png"
     },
-    "ar_durga_zaou.png": {
+    "ar_durga_zaou": {
         "jp_rawname": "ワンダーフォーゲル！",
         "rarity": 4,
         "tag": [
             "durga",
             "zaou"
         ],
-        "path": "ar\\ar_durga_zaou.png"
+        "path": "ar/ar_durga_zaou.png"
     },
-    "ar_ebis_azathoth.png": {
+    "ar_ebis_azathoth": {
         "jp_rawname": "万聖節には合いの手を！",
         "rarity": 3,
         "tag": [
             "ebis",
             "azathoth"
         ],
-        "path": "ar\\ar_ebis_azathoth.png"
+        "path": "ar/ar_ebis_azathoth.png"
     },
-    "ar_ebisu_benten.png": {
+    "ar_ebisu_benten": {
         "jp_rawname": "打ち上げLIVE！",
         "rarity": 3,
         "tag": [
             "ebisu",
             "benten"
         ],
-        "path": "ar\\ar_ebisu_benten.png"
+        "path": "ar/ar_ebisu_benten.png"
     },
-    "ar_ebisu_chouji.png": {
+    "ar_ebisu_chouji": {
         "jp_rawname": "チョコレート・ダイナマイト！",
         "rarity": 3,
         "tag": [
             "ebisu",
             "chouji"
         ],
-        "path": "ar\\ar_ebisu_chouji.png"
+        "path": "ar/ar_ebisu_chouji.png"
     },
-    "ar_echo_ziz.png": {
+    "ar_echo_ziz": {
         "jp_rawname": "デュエット・レッスン",
         "rarity": 5,
         "tag": [
             "echo",
             "ziz"
         ],
-        "path": "ar\\ar_echo_ziz.png"
+        "path": "ar/ar_echo_ziz.png"
     },
-    "ar_ellie_tsukuyomi.png": {
+    "ar_ellie_tsukuyomi": {
         "jp_rawname": "クイーン・オブ・カブキチョウ",
         "rarity": 5,
         "tag": [
             "ellie",
             "tsukuyomi"
         ],
-        "path": "ar\\ar_ellie_tsukuyomi.png"
+        "effect": {
+            "seed": "public"
+        },
+        "path": "ar/ar_ellie_tsukuyomi.png"
     },
-    "ar_enigma_vapula.png": {
+    "ar_enigma_vapula": {
         "jp_rawname": "いけない！？デッドライン",
         "rarity": 4,
         "tag": [
             "enigma",
             "vapula"
         ],
-        "path": "ar\\ar_enigma_vapula.png"
+        "path": "ar/ar_enigma_vapula.png"
     },
-    "ar_fisher.png": {
+    "ar_fisher": {
         "jp_rawname": "長途の待人の破片",
         "rarity": 2,
         "tag": [
             "fisher"
         ],
-        "path": "ar\\ar_fisher.png"
+        "path": "ar/ar_fisher.png"
     },
-    "ar_gabriel_managarmr.png": {
+    "ar_gabriel_managarmr": {
         "jp_rawname": "バレンタイン・ライブ！",
         "rarity": 5,
         "tag": [
             "gabriel",
             "managarmr"
         ],
-        "path": "ar\\ar_gabriel_managarmr.png"
+        "path": "ar/ar_gabriel_managarmr.png"
     },
-    "ar_gabriel_nomad.png": {
+    "ar_gabriel_nomad": {
         "jp_rawname": "がんばれ貧乏探偵！",
         "rarity": 5,
         "tag": [
             "gabriel",
             "nomad"
         ],
-        "path": "ar\\ar_gabriel_nomad.png"
+        "path": "ar/ar_gabriel_nomad.png"
     },
-    "ar_gandharva_thunderbird.png": {
+    "ar_gandharva_thunderbird": {
         "jp_rawname": "都会の隠れ家",
         "rarity": 3,
         "tag": [
             "gandharva",
             "thunderbird"
         ],
-        "path": "ar\\ar_gandharva_thunderbird.png"
+        "path": "ar/ar_gandharva_thunderbird.png"
     },
-    "ar_genociders_kirito.png": {
+    "ar_genociders_kirito": {
         "jp_rawname": "ひとりだけのあなたへ",
         "rarity": 4,
         "tag": [
             "genociders",
             "kirito"
         ],
-        "path": "ar\\ar_genociders_kirito.png"
+        "effect": {
+            "flower": "self"
+        },
+        "path": "ar/ar_genociders_kirito.png"
     },
-    "ar_glashtyn_takemaru.png": {
+    "ar_glashtyn_takemaru": {
         "jp_rawname": "駆け馬に鬼のかけ湯",
         "rarity": 3,
         "tag": [
             "glashtyn",
             "takemaru"
         ],
-        "path": "ar\\ar_glashtyn_takemaru.png"
+        "path": "ar/ar_glashtyn_takemaru.png"
     },
-    "ar_gouryou_seth.png": {
+    "ar_gouryou_seth": {
         "jp_rawname": "砂漠のプライベート・レッスン？",
         "rarity": 5,
         "tag": [
             "gouryou",
             "seth"
         ],
-        "path": "ar\\ar_gouryou_seth.png"
+        "path": "ar/ar_gouryou_seth.png"
     },
-    "ar_gouryou_ulaanbaatar.png": {
+    "ar_gouryou_ulaanbaatar": {
         "jp_rawname": "踊れや歌えやどんちゃん騒ぎ！",
         "rarity": 5,
         "tag": [
             "gouryou",
             "ulaanbaatar"
         ],
-        "path": "ar\\ar_gouryou_ulaanbaatar.png"
+        "path": "ar/ar_gouryou_ulaanbaatar.png"
     },
-    "ar_gullinbursti_tanngrisnir.png": {
+    "ar_gullinbursti_tanngrisnir": {
         "jp_rawname": "隣を駆ける者ども",
         "rarity": 3,
         "tag": [
             "gullinbursti",
             "tanngrisnir"
         ],
-        "path": "ar\\ar_gullinbursti_tanngrisnir.png"
+        "path": "ar/ar_gullinbursti_tanngrisnir.png"
     },
-    "ar_gunzou_kyuuma.png": {
+    "ar_gunzou_kyuuma": {
         "jp_rawname": "夕暮れ時の青春は",
         "rarity": 4,
         "tag": [
             "gunzou",
             "kyuuma"
         ],
-        "path": "ar\\ar_gunzou_kyuuma.png"
+        "path": "ar/ar_gunzou_kyuuma.png"
     },
-    "ar_gyuumaou_seth.png": {
+    "ar_gyuumaou_seth": {
         "jp_rawname": "ギュウマオウ式OJT！",
         "rarity": 3,
         "tag": [
             "gyuumaou",
             "seth"
         ],
-        "path": "ar\\ar_gyuumaou_seth.png"
+        "path": "ar/ar_gyuumaou_seth.png"
     },
-    "ar_gyuumaou_snow.png": {
+    "ar_gyuumaou_snow": {
         "jp_rawname": "上質の一杯",
         "rarity": 5,
         "tag": [
             "gyuumaou",
             "snow"
         ],
-        "path": "ar\\ar_gyuumaou_snow.png"
+        "path": "ar/ar_gyuumaou_snow.png"
     },
-    "ar_hakumen_tuatgua.png": {
+    "ar_hakumen_tuatgua": {
         "jp_rawname": "六本木のフィクサーたち",
         "rarity": 4,
         "tag": [
             "hakumen",
             "tuatgua"
         ],
-        "path": "ar\\ar_hakumen_tuatgua.png"
+        "path": "ar/ar_hakumen_tuatgua.png"
     },
-    "ar_hakumen_xolotl.png": {
+    "ar_hakumen_xolotl": {
         "jp_rawname": "東京カジノへようこそ",
         "rarity": 3,
         "tag": [
             "hakumen",
             "xolotl"
         ],
-        "path": "ar\\ar_hakumen_xolotl.png"
+        "path": "ar/ar_hakumen_xolotl.png"
     },
-    "ar_hanuman_tetsugyuu.png": {
+    "ar_hanuman_tetsugyuu": {
         "jp_rawname": "浅草ダウンタウンボーイズ",
         "rarity": 4,
         "tag": [
             "hanuman",
             "tetsugyuu"
         ],
-        "path": "ar\\ar_hanuman_tetsugyuu.png"
+        "path": "ar/ar_hanuman_tetsugyuu.png"
     },
-    "ar_hanuman_tuatgua.png": {
+    "ar_hanuman_tuatgua": {
         "jp_rawname": "サバイバルリゾート",
         "rarity": 4,
         "tag": [
             "hanuman",
             "tuatgua"
         ],
-        "path": "ar\\ar_hanuman_tuatgua.png"
+        "path": "ar/ar_hanuman_tuatgua.png"
     },
-    "ar_harlot_surtr.png": {
+    "ar_harlot_surtr": {
         "jp_rawname": "ジェノサイド・ハロウィン",
         "rarity": 5,
         "tag": [
             "harlot",
             "surtr"
         ],
-        "path": "ar\\ar_harlot_surtr.png"
+        "path": "ar/ar_harlot_surtr.png"
     },
-    "ar_hephaestus_kurogane.png": {
+    "ar_hephaestus_kurogane": {
         "jp_rawname": "鍛錬あるのみ！",
         "rarity": 3,
         "tag": [
             "hephaestus",
             "kurogane"
         ],
-        "path": "ar\\ar_hephaestus_kurogane.png"
+        "path": "ar/ar_hephaestus_kurogane.png"
     },
-    "ar_heracles_echo.png": {
+    "ar_heracles_echo": {
         "jp_rawname": "従者並びて",
         "rarity": 4,
         "tag": [
             "heracles",
             "echo"
         ],
-        "path": "ar\\ar_heracles_echo.png"
+        "path": "ar/ar_heracles_echo.png"
     },
-    "ar_hippolytus_masanori.png": {
+    "ar_hippolytus_masanori": {
         "jp_rawname": "プリザーブドタイム",
         "rarity": 4,
         "tag": [
             "hippolytus",
             "masanori"
         ],
-        "path": "ar\\ar_hippolytus_masanori.png"
+        "path": "ar/ar_hippolytus_masanori.png"
     },
-    "ar_hombretigre_tezcatlipoca.png": {
+    "ar_hombretigre_tezcatlipoca": {
         "jp_rawname": "星よ！太陽よ！",
         "rarity": 3,
         "tag": [
             "hombretigre",
             "tezcatlipoca"
         ],
-        "path": "ar\\ar_hombretigre_tezcatlipoca.png"
+        "path": "ar/ar_hombretigre_tezcatlipoca.png"
     },
-    "ar_hoover_kotarou.png": {
+    "ar_hoover_kotarou": {
         "jp_rawname": "エージェンツ・ウェイクアップ",
         "rarity": 5,
         "tag": [
             "hoover",
             "kotarou"
         ],
-        "path": "ar\\ar_hoover_kotarou.png"
+        "effect": {
+            "community_update": "public"
+        },
+        "path": "ar/ar_hoover_kotarou.png"
     },
-    "ar_horkeukamui_kimunkamui.png": {
+    "ar_horkeukamui_kimunkamui": {
         "jp_rawname": "雪解けの甘くとろけたる",
         "rarity": 5,
         "tag": [
             "horkeukamui",
             "kimunkamui"
         ],
-        "path": "ar\\ar_horkeukamui_kimunkamui.png"
+        "path": "ar/ar_horkeukamui_kimunkamui.png"
     },
-    "ar_hotei_alp.png": {
+    "ar_hotei_alp": {
         "jp_rawname": "ダイブ・トゥ・ドリーム",
         "rarity": 5,
         "tag": [
             "hotei",
             "alp"
         ],
-        "path": "ar\\ar_hotei_alp.png"
+        "path": "ar/ar_hotei_alp.png"
     },
-    "ar_hotei_touji.png": {
+    "ar_hotei_touji": {
         "jp_rawname": "ハロウィンポリスBack！",
         "rarity": 4,
         "tag": [
             "hotei",
             "touji"
         ],
-        "path": "ar\\ar_hotei_touji.png"
+        "path": "ar/ar_hotei_touji.png"
     },
-    "ar_hougen_touji.png": {
+    "ar_hougen_touji": {
         "jp_rawname": "剣の道は尚遙か",
         "rarity": 4,
         "tag": [
             "hougen",
             "touji"
         ],
-        "path": "ar\\ar_hougen_touji.png"
+        "path": "ar/ar_hougen_touji.png"
     },
-    "ar_ibaraki_tsukuyomi.png": {
+    "ar_ibaraki_tsukuyomi": {
         "jp_rawname": "不夜城のおしごと！",
         "rarity": 4,
         "tag": [
             "ibaraki",
             "tsukuyomi"
         ],
-        "path": "ar\\ar_ibaraki_tsukuyomi.png"
+        "path": "ar/ar_ibaraki_tsukuyomi.png"
     },
-    "ar_isaac_tuaring.png": {
+    "ar_isaac_tuaring": {
         "jp_rawname": "届かじのペーパープレイン",
         "rarity": 5,
         "tag": [
             "isaac",
             "tuaring"
         ],
-        "path": "ar\\ar_isaac_tuaring.png"
+        "effect": {
+            "seed": "public"
+        },
+        "path": "ar/ar_isaac_tuaring.png"
     },
-    "ar_itzamna_licht.png": {
+    "ar_itzamna_licht": {
         "jp_rawname": "再生のキャンバス",
         "rarity": 3,
         "tag": [
             "itzamna",
             "licht"
         ],
-        "path": "ar\\ar_itzamna_licht.png"
+        "path": "ar/ar_itzamna_licht.png"
     },
-    "ar_itzamna_vapula.png": {
+    "ar_itzamna_vapula": {
         "jp_rawname": "波乱のサンドアート教室",
         "rarity": 3,
         "tag": [
             "itzamna",
             "vapula"
         ],
-        "path": "ar\\ar_itzamna_vapula.png"
+        "path": "ar/ar_itzamna_vapula.png"
     },
-    "ar_ixbaranque_yamasachihiko.png": {
+    "ar_ixbaranque_yamasachihiko": {
         "jp_rawname": "狩猟式トレイルランニング",
         "rarity": 3,
         "tag": [
             "ixbaranque",
             "yamasachihiko"
         ],
-        "path": "ar\\ar_ixbaranque_yamasachihiko.png"
+        "path": "ar/ar_ixbaranque_yamasachihiko.png"
     },
-    "ar_jacob_shinya.png": {
+    "ar_jacob_shinya": {
         "jp_rawname": "博愛に満ちた季節",
         "rarity": 3,
         "tag": [
             "jacob",
             "shinya"
         ],
-        "path": "ar\\ar_jacob_shinya.png"
+        "path": "ar/ar_jacob_shinya.png"
     },
-    "ar_jambavat_fenrir.png": {
+    "ar_jambavat_fenrir": {
         "jp_rawname": "制御できるならやってみろ！",
         "rarity": 4,
         "tag": [
             "jambavat",
             "fenrir"
         ],
-        "path": "ar\\ar_jambavat_fenrir.png"
+        "path": "ar/ar_jambavat_fenrir.png"
     },
-    "ar_jinn_triton.png": {
+    "ar_jinn_triton": {
         "jp_rawname": "仰げば尊し",
         "rarity": 4,
         "tag": [
             "jinn",
             "triton"
         ],
-        "path": "ar\\ar_jinn_triton.png"
+        "effect": {
+            "character_exp": "self"
+        },
+        "path": "ar/ar_jinn_triton.png"
     },
-    "ar_jiraiya_goemon.png": {
+    "ar_jiraiya_goemon": {
         "jp_rawname": "忍×忍捕物帳！",
         "rarity": 4,
         "tag": [
             "jiraiya",
             "goemon"
         ],
-        "path": "ar\\ar_jiraiya_goemon.png"
+        "path": "ar/ar_jiraiya_goemon.png"
     },
-    "ar_jiraiya_hermes.png": {
+    "ar_jiraiya_hermes": {
         "jp_rawname": "怪盗たちの入学式",
         "rarity": 5,
         "tag": [
             "jiraiya",
             "hermes"
         ],
-        "path": "ar\\ar_jiraiya_hermes.png"
+        "effect": {
+            "community_change": "public"
+        },
+        "path": "ar/ar_jiraiya_hermes.png"
     },
-    "ar_jormungandr_gorozaemon_oz.png": {
+    "ar_jormungandr_gorozaemon_oz": {
         "jp_rawname": "煽られ乗せられ流されLUV／U！",
         "rarity": 3,
         "tag": [
@@ -1073,18 +1136,18 @@
             "gorozaemon",
             "oz"
         ],
-        "path": "ar\\ar_jormungandr_gorozaemon_oz.png"
+        "path": "ar/ar_jormungandr_gorozaemon_oz.png"
     },
-    "ar_kagutsuchi_ikutoshi.png": {
+    "ar_kagutsuchi_ikutoshi": {
         "jp_rawname": "きょうだい弟子の組手",
         "rarity": 4,
         "tag": [
             "kagutsuchi",
             "ikutoshi"
         ],
-        "path": "ar\\ar_kagutsuchi_ikutoshi.png"
+        "path": "ar/ar_kagutsuchi_ikutoshi.png"
     },
-    "ar_kagutsuchi_shirou_aizen.png": {
+    "ar_kagutsuchi_shirou_aizen": {
         "jp_rawname": "アチアチ・ホットキャンプ！",
         "rarity": 3,
         "tag": [
@@ -1092,224 +1155,227 @@
             "shirou",
             "aizen"
         ],
-        "path": "ar\\ar_kagutsuchi_shirou_aizen.png"
+        "path": "ar/ar_kagutsuchi_shirou_aizen.png"
     },
-    "ar_kalki_managarmr.png": {
+    "ar_kalki_managarmr": {
         "jp_rawname": "ファンクラブの友たち",
         "rarity": 4,
         "tag": [
             "kalki",
             "managarmr"
         ],
-        "path": "ar\\ar_kalki_managarmr.png"
+        "path": "ar/ar_kalki_managarmr.png"
     },
-    "ar_kengo_oniwaka.png": {
+    "ar_kengo_oniwaka": {
         "jp_rawname": "餅つきと喧嘩はひとりで出来ぬ",
         "rarity": 4,
         "tag": [
             "kengo",
             "oniwaka"
         ],
-        "path": "ar\\ar_kengo_oniwaka.png"
+        "path": "ar/ar_kengo_oniwaka.png"
     },
-    "ar_kengo_player.png": {
+    "ar_kengo_player": {
         "jp_rawname": "無窮の誓い",
         "rarity": 5,
         "tag": [
             "kengo",
             "player"
         ],
-        "path": "ar\\ar_kengo_player.png"
+        "path": "ar/ar_kengo_player.png"
     },
-    "ar_kengo_shirou.png": {
+    "ar_kengo_shirou": {
         "jp_rawname": "幼馴染の流儀",
         "rarity": 4,
         "tag": [
             "kengo",
             "shirou"
         ],
-        "path": "ar\\ar_kengo_shirou.png"
+        "path": "ar/ar_kengo_shirou.png"
     },
-    "ar_kijimuna_eita.png": {
+    "ar_kijimuna_eita": {
         "jp_rawname": "お手柄！うみのこ探検隊",
         "rarity": 3,
         "tag": [
             "kijimuna",
             "eita"
         ],
-        "path": "ar\\ar_kijimuna_eita.png"
+        "path": "ar/ar_kijimuna_eita.png"
     },
-    "ar_krampus_simurgh.png": {
+    "ar_krampus_simurgh": {
         "jp_rawname": "バッドガイズ・グッドラック！",
         "rarity": 4,
         "tag": [
             "krampus",
             "simurgh"
         ],
-        "path": "ar\\ar_krampus_simurgh.png"
+        "path": "ar/ar_krampus_simurgh.png"
     },
-    "ar_krampus_taurus.png": {
+    "ar_krampus_taurus": {
         "jp_rawname": "聖夜のダブル・ヒーロー！",
         "rarity": 3,
         "tag": [
             "krampus",
             "taurus"
         ],
-        "path": "ar\\ar_krampus_taurus.png"
+        "path": "ar/ar_krampus_taurus.png"
     },
-    "ar_kresnik_ellie.png": {
+    "ar_kresnik_ellie": {
         "jp_rawname": "たった２人の夜学戦線",
         "rarity": 5,
         "tag": [
             "kresnik",
             "ellie"
         ],
-        "path": "ar\\ar_kresnik_ellie.png"
+        "path": "ar/ar_kresnik_ellie.png"
     },
-    "ar_kuniyoshi_alp.png": {
+    "ar_kuniyoshi_alp": {
         "jp_rawname": "夢のもふもふ大激突！",
         "rarity": 3,
         "tag": [
             "kuniyoshi",
             "alp"
         ],
-        "path": "ar\\ar_kuniyoshi_alp.png"
+        "path": "ar/ar_kuniyoshi_alp.png"
     },
-    "ar_kuniyoshi_benten.png": {
+    "ar_kuniyoshi_benten": {
         "jp_rawname": "出会いは決定的に",
         "rarity": 4,
         "tag": [
             "kuniyoshi",
             "benten"
         ],
-        "path": "ar\\ar_kuniyoshi_benten.png"
+        "path": "ar/ar_kuniyoshi_benten.png"
     },
-    "ar_kuniyoshi_cusith.png": {
+    "ar_kuniyoshi_cusith": {
         "jp_rawname": "おいでよぼくらのもふもふ王国",
         "rarity": 5,
         "tag": [
             "kuniyoshi",
             "cusith"
         ],
-        "path": "ar\\ar_kuniyoshi_cusith.png"
+        "path": "ar/ar_kuniyoshi_cusith.png"
     },
-    "ar_kuniyoshi_hekate.png": {
+    "ar_kuniyoshi_hekate": {
         "jp_rawname": "あのサークルへ急げ！",
         "rarity": 3,
         "tag": [
             "kuniyoshi",
             "hekate"
         ],
-        "path": "ar\\ar_kuniyoshi_hekate.png"
+        "path": "ar/ar_kuniyoshi_hekate.png"
     },
-    "ar_kuniyoshi_licht.png": {
+    "ar_kuniyoshi_licht": {
         "jp_rawname": "どっちの味方なの！？",
         "rarity": 3,
         "tag": [
             "kuniyoshi",
             "licht"
         ],
-        "path": "ar\\ar_kuniyoshi_licht.png"
+        "path": "ar/ar_kuniyoshi_licht.png"
     },
-    "ar_kurogane_amatsumara.png": {
+    "ar_kurogane_amatsumara": {
         "jp_rawname": "蒲田ギルドの師弟",
         "rarity": 5,
         "tag": [
             "kurogane",
             "amatsumara"
         ],
-        "path": "ar\\ar_kurogane_amatsumara.png"
+        "path": "ar/ar_kurogane_amatsumara.png"
     },
-    "ar_kurogane_hephaestus.png": {
+    "ar_kurogane_hephaestus": {
         "jp_rawname": "家族の事が知りたくて",
         "rarity": 4,
         "tag": [
             "kurogane",
             "hephaestus"
         ],
-        "path": "ar\\ar_kurogane_hephaestus.png"
+        "path": "ar/ar_kurogane_hephaestus.png"
     },
-    "ar_kurogane_nomad.png": {
+    "ar_kurogane_nomad": {
         "jp_rawname": "ドキドキ実験開始！",
         "rarity": 5,
         "tag": [
             "kurogane",
             "nomad"
         ],
-        "path": "ar\\ar_kurogane_nomad.png"
+        "path": "ar/ar_kurogane_nomad.png"
     },
-    "ar_kyouma_salomon.png": {
+    "ar_kyouma_salomon": {
         "jp_rawname": "みず入らずの初詣",
         "rarity": 5,
         "tag": [
             "kyouma",
             "salomon"
         ],
-        "path": "ar\\ar_kyouma_salomon.png"
+        "effect": {
+            "character_exp": "public"
+        },
+        "path": "ar/ar_kyouma_salomon.png"
     },
-    "ar_kyuuma_akihagongen.png": {
+    "ar_kyuuma_akihagongen": {
         "jp_rawname": "バレンタインアドベンチャー",
         "rarity": 3,
         "tag": [
             "kyuuma",
             "akihagongen"
         ],
-        "path": "ar\\ar_kyuuma_akihagongen.png"
+        "path": "ar/ar_kyuuma_akihagongen.png"
     },
-    "ar_leib_boogeyman.png": {
+    "ar_leib_boogeyman": {
         "jp_rawname": "カーテンコールをもう一度！",
         "rarity": 5,
         "tag": [
             "leib",
             "boogeyman"
         ],
-        "path": "ar\\ar_leib_boogeyman.png"
+        "path": "ar/ar_leib_boogeyman.png"
     },
-    "ar_leib_cusith.png": {
+    "ar_leib_cusith": {
         "jp_rawname": "バディの絆",
         "rarity": 3,
         "tag": [
             "leib",
             "cusith"
         ],
-        "path": "ar\\ar_leib_cusith.png"
+        "path": "ar/ar_leib_cusith.png"
     },
-    "ar_leib_jambavat.png": {
+    "ar_leib_jambavat": {
         "jp_rawname": "研究棟の夜は終わらず",
         "rarity": 5,
         "tag": [
             "leib",
             "jambavat"
         ],
-        "path": "ar\\ar_leib_jambavat.png"
+        "path": "ar/ar_leib_jambavat.png"
     },
-    "ar_leviathan.png": {
+    "ar_leviathan": {
         "jp_rawname": "拮抗の例外処理？",
         "rarity": 2,
         "tag": [
             "leviathan"
         ],
-        "path": "ar\\ar_leviathan.png"
+        "path": "ar/ar_leviathan.png"
     },
-    "ar_licho_furufumi.png": {
+    "ar_licho_furufumi": {
         "jp_rawname": "祭りの日の出会い",
         "rarity": 4,
         "tag": [
             "licho",
             "furufumi"
         ],
-        "path": "ar\\ar_licho_furufumi.png"
+        "path": "ar/ar_licho_furufumi.png"
     },
-    "ar_licho_motosumi.png": {
+    "ar_licho_motosumi": {
         "jp_rawname": "浅草の愚連隊",
         "rarity": 4,
         "tag": [
             "licho",
             "motosumi"
         ],
-        "path": "ar\\ar_licho_motosumi.png"
+        "path": "ar/ar_licho_motosumi.png"
     },
-    "ar_licho_ryouta_caitsith.png": {
+    "ar_licho_ryouta_caitsith": {
         "jp_rawname": "金魚すくいレクチャー！",
         "rarity": 5,
         "tag": [
@@ -1317,36 +1383,40 @@
             "ryouta",
             "caitsith"
         ],
-        "path": "ar\\ar_licho_ryouta_caitsith.png"
+        "path": "ar/ar_licho_ryouta_caitsith.png"
     },
-    "ar_licht_furufumi.png": {
+    "ar_licht_furufumi": {
         "jp_rawname": "骨董市の品定め",
         "rarity": 5,
         "tag": [
             "licht",
             "furufumi"
         ],
-        "path": "ar\\ar_licht_furufumi.png"
+        "path": "ar/ar_licht_furufumi.png"
     },
-    "ar_licht_kuniyoshi.png": {
+    "ar_licht_kuniyoshi": {
         "jp_rawname": "芸術は光と陰に",
         "rarity": 3,
         "tag": [
             "licht",
             "kuniyoshi"
         ],
-        "path": "ar\\ar_licht_kuniyoshi.png"
+        "path": "ar/ar_licht_kuniyoshi.png"
     },
-    "ar_licht_melusine.png": {
+    "ar_licht_melusine": {
         "jp_rawname": "ある安らぎの日",
         "rarity": 5,
         "tag": [
             "licht",
             "melusine"
         ],
-        "path": "ar\\ar_licht_melusine.png"
+        "effect": {
+            "user_exp": "public",
+            "coin": "public"
+        },
+        "path": "ar/ar_licht_melusine.png"
     },
-    "ar_macroich_leib_hekate.png": {
+    "ar_macroich_leib_hekate": {
         "jp_rawname": "探求者たちのステージ",
         "rarity": 4,
         "tag": [
@@ -1354,27 +1424,27 @@
             "leib",
             "hekate"
         ],
-        "path": "ar\\ar_macroich_leib_hekate.png"
+        "path": "ar/ar_macroich_leib_hekate.png"
     },
-    "ar_maria_azazel.png": {
+    "ar_maria_azazel": {
         "jp_rawname": "汝、何処へ行き給う",
         "rarity": 5,
         "tag": [
             "maria",
             "azazel"
         ],
-        "path": "ar\\ar_maria_azazel.png"
+        "path": "ar/ar_maria_azazel.png"
     },
-    "ar_maria_gabriel.png": {
+    "ar_maria_gabriel": {
         "jp_rawname": "同じ月が見ている",
         "rarity": 4,
         "tag": [
             "maria",
             "gabriel"
         ],
-        "path": "ar\\ar_maria_gabriel.png"
+        "path": "ar/ar_maria_gabriel.png"
     },
-    "ar_maria_lichit_claude.png": {
+    "ar_maria_lichit_claude": {
         "jp_rawname": "我ら今は共に歩みて",
         "rarity": 5,
         "tag": [
@@ -1382,252 +1452,271 @@
             "lichit",
             "claude"
         ],
-        "path": "ar\\ar_maria_lichit_claude.png"
+        "effect": {
+            "user_exp": "public"
+        },
+        "path": "ar/ar_maria_lichit_claude.png"
     },
-    "ar_masanori_yoshito.png": {
+    "ar_masanori_yoshito": {
         "jp_rawname": "革命の犬たちへ",
         "rarity": 5,
         "tag": [
             "masanori",
             "yoshito"
         ],
-        "path": "ar\\ar_masanori_yoshito.png"
+        "path": "ar/ar_masanori_yoshito.png"
     },
-    "ar_melusine_snow.png": {
+    "ar_melusine_snow": {
         "jp_rawname": "池袋クリスマス・場外乱闘！",
         "rarity": 4,
         "tag": [
             "melusine",
             "snow"
         ],
-        "path": "ar\\ar_melusine_snow.png"
+        "path": "ar/ar_melusine_snow.png"
     },
-    "ar_mineaki_avarga.png": {
+    "ar_mineaki_avarga": {
         "jp_rawname": "教えの庭にも",
         "rarity": 4,
         "tag": [
             "mineaki",
             "avarga"
         ],
-        "path": "ar\\ar_mineaki_avarga.png"
+        "effect": {
+            "character_exp": "self",
+            "user_exp": "self"
+        },
+        "path": "ar/ar_mineaki_avarga.png"
     },
-    "ar_mineaki_daikoku.png": {
+    "ar_mineaki_daikoku": {
         "jp_rawname": "有馬の２人は三羽烏と",
         "rarity": 3,
         "tag": [
             "mineaki",
             "daikoku"
         ],
-        "path": "ar\\ar_mineaki_daikoku.png"
+        "path": "ar/ar_mineaki_daikoku.png"
     },
-    "ar_moritaka_agyou.png": {
+    "ar_moritaka_agyou": {
         "jp_rawname": "はじめてのオムライス！",
         "rarity": 3,
         "tag": [
             "moritaka",
             "agyou"
         ],
-        "path": "ar\\ar_moritaka_agyou.png"
+        "path": "ar/ar_moritaka_agyou.png"
     },
-    "ar_moritaka_horkeukamui.png": {
+    "ar_moritaka_horkeukamui": {
         "jp_rawname": "曇り無き氷の如く",
         "rarity": 5,
         "tag": [
             "moritaka",
             "horkeukamui"
         ],
-        "path": "ar\\ar_moritaka_horkeukamui.png"
+        "effect": {
+            "character_exp": "public"
+        },
+        "path": "ar/ar_moritaka_horkeukamui.png"
     },
-    "ar_moritaka_masashi.png": {
+    "ar_moritaka_masashi": {
         "jp_rawname": "スペシャルワンは譲らない！",
         "rarity": 5,
         "tag": [
             "moritaka",
             "masashi"
         ],
-        "path": "ar\\ar_moritaka_masashi.png"
+        "effect": {
+            "community_change": "public"
+        },
+        "path": "ar/ar_moritaka_masashi.png"
     },
-    "ar_moritaka_orgus.png": {
+    "ar_moritaka_orgus": {
         "jp_rawname": "苦楽は汗と共に",
         "rarity": 5,
         "tag": [
             "moritaka",
             "orgus"
         ],
-        "path": "ar\\ar_moritaka_orgus.png"
+        "path": "ar/ar_moritaka_orgus.png"
     },
-    "ar_moritaka_tadatomo.png": {
+    "ar_moritaka_tadatomo": {
         "jp_rawname": "バレンタイン・ドッグス！",
         "rarity": 5,
         "tag": [
             "moritaka",
             "tadatomo"
         ],
-        "path": "ar\\ar_moritaka_tadatomo.png"
+        "path": "ar/ar_moritaka_tadatomo.png"
     },
-    "ar_motosumi_sanzo.png": {
+    "ar_motosumi_sanzo": {
         "jp_rawname": "あれからのファザーフッド",
         "rarity": 5,
         "tag": [
             "motosumi",
             "sanzo"
         ],
-        "path": "ar\\ar_motosumi_sanzo.png"
+        "effect": {
+            "user_exp": "public"
+        },
+        "path": "ar/ar_motosumi_sanzo.png"
     },
-    "ar_motosumi_takemaru.png": {
+    "ar_motosumi_takemaru": {
         "jp_rawname": "鬼も、福も",
         "rarity": 5,
         "tag": [
             "motosumi",
             "takemaru"
         ],
-        "path": "ar\\ar_motosumi_takemaru.png"
+        "path": "ar/ar_motosumi_takemaru.png"
     },
-    "ar_musashi_amatsumara.png": {
+    "ar_musashi_amatsumara": {
         "jp_rawname": "祭りの日の出会い",
         "rarity": 4,
         "tag": [
             "musashi",
             "amatsumara"
         ],
-        "path": "ar\\ar_musashi_amatsumara.png"
+        "path": "ar/ar_musashi_amatsumara.png"
     },
-    "ar_nekros_nekros2.png": {
+    "ar_nekros_nekros2": {
         "jp_rawname": "まどろみの玉座",
         "rarity": 4,
         "tag": [
             "nekros",
             "nekros2"
         ],
-        "path": "ar\\ar_nekros_nekros2.png"
+        "path": "ar/ar_nekros_nekros2.png"
     },
-    "ar_nezha_hanuman.png": {
+    "ar_nezha_hanuman": {
         "jp_rawname": "ウマミチカンフージェネレーション",
         "rarity": 4,
         "tag": [
             "nezha",
             "hanuman"
         ],
-        "path": "ar\\ar_nezha_hanuman.png"
+        "path": "ar/ar_nezha_hanuman.png"
     },
-    "ar_nezha_tetsugyuu.png": {
+    "ar_nezha_tetsugyuu": {
         "jp_rawname": "昼休みの購買部闘争！",
         "rarity": 4,
         "tag": [
             "nezha",
             "tetsugyuu"
         ],
-        "path": "ar\\ar_nezha_tetsugyuu.png"
+        "path": "ar/ar_nezha_tetsugyuu.png"
     },
-    "ar_nobuharu_ifrit.png": {
+    "ar_nobuharu_ifrit": {
         "jp_rawname": "応援すること火の如し",
         "rarity": 5,
         "tag": [
             "nobuharu",
             "ifrit"
         ],
-        "path": "ar\\ar_nobuharu_ifrit.png"
+        "path": "ar/ar_nobuharu_ifrit.png"
     },
-    "ar_oguchimagami_shiva.png": {
+    "ar_oguchimagami_shiva": {
         "jp_rawname": "ウォーター・ストライク！",
         "rarity": 4,
         "tag": [
             "oguchimagami",
             "shiva"
         ],
-        "path": "ar\\ar_oguchimagami_shiva.png"
+        "path": "ar/ar_oguchimagami_shiva.png"
     },
-    "ar_oguchimagami_tadikarao.png": {
+    "ar_oguchimagami_tadikarao": {
         "jp_rawname": "ドントストップ・サマージョイ！",
         "rarity": 5,
         "tag": [
             "oguchimagami",
             "tadikarao"
         ],
-        "path": "ar\\ar_oguchimagami_tadikarao.png"
+        "path": "ar/ar_oguchimagami_tadikarao.png"
     },
-    "ar_onamuji_sarutahiko.png": {
+    "ar_onamuji_sarutahiko": {
         "jp_rawname": "湯殿経営２人なら極楽",
         "rarity": 5,
         "tag": [
             "onamuji",
             "sarutahiko"
         ],
-        "path": "ar\\ar_onamuji_sarutahiko.png"
+        "path": "ar/ar_onamuji_sarutahiko.png"
     },
-    "ar_oniwaka_cusith.png": {
+    "ar_oniwaka_cusith": {
         "jp_rawname": "従者並びて",
         "rarity": 4,
         "tag": [
             "oniwaka",
             "cusith"
         ],
-        "path": "ar\\ar_oniwaka_cusith.png"
+        "path": "ar/ar_oniwaka_cusith.png"
     },
-    "ar_oniwaka_ibaraki.png": {
+    "ar_oniwaka_ibaraki": {
         "jp_rawname": "フィスト・ファイト！",
         "rarity": 4,
         "tag": [
             "oniwaka",
             "ibaraki"
         ],
-        "path": "ar\\ar_oniwaka_ibaraki.png"
+        "path": "ar/ar_oniwaka_ibaraki.png"
     },
-    "ar_oniwaka_shuten.png": {
+    "ar_oniwaka_shuten": {
         "jp_rawname": "禅の心",
         "rarity": 5,
         "tag": [
             "oniwaka",
             "shuten"
         ],
-        "path": "ar\\ar_oniwaka_shuten.png"
+        "path": "ar/ar_oniwaka_shuten.png"
     },
-    "ar_oniwaka_yoritomo.png": {
+    "ar_oniwaka_yoritomo": {
         "jp_rawname": "折れし角、折れぬ心",
         "rarity": 5,
         "tag": [
             "oniwaka",
             "yoritomo"
         ],
-        "path": "ar\\ar_oniwaka_yoritomo.png"
+        "path": "ar/ar_oniwaka_yoritomo.png"
     },
-    "ar_oscar_loki.png": {
+    "ar_oscar_loki": {
         "jp_rawname": "ライク・ア・ショウ",
         "rarity": 5,
         "tag": [
             "oscar",
             "loki"
         ],
-        "path": "ar\\ar_oscar_loki.png"
+        "effect": {
+            "flower": "public"
+        },
+        "path": "ar/ar_oscar_loki.png"
     },
-    "ar_ose_kotarou.png": {
+    "ar_ose_kotarou": {
         "jp_rawname": "ミッションコンプリート",
         "rarity": 4,
         "tag": [
             "ose",
             "kotarou"
         ],
-        "path": "ar\\ar_ose_kotarou.png"
+        "path": "ar/ar_ose_kotarou.png"
     },
-    "ar_otohime_yamasachihiko.png": {
+    "ar_otohime_yamasachihiko": {
         "jp_rawname": "君と喜びの舞を",
         "rarity": 4,
         "tag": [
             "otohime",
             "yamasachihiko"
         ],
-        "path": "ar\\ar_otohime_yamasachihiko.png"
+        "path": "ar/ar_otohime_yamasachihiko.png"
     },
-    "ar_otter_horus.png": {
+    "ar_otter_horus": {
         "jp_rawname": "お控えなすって！",
         "rarity": 4,
         "tag": [
             "otter",
             "horus"
         ],
-        "path": "ar\\ar_otter_horus.png"
+        "path": "ar/ar_otter_horus.png"
     },
-    "ar_otter_horus_tuaring.png": {
+    "ar_otter_horus_tuaring": {
         "jp_rawname": "ゆるっとミニふわクリスマス！",
         "rarity": 5,
         "tag": [
@@ -1635,332 +1724,335 @@
             "horus",
             "tuaring"
         ],
-        "path": "ar\\ar_otter_horus_tuaring.png"
+        "path": "ar/ar_otter_horus_tuaring.png"
     },
-    "ar_qinglong_amanojaku.png": {
+    "ar_qinglong_amanojaku": {
         "jp_rawname": "新年に啜るは涙にあらず",
         "rarity": 4,
         "tag": [
             "qinglong",
             "amanojaku"
         ],
-        "path": "ar\\ar_qinglong_amanojaku.png"
+        "path": "ar/ar_qinglong_amanojaku.png"
     },
-    "ar_riku_duo.png": {
+    "ar_riku_duo": {
         "jp_rawname": "D計画の少年たち",
         "rarity": 4,
         "tag": [
             "riku",
             "duo"
         ],
-        "path": "ar\\ar_riku_duo.png"
+        "path": "ar/ar_riku_duo.png"
     },
-    "ar_robinson_asterios.png": {
+    "ar_robinson_asterios": {
         "jp_rawname": "或る島での１ページ",
         "rarity": 3,
         "tag": [
             "robinson",
             "asterios"
         ],
-        "path": "ar\\ar_robinson_asterios.png"
+        "path": "ar/ar_robinson_asterios.png"
     },
-    "ar_robinson_asterios2.png": {
+    "ar_robinson_asterios2": {
         "jp_rawname": "ロスト・パラダイス",
         "rarity": 4,
         "tag": [
             "robinson",
             "asterios2"
         ],
-        "path": "ar\\ar_robinson_asterios2.png"
+        "path": "ar/ar_robinson_asterios2.png"
     },
-    "ar_ryouta_chernobog.png": {
+    "ar_ryouta_chernobog": {
         "jp_rawname": "極上肉のテクニック",
         "rarity": 4,
         "tag": [
             "ryouta",
             "chernobog"
         ],
-        "path": "ar\\ar_ryouta_chernobog.png"
+        "path": "ar/ar_ryouta_chernobog.png"
     },
-    "ar_ryouta_chouji.png": {
+    "ar_ryouta_chouji": {
         "jp_rawname": "夏の新メニュー開発！",
         "rarity": 3,
         "tag": [
             "ryouta",
             "chouji"
         ],
-        "path": "ar\\ar_ryouta_chouji.png"
+        "path": "ar/ar_ryouta_chouji.png"
     },
-    "ar_ryouta_furufumi.png": {
+    "ar_ryouta_furufumi": {
         "jp_rawname": "胸騒ぎの旧校舎",
         "rarity": 5,
         "tag": [
             "ryouta",
             "furufumi"
         ],
-        "path": "ar\\ar_ryouta_furufumi.png"
+        "path": "ar/ar_ryouta_furufumi.png"
     },
-    "ar_ryouta_player.png": {
+    "ar_ryouta_player": {
         "jp_rawname": "豊穣の誓い",
         "rarity": 5,
         "tag": [
             "ryouta",
             "player"
         ],
-        "path": "ar\\ar_ryouta_player.png"
+        "path": "ar/ar_ryouta_player.png"
     },
-    "ar_ryouta_touji.png": {
+    "ar_ryouta_touji": {
         "jp_rawname": "サモナーズのX’MAS",
         "rarity": 5,
         "tag": [
             "ryouta",
             "touji"
         ],
-        "path": "ar\\ar_ryouta_touji.png"
+        "path": "ar/ar_ryouta_touji.png"
     },
-    "ar_salomon.png": {
+    "ar_salomon": {
         "jp_rawname": "見習い使い魔の応援",
         "rarity": 1,
         "tag": [
             "salomon"
         ],
-        "path": "ar\\ar_salomon.png"
+        "path": "ar/ar_salomon.png"
     },
-    "ar_sanatkumara_licho.png": {
+    "ar_sanatkumara_licho": {
         "jp_rawname": "今月の得真道学園",
         "rarity": 4,
         "tag": [
             "sanatkumara",
             "licho"
         ],
-        "path": "ar\\ar_sanatkumara_licho.png"
+        "path": "ar/ar_sanatkumara_licho.png"
     },
-    "ar_sandayu_kresnik.png": {
+    "ar_sandayu_kresnik": {
         "jp_rawname": "仕事終わりのひとときを",
         "rarity": 4,
         "tag": [
             "sandayu",
             "kresnik"
         ],
-        "path": "ar\\ar_sandayu_kresnik.png"
+        "effect": {
+            "coin": "self"
+        },
+        "path": "ar/ar_sandayu_kresnik.png"
     },
-    "ar_sarutahiko_onamuji.png": {
+    "ar_sarutahiko_onamuji": {
         "jp_rawname": "ようこそ地獄の温泉郷",
         "rarity": 3,
         "tag": [
             "sarutahiko",
             "onamuji"
         ],
-        "path": "ar\\ar_sarutahiko_onamuji.png"
+        "path": "ar/ar_sarutahiko_onamuji.png"
     },
-    "ar_seth_goemon.png": {
+    "ar_seth_goemon": {
         "jp_rawname": "Surf the wave",
         "rarity": 4,
         "tag": [
             "seth",
             "goemon"
         ],
-        "path": "ar\\ar_seth_goemon.png"
+        "path": "ar/ar_seth_goemon.png"
     },
-    "ar_seth_gyuumaou.png": {
+    "ar_seth_gyuumaou": {
         "jp_rawname": "六本木の最強ヤンキー同盟",
         "rarity": 5,
         "tag": [
             "seth",
             "gyuumaou"
         ],
-        "path": "ar\\ar_seth_gyuumaou.png"
+        "path": "ar/ar_seth_gyuumaou.png"
     },
-    "ar_shennong_gyuumaou.png": {
+    "ar_shennong_gyuumaou": {
         "jp_rawname": "初湯のひととき",
         "rarity": 4,
         "tag": [
             "shennong",
             "gyuumaou"
         ],
-        "path": "ar\\ar_shennong_gyuumaou.png"
+        "path": "ar/ar_shennong_gyuumaou.png"
     },
-    "ar_shennong_hombretigre.png": {
+    "ar_shennong_hombretigre": {
         "jp_rawname": "兵どもが星の下",
         "rarity": 5,
         "tag": [
             "shennong",
             "hombretigre"
         ],
-        "path": "ar\\ar_shennong_hombretigre.png"
+        "path": "ar/ar_shennong_hombretigre.png"
     },
-    "ar_shennong_volos.png": {
+    "ar_shennong_volos": {
         "jp_rawname": "グリーンマジック",
         "rarity": 4,
         "tag": [
             "shennong",
             "volos"
         ],
-        "path": "ar\\ar_shennong_volos.png"
+        "path": "ar/ar_shennong_volos.png"
     },
-    "ar_shennong_yasuyori.png": {
+    "ar_shennong_yasuyori": {
         "jp_rawname": "インソムニア・レメディ",
         "rarity": 5,
         "tag": [
             "shennong",
             "yasuyori"
         ],
-        "path": "ar\\ar_shennong_yasuyori.png"
+        "path": "ar/ar_shennong_yasuyori.png"
     },
-    "ar_shino_marchosias.png": {
+    "ar_shino_marchosias": {
         "jp_rawname": "廻り合わせの父たちへ",
         "rarity": 3,
         "tag": [
             "shino",
             "marchosias"
         ],
-        "path": "ar\\ar_shino_marchosias.png"
+        "path": "ar/ar_shino_marchosias.png"
     },
-    "ar_shino_moritaka.png": {
+    "ar_shino_moritaka": {
         "jp_rawname": "犬どもの戦場",
         "rarity": 4,
         "tag": [
             "shino",
             "moritaka"
         ],
-        "path": "ar\\ar_shino_moritaka.png"
+        "path": "ar/ar_shino_moritaka.png"
     },
-    "ar_shirou_player.png": {
+    "ar_shirou_player": {
         "jp_rawname": "開拓の誓い",
         "rarity": 5,
         "tag": [
             "shirou",
             "player"
         ],
-        "path": "ar\\ar_shirou_player.png"
+        "path": "ar/ar_shirou_player.png"
     },
-    "ar_shirou_ryouta.png": {
+    "ar_shirou_ryouta": {
         "jp_rawname": "寒空の下、君を待って",
         "rarity": 3,
         "tag": [
             "shirou",
             "ryouta"
         ],
-        "path": "ar\\ar_shirou_ryouta.png"
+        "path": "ar/ar_shirou_ryouta.png"
     },
-    "ar_shirou_yogsothoth.png": {
+    "ar_shirou_yogsothoth": {
         "jp_rawname": "計り知れざる永劫の",
         "rarity": 4,
         "tag": [
             "shirou",
             "yogsothoth"
         ],
-        "path": "ar\\ar_shirou_yogsothoth.png"
+        "path": "ar/ar_shirou_yogsothoth.png"
     },
-    "ar_shiva_balor.png": {
+    "ar_shiva_balor": {
         "jp_rawname": "我ら拳と魔眼を交え",
         "rarity": 5,
         "tag": [
             "shiva",
             "balor"
         ],
-        "path": "ar\\ar_shiva_balor.png"
+        "path": "ar/ar_shiva_balor.png"
     },
-    "ar_shiva_heracles.png": {
+    "ar_shiva_heracles": {
         "jp_rawname": "無骨な漢の贈り物",
         "rarity": 4,
         "tag": [
             "shiva",
             "heracles"
         ],
-        "path": "ar\\ar_shiva_heracles.png"
+        "path": "ar/ar_shiva_heracles.png"
     },
-    "ar_shiva_juugo.png": {
+    "ar_shiva_juugo": {
         "jp_rawname": "リバーサイド・レスキュー",
         "rarity": 5,
         "tag": [
             "shiva",
             "juugo"
         ],
-        "path": "ar\\ar_shiva_juugo.png"
+        "path": "ar/ar_shiva_juugo.png"
     },
-    "ar_shuten_ibaraki.png": {
+    "ar_shuten_ibaraki": {
         "jp_rawname": "大江山の鬼たち",
         "rarity": 4,
         "tag": [
             "shuten",
             "ibaraki"
         ],
-        "path": "ar\\ar_shuten_ibaraki.png"
+        "path": "ar/ar_shuten_ibaraki.png"
     },
-    "ar_shuuichi_macroich.png": {
+    "ar_shuuichi_macroich": {
         "jp_rawname": "稽古の後でもう一本！",
         "rarity": 5,
         "tag": [
             "shuuichi",
             "macroich"
         ],
-        "path": "ar\\ar_shuuichi_macroich.png"
+        "path": "ar/ar_shuuichi_macroich.png"
     },
-    "ar_sitri_bathym.png": {
+    "ar_sitri_bathym": {
         "jp_rawname": "親父さん見てる！？",
         "rarity": 4,
         "tag": [
             "sitri",
             "bathym"
         ],
-        "path": "ar\\ar_sitri_bathym.png"
+        "path": "ar/ar_sitri_bathym.png"
     },
-    "ar_sitri_fenrir.png": {
+    "ar_sitri_fenrir": {
         "jp_rawname": "サウナの作法！？",
         "rarity": 5,
         "tag": [
             "sitri",
             "fenrir"
         ],
-        "path": "ar\\ar_sitri_fenrir.png"
+        "path": "ar/ar_sitri_fenrir.png"
     },
-    "ar_sitri_hippolytus.png": {
+    "ar_sitri_hippolytus": {
         "jp_rawname": "微笑み彩る花箱を",
         "rarity": 3,
         "tag": [
             "sitri",
             "hippolytus"
         ],
-        "path": "ar\\ar_sitri_hippolytus.png"
+        "path": "ar/ar_sitri_hippolytus.png"
     },
-    "ar_sitri_kengo.png": {
+    "ar_sitri_kengo": {
         "jp_rawname": "硬派を気取ったあの頃は",
         "rarity": 4,
         "tag": [
             "sitri",
             "kengo"
         ],
-        "path": "ar\\ar_sitri_kengo.png"
+        "path": "ar/ar_sitri_kengo.png"
     },
-    "ar_sitri_shirou.png": {
+    "ar_sitri_shirou": {
         "jp_rawname": "ショコラは深淵より来たり",
         "rarity": 4,
         "tag": [
             "sitri",
             "shirou"
         ],
-        "path": "ar\\ar_sitri_shirou.png"
+        "path": "ar/ar_sitri_shirou.png"
     },
-    "ar_snow_claude.png": {
+    "ar_snow_claude": {
         "jp_rawname": "鉄血のバージンロード",
         "rarity": 4,
         "tag": [
             "snow",
             "claude"
         ],
-        "path": "ar\\ar_snow_claude.png"
+        "path": "ar/ar_snow_claude.png"
     },
-    "ar_sol_kimunkamui.png": {
+    "ar_sol_kimunkamui": {
         "jp_rawname": "聖者の休息",
         "rarity": 4,
         "tag": [
             "sol",
             "kimunkamui"
         ],
-        "path": "ar\\ar_sol_kimunkamui.png"
+        "path": "ar/ar_sol_kimunkamui.png"
     },
-    "ar_sol_orgus_bacchus.png": {
+    "ar_sol_orgus_bacchus": {
         "jp_rawname": "冒険に祝杯を",
         "rarity": 3,
         "tag": [
@@ -1968,633 +2060,648 @@
             "orgus",
             "bacchus"
         ],
-        "path": "ar\\ar_sol_orgus_bacchus.png"
+        "path": "ar/ar_sol_orgus_bacchus.png"
     },
-    "ar_sol_ryouta.png": {
+    "ar_sol_ryouta": {
         "jp_rawname": "最高のパフォーマンスを",
         "rarity": 5,
         "tag": [
             "sol",
             "ryouta"
         ],
-        "path": "ar\\ar_sol_ryouta.png"
+        "path": "ar/ar_sol_ryouta.png"
     },
-    "ar_sphinx_ose.png": {
+    "ar_sphinx_ose": {
         "jp_rawname": "謎々迷Q",
         "rarity": 3,
         "tag": [
             "sphinx",
             "ose"
         ],
-        "path": "ar\\ar_sphinx_ose.png"
+        "path": "ar/ar_sphinx_ose.png"
     },
-    "ar_summoners_salomon.png": {
+    "ar_summoners_salomon": {
         "jp_rawname": "今、ここだけにしかない物語",
         "rarity": 4,
         "tag": [
             "summoners",
             "salomon"
         ],
-        "path": "ar\\ar_summoners_salomon.png"
+        "effect": {
+            "user_exp": "self"
+        },
+        "path": "ar/ar_summoners_salomon.png"
     },
-    "ar_surtr_amatsumara.png": {
+    "ar_surtr_amatsumara": {
         "jp_rawname": "全ては筋肉より始まる",
         "rarity": 3,
         "tag": [
             "surtr",
             "amatsumara"
         ],
-        "path": "ar\\ar_surtr_amatsumara.png"
+        "path": "ar/ar_surtr_amatsumara.png"
     },
-    "ar_surtr_arc.png": {
+    "ar_surtr_arc": {
         "jp_rawname": "父と子と",
         "rarity": 3,
         "tag": [
             "surtr",
             "arc"
         ],
-        "path": "ar\\ar_surtr_arc.png"
+        "path": "ar/ar_surtr_arc.png"
     },
-    "ar_surtr_harlot.png": {
+    "ar_surtr_harlot": {
         "jp_rawname": "ある家族の肖像",
         "rarity": 3,
         "tag": [
             "surtr",
             "harlot"
         ],
-        "path": "ar\\ar_surtr_harlot.png"
+        "path": "ar/ar_surtr_harlot.png"
     },
-    "ar_suzuka_ibaraki.png": {
+    "ar_suzuka_ibaraki": {
         "jp_rawname": "歓楽の鬼",
         "rarity": 4,
         "tag": [
             "suzuka",
             "ibaraki"
         ],
-        "path": "ar\\ar_suzuka_ibaraki.png"
+        "path": "ar/ar_suzuka_ibaraki.png"
     },
-    "ar_suzuka_ibaraki2.png": {
+    "ar_suzuka_ibaraki2": {
         "jp_rawname": "いつかどうして夢の鬼",
         "rarity": 4,
         "tag": [
             "suzuka",
             "ibaraki2"
         ],
-        "path": "ar\\ar_suzuka_ibaraki2.png"
+        "path": "ar/ar_suzuka_ibaraki2.png"
     },
-    "ar_suzuka_tetsugyuu.png": {
+    "ar_suzuka_tetsugyuu": {
         "jp_rawname": "流れ者の集う街",
         "rarity": 5,
         "tag": [
             "suzuka",
             "tetsugyuu"
         ],
-        "path": "ar\\ar_suzuka_tetsugyuu.png"
+        "path": "ar/ar_suzuka_tetsugyuu.png"
     },
-    "ar_tadatomo_marchosias.png": {
+    "ar_tadatomo_marchosias": {
         "jp_rawname": "父の思い出",
         "rarity": 5,
         "tag": [
             "tadatomo",
             "marchosias"
         ],
-        "path": "ar\\ar_tadatomo_marchosias.png"
+        "path": "ar/ar_tadatomo_marchosias.png"
     },
-    "ar_tadatomo_nomad.png": {
+    "ar_tadatomo_nomad": {
         "jp_rawname": "しゃかりき稼ぐぜ海の家",
         "rarity": 3,
         "tag": [
             "tadatomo",
             "nomad"
         ],
-        "path": "ar\\ar_tadatomo_nomad.png"
+        "path": "ar/ar_tadatomo_nomad.png"
     },
-    "ar_tadikarao_hougen.png": {
+    "ar_tadikarao_hougen": {
         "jp_rawname": "新宿ポリスアカデミー",
         "rarity": 4,
         "tag": [
             "tadikarao",
             "hougen"
         ],
-        "path": "ar\\ar_tadikarao_hougen.png"
+        "path": "ar/ar_tadikarao_hougen.png"
     },
-    "ar_tadikarao_tezcatlipoca.png": {
+    "ar_tadikarao_tezcatlipoca": {
         "jp_rawname": "祭り漢のお通りよお",
         "rarity": 3,
         "tag": [
             "tadikarao",
             "tezcatlipoca"
         ],
-        "path": "ar\\ar_tadikarao_tezcatlipoca.png"
+        "path": "ar/ar_tadikarao_tezcatlipoca.png"
     },
-    "ar_taishakuten_takeminakata.png": {
+    "ar_taishakuten_takeminakata": {
         "jp_rawname": "出雲に雷舞う如く！",
         "rarity": 5,
         "tag": [
             "taishakuten",
             "takeminakata"
         ],
-        "path": "ar\\ar_taishakuten_takeminakata.png"
+        "path": "ar/ar_taishakuten_takeminakata.png"
     },
-    "ar_takemaru_orgus.png": {
+    "ar_takemaru_orgus": {
         "jp_rawname": "鬼は十年一剣を磨く",
         "rarity": 4,
         "tag": [
             "takemaru",
             "orgus"
         ],
-        "path": "ar\\ar_takemaru_orgus.png"
+        "path": "ar/ar_takemaru_orgus.png"
     },
-    "ar_tangaroa_dagon.png": {
+    "ar_tangaroa_dagon": {
         "jp_rawname": "巨いなる供物",
         "rarity": 4,
         "tag": [
             "tangaroa",
             "dagon"
         ],
-        "path": "ar\\ar_tangaroa_dagon.png"
+        "path": "ar/ar_tangaroa_dagon.png"
     },
-    "ar_tangaroa_kijimuna.png": {
+    "ar_tangaroa_kijimuna": {
         "jp_rawname": "南の島の夜の踊り",
         "rarity": 5,
         "tag": [
             "tangaroa",
             "kijimuna"
         ],
-        "path": "ar\\ar_tangaroa_kijimuna.png"
+        "path": "ar/ar_tangaroa_kijimuna.png"
     },
-    "ar_tangaroa_kurogane.png": {
+    "ar_tangaroa_kurogane": {
         "jp_rawname": "サン・アンド・オイル！",
         "rarity": 4,
         "tag": [
             "tangaroa",
             "kurogane"
         ],
-        "path": "ar\\ar_tangaroa_kurogane.png"
+        "path": "ar/ar_tangaroa_kurogane.png"
     },
-    "ar_teda_marduk.png": {
+    "ar_teda_marduk": {
         "jp_rawname": "太陽の子らよ、廃墟を翔けよ",
         "rarity": 3,
         "tag": [
             "teda",
             "marduk"
         ],
-        "path": "ar\\ar_teda_marduk.png"
+        "path": "ar/ar_teda_marduk.png"
     },
-    "ar_tetsugyuu_girimekra.png": {
+    "ar_tetsugyuu_girimekra": {
         "jp_rawname": "放課後ハプニング！",
         "rarity": 4,
         "tag": [
             "tetsugyuu",
             "girimekra"
         ],
-        "path": "ar\\ar_tetsugyuu_girimekra.png"
+        "path": "ar/ar_tetsugyuu_girimekra.png"
     },
-    "ar_tetsuya_tomte.png": {
+    "ar_tetsuya_tomte": {
         "jp_rawname": "はぐれ者の幕間",
         "rarity": 3,
         "tag": [
             "tetsuya",
             "tomte"
         ],
-        "path": "ar\\ar_tetsuya_tomte.png"
+        "path": "ar/ar_tetsuya_tomte.png"
     },
-    "ar_tezcatlipoca_caitsith.png": {
+    "ar_tezcatlipoca_caitsith": {
         "jp_rawname": "FUWAMOCO☆マジックショー！",
         "rarity": 5,
         "tag": [
             "tezcatlipoca",
             "caitsith"
         ],
-        "path": "ar\\ar_tezcatlipoca_caitsith.png"
+        "path": "ar/ar_tezcatlipoca_caitsith.png"
     },
-    "ar_tezcatlipoca_hombretigre.png": {
+    "ar_tezcatlipoca_hombretigre": {
         "jp_rawname": "真夏の浜辺の大闘争！",
         "rarity": 5,
         "tag": [
             "tezcatlipoca",
             "hombretigre"
         ],
-        "path": "ar\\ar_tezcatlipoca_hombretigre.png"
+        "path": "ar/ar_tezcatlipoca_hombretigre.png"
     },
-    "ar_thehero_kengo.png": {
+    "ar_thehero_kengo": {
         "jp_rawname": "ある日の一幕",
         "rarity": 4,
         "tag": [
             "thehero",
             "kengo"
         ],
-        "path": "ar\\ar_thehero_kengo.png"
+        "path": "ar/ar_thehero_kengo.png"
     },
-    "ar_thesmokygod_fuxi.png": {
+    "ar_thesmokygod_fuxi": {
         "jp_rawname": "VSハートランド・インベイダー",
         "rarity": 5,
         "tag": [
             "thesmokygod",
             "fuxi"
         ],
-        "path": "ar\\ar_thesmokygod_fuxi.png"
+        "path": "ar/ar_thesmokygod_fuxi.png"
     },
-    "ar_thesmokygod_sandayu.png": {
+    "ar_thesmokygod_sandayu": {
         "jp_rawname": "トリリオン・オーダー！",
         "rarity": 5,
         "tag": [
             "thesmokygod",
             "sandayu"
         ],
-        "path": "ar\\ar_thesmokygod_sandayu.png"
+        "path": "ar/ar_thesmokygod_sandayu.png"
     },
-    "ar_thor.png": {
+    "ar_thor": {
         "jp_rawname": "遠雷の闘士の破片",
         "rarity": 2,
         "tag": [
             "thor"
         ],
-        "path": "ar\\ar_thor.png"
+        "path": "ar/ar_thor.png"
     },
-    "ar_thunderbird_gandharva.png": {
+    "ar_thunderbird_gandharva": {
         "jp_rawname": "ナイトバード・ラウンジ",
         "rarity": 4,
         "tag": [
             "thunderbird",
             "gandharva"
         ],
-        "path": "ar\\ar_thunderbird_gandharva.png"
+        "path": "ar/ar_thunderbird_gandharva.png"
     },
-    "ar_thunderbird_horus.png": {
+    "ar_thunderbird_horus": {
         "jp_rawname": "正義と憧れを胸に",
         "rarity": 3,
         "tag": [
             "thunderbird",
             "horus"
         ],
-        "path": "ar\\ar_thunderbird_horus.png"
+        "path": "ar/ar_thunderbird_horus.png"
     },
-    "ar_tindalos_catoblepas.png": {
+    "ar_tindalos_catoblepas": {
         "jp_rawname": "シーサイド・アテンション",
         "rarity": 5,
         "tag": [
             "tindalos",
             "catoblepas"
         ],
-        "path": "ar\\ar_tindalos_catoblepas.png"
+        "path": "ar/ar_tindalos_catoblepas.png"
     },
-    "ar_tindalos_enigma.png": {
+    "ar_tindalos_enigma": {
         "jp_rawname": "ウェルカムトゥサイバースペース",
         "rarity": 5,
         "tag": [
             "tindalos",
             "enigma"
         ],
-        "path": "ar\\ar_tindalos_enigma.png"
+        "path": "ar/ar_tindalos_enigma.png"
     },
-    "ar_tomte_horkeukamui.png": {
+    "ar_tomte_horkeukamui": {
         "jp_rawname": "そこにお世話のある限り！",
         "rarity": 3,
         "tag": [
             "tomte",
             "horkeukamui"
         ],
-        "path": "ar\\ar_tomte_horkeukamui.png"
+        "path": "ar/ar_tomte_horkeukamui.png"
     },
-    "ar_tomte_kalki.png": {
+    "ar_tomte_kalki": {
         "jp_rawname": "サウナ・プライド",
         "rarity": 4,
         "tag": [
             "tomte",
             "kalki"
         ],
-        "path": "ar\\ar_tomte_kalki.png"
+        "path": "ar/ar_tomte_kalki.png"
     },
-    "ar_touji_gullinbursti.png": {
+    "ar_touji_gullinbursti": {
         "jp_rawname": "光輝成す刃たち",
         "rarity": 5,
         "tag": [
             "touji",
             "gullinbursti"
         ],
-        "path": "ar\\ar_touji_gullinbursti.png"
+        "effect": {
+            "ar": "public"
+        },
+        "path": "ar/ar_touji_gullinbursti.png"
     },
-    "ar_touji_kengo.png": {
+    "ar_touji_kengo": {
         "jp_rawname": "鬼ごっこまたしても",
         "rarity": 4,
         "tag": [
             "touji",
             "kengo"
         ],
-        "path": "ar\\ar_touji_kengo.png"
+        "path": "ar/ar_touji_kengo.png"
     },
-    "ar_touji_player.png": {
+    "ar_touji_player": {
         "jp_rawname": "根絶の誓い",
         "rarity": 5,
         "tag": [
             "touji",
             "player"
         ],
-        "path": "ar\\ar_touji_player.png"
+        "path": "ar/ar_touji_player.png"
     },
-    "ar_triton_dagon.png": {
+    "ar_triton_dagon": {
         "jp_rawname": "深淵の海より来たりて",
         "rarity": 5,
         "tag": [
             "triton",
             "dagon"
         ],
-        "path": "ar\\ar_triton_dagon.png"
+        "path": "ar/ar_triton_dagon.png"
     },
-    "ar_tsukuyomi_kresnik.png": {
+    "ar_tsukuyomi_kresnik": {
         "jp_rawname": "今宵はムーンストラック",
         "rarity": 4,
         "tag": [
             "tsukuyomi",
             "kresnik"
         ],
-        "path": "ar\\ar_tsukuyomi_kresnik.png"
+        "path": "ar/ar_tsukuyomi_kresnik.png"
     },
-    "ar_tsukuyomi_suzuka.png": {
+    "ar_tsukuyomi_suzuka": {
         "jp_rawname": "ようこそ、夜の宝石たち",
         "rarity": 4,
         "tag": [
             "tsukuyomi",
             "suzuka"
         ],
-        "path": "ar\\ar_tsukuyomi_suzuka.png"
+        "path": "ar/ar_tsukuyomi_suzuka.png"
     },
-    "ar_tuaring_ulaanbaatar.png": {
+    "ar_tuaring_ulaanbaatar": {
         "jp_rawname": "赤と白の格子暗号",
         "rarity": 4,
         "tag": [
             "tuaring",
             "ulaanbaatar"
         ],
-        "path": "ar\\ar_tuaring_ulaanbaatar.png"
+        "path": "ar/ar_tuaring_ulaanbaatar.png"
     },
-    "ar_tvastar_kurogane.png": {
+    "ar_tvastar_kurogane": {
         "jp_rawname": "クラフターズの日課",
         "rarity": 5,
         "tag": [
             "tvastar",
             "kurogane"
         ],
-        "path": "ar\\ar_tvastar_kurogane.png"
+        "effect": {
+            "ar": "public"
+        },
+        "path": "ar/ar_tvastar_kurogane.png"
     },
-    "ar_typhon_benten.png": {
+    "ar_typhon_benten": {
         "jp_rawname": "奪取Theサマー！",
         "rarity": 3,
         "tag": [
             "typhon",
             "benten"
         ],
-        "path": "ar\\ar_typhon_benten.png"
+        "path": "ar/ar_typhon_benten.png"
     },
-    "ar_typhon_eita.png": {
+    "ar_typhon_eita": {
         "jp_rawname": "出発！真夏の水中冒険",
         "rarity": 3,
         "tag": [
             "typhon",
             "eita"
         ],
-        "path": "ar\\ar_typhon_eita.png"
+        "path": "ar/ar_typhon_eita.png"
     },
-    "ar_typhon_gouryou.png": {
+    "ar_typhon_gouryou": {
         "jp_rawname": "ナンパの心得",
         "rarity": 3,
         "tag": [
             "typhon",
             "gouryou"
         ],
-        "path": "ar\\ar_typhon_gouryou.png"
+        "path": "ar/ar_typhon_gouryou.png"
     },
-    "ar_vapula_amduscias.png": {
+    "ar_vapula_amduscias": {
         "jp_rawname": "キミと！ホットウィンター",
         "rarity": 5,
         "tag": [
             "vapula",
             "amduscias"
         ],
-        "path": "ar\\ar_vapula_amduscias.png"
+        "path": "ar/ar_vapula_amduscias.png"
     },
-    "ar_vapula_babebunyan.png": {
+    "ar_vapula_babebunyan": {
         "jp_rawname": "カウボーイ・レッスン",
         "rarity": 3,
         "tag": [
             "vapula",
             "babebunyan"
         ],
-        "path": "ar\\ar_vapula_babebunyan.png"
+        "path": "ar/ar_vapula_babebunyan.png"
     },
-    "ar_volkh_yamasachihiko.png": {
+    "ar_volkh_yamasachihiko": {
         "jp_rawname": "召しませ世耕夏の幸！",
         "rarity": 5,
         "tag": [
             "volkh",
             "yamasachihiko"
         ],
-        "path": "ar\\ar_volkh_yamasachihiko.png"
+        "path": "ar/ar_volkh_yamasachihiko.png"
     },
-    "ar_volos_goemon.png": {
+    "ar_volos_goemon": {
         "jp_rawname": "黄金の実り",
         "rarity": 5,
         "tag": [
             "volos",
             "goemon"
         ],
-        "path": "ar\\ar_volos_goemon.png"
+        "path": "ar/ar_volos_goemon.png"
     },
-    "ar_wakantanka_gunzou.png": {
+    "ar_wakantanka_gunzou": {
         "jp_rawname": "先輩と後輩の時間",
         "rarity": 4,
         "tag": [
             "wakantanka",
             "gunzou"
         ],
-        "path": "ar\\ar_wakantanka_gunzou.png"
+        "path": "ar/ar_wakantanka_gunzou.png"
     },
-    "ar_wakantanka_taurus.png": {
+    "ar_wakantanka_taurus": {
         "jp_rawname": "曙光に燃える",
         "rarity": 4,
         "tag": [
             "wakantanka",
             "taurus"
         ],
-        "path": "ar\\ar_wakantanka_taurus.png"
+        "path": "ar/ar_wakantanka_taurus.png"
     },
-    "ar_wakantanka_tetsugyuu.png": {
+    "ar_wakantanka_tetsugyuu": {
         "jp_rawname": "寂しがりの猛牛たち",
         "rarity": 5,
         "tag": [
             "wakantanka",
             "tetsugyuu"
         ],
-        "path": "ar\\ar_wakantanka_tetsugyuu.png"
+        "path": "ar/ar_wakantanka_tetsugyuu.png"
     },
-    "ar_wakantanka_zabaniya.png": {
+    "ar_wakantanka_zabaniya": {
         "jp_rawname": "サマータイム・シャワー",
         "rarity": 3,
         "tag": [
             "wakantanka",
             "zabaniya"
         ],
-        "path": "ar\\ar_wakantanka_zabaniya.png"
+        "path": "ar/ar_wakantanka_zabaniya.png"
     },
-    "ar_xolotl_hakumen.png": {
+    "ar_xolotl_hakumen": {
         "jp_rawname": "愛の牢獄",
         "rarity": 4,
         "tag": [
             "xolotl",
             "hakumen"
         ],
-        "path": "ar\\ar_xolotl_hakumen.png"
+        "path": "ar/ar_xolotl_hakumen.png"
     },
-    "ar_xolotl_horkeukamui.png": {
+    "ar_xolotl_horkeukamui": {
         "jp_rawname": "冥境にて世話をかく",
         "rarity": 5,
         "tag": [
             "xolotl",
             "horkeukamui"
         ],
-        "path": "ar\\ar_xolotl_horkeukamui.png"
+        "path": "ar/ar_xolotl_horkeukamui.png"
     },
-    "ar_yamasachihiko_thesmokygod.png": {
+    "ar_yamasachihiko_thesmokygod": {
         "jp_rawname": "今宵釣られてすくわれて",
         "rarity": 4,
         "tag": [
             "yamasachihiko",
             "thesmokygod"
         ],
-        "path": "ar\\ar_yamasachihiko_thesmokygod.png"
+        "path": "ar/ar_yamasachihiko_thesmokygod.png"
     },
-    "ar_yasuyori_hombretigre.png": {
+    "ar_yasuyori_hombretigre": {
         "jp_rawname": "N番目の祝宴",
         "rarity": 3,
         "tag": [
             "yasuyori",
             "hombretigre"
         ],
-        "path": "ar\\ar_yasuyori_hombretigre.png"
+        "path": "ar/ar_yasuyori_hombretigre.png"
     },
-    "ar_yasuyori_tanetomo.png": {
+    "ar_yasuyori_tanetomo": {
         "jp_rawname": "花散らす犬士たち",
         "rarity": 5,
         "tag": [
             "yasuyori",
             "tanetomo"
         ],
-        "path": "ar\\ar_yasuyori_tanetomo.png"
+        "path": "ar/ar_yasuyori_tanetomo.png"
     },
-    "ar_yogsothoth.png": {
+    "ar_yogsothoth": {
         "jp_rawname": "深淵の門番の破片",
         "rarity": 2,
         "tag": [
             "yogsothoth"
         ],
-        "path": "ar\\ar_yogsothoth.png"
+        "path": "ar/ar_yogsothoth.png"
     },
-    "ar_yoritomo_tanetomo.png": {
+    "ar_yoritomo_tanetomo": {
         "jp_rawname": "知略の武士ども",
         "rarity": 4,
         "tag": [
             "yoritomo",
             "tanetomo"
         ],
-        "path": "ar\\ar_yoritomo_tanetomo.png"
+        "path": "ar/ar_yoritomo_tanetomo.png"
     },
-    "ar_yoyogi_gunzou.png": {
+    "ar_yoyogi_gunzou": {
         "jp_rawname": "友情のコンビネーション！",
         "rarity": 4,
         "tag": [
             "yoyogi",
             "gunzou"
         ],
-        "path": "ar\\ar_yoyogi_gunzou.png"
+        "effect": {
+            "point": "self"
+        },
+        "path": "ar/ar_yoyogi_gunzou.png"
     },
-    "ar_yukimura.png": {
+    "ar_yukimura": {
         "jp_rawname": "重来の武将の破片",
         "rarity": 2,
         "tag": [
             "yukimura"
         ],
-        "path": "ar\\ar_yukimura.png"
+        "path": "ar/ar_yukimura.png"
     },
-    "ar_yuma_alp.png": {
+    "ar_yuma_alp": {
         "jp_rawname": "愛され獣になりたくて！",
         "rarity": 5,
         "tag": [
             "yuma",
             "alp"
         ],
-        "path": "ar\\ar_yuma_alp.png"
+        "path": "ar/ar_yuma_alp.png"
     },
-    "ar_zabaniya_arslan.png": {
+    "ar_zabaniya_arslan": {
         "jp_rawname": "法の代行者たち",
         "rarity": 5,
         "tag": [
             "zabaniya",
             "arslan"
         ],
-        "path": "ar\\ar_zabaniya_arslan.png"
+        "path": "ar/ar_zabaniya_arslan.png"
     },
-    "ar_zabaniya_jacob.png": {
+    "ar_zabaniya_jacob": {
         "jp_rawname": "聖拳の交わり",
         "rarity": 5,
         "tag": [
             "zabaniya",
             "jacob"
         ],
-        "path": "ar\\ar_zabaniya_jacob.png"
+        "effect": {
+            "character_exp": "self"
+        },
+        "path": "ar/ar_zabaniya_jacob.png"
     },
-    "ar_zaou_chernobog.png": {
+    "ar_zaou_chernobog": {
         "jp_rawname": "おお温泉の喜びよ",
         "rarity": 5,
         "tag": [
             "zaou",
             "chernobog"
         ],
-        "path": "ar\\ar_zaou_chernobog.png"
+        "path": "ar/ar_zaou_chernobog.png"
     },
-    "ar_zaou_shuten.png": {
+    "ar_zaou_shuten": {
         "jp_rawname": "その日は、桜の山で",
         "rarity": 4,
         "tag": [
             "zaou",
             "shuten"
         ],
-        "path": "ar\\ar_zaou_shuten.png"
+        "path": "ar/ar_zaou_shuten.png"
     },
-    "ar_zhurong_babebunyan.png": {
+    "ar_zhurong_babebunyan": {
         "jp_rawname": "ふわもこな湯上がりに",
         "rarity": 4,
         "tag": [
             "zhurong",
             "babebunyan"
         ],
-        "path": "ar\\ar_zhurong_babebunyan.png"
+        "path": "ar/ar_zhurong_babebunyan.png"
     },
-    "ar_zhurong_barguest.png": {
+    "ar_zhurong_barguest": {
         "jp_rawname": "菓子箱の中の夢",
         "rarity": 3,
         "tag": [
             "zhurong",
             "barguest"
         ],
-        "path": "ar\\ar_zhurong_barguest.png"
+        "path": "ar/ar_zhurong_barguest.png"
     },
-    "ar_ziz_behemoth.png": {
+    "ar_ziz_behemoth": {
         "jp_rawname": "休日のカラオケロード！",
         "rarity": 3,
         "tag": [
             "ziz",
             "behemoth"
         ],
-        "path": "ar\\ar_ziz_behemoth.png"
+        "path": "ar/ar_ziz_behemoth.png"
     },
-    "ar_ziz_harlot.png": {
+    "ar_ziz_harlot": {
         "jp_rawname": "辺獄の子らに愛を",
         "rarity": 3,
         "tag": [
             "ziz",
             "harlot"
         ],
-        "path": "ar\\ar_ziz_harlot.png"
+        "path": "ar/ar_ziz_harlot.png"
     }
 }

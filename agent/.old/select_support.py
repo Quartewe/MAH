@@ -67,15 +67,15 @@ class SelectSupport(CustomAction):
                 print("[DEBUG] Recognition failed completely")
                 add_res = {}
             else:
-                rbox = [recres.box[0], recres.box[1], recres.box[2], recres.box[3]]
-                if rbox == [-1, -1, -1, -1]:
+                rbox = [recres.box[0], recres.box[1], recres.box[2], recres.box[3]] if recres.box else None
+                if rbox is None:
                     print(f"[DEBUG] Failed to find character: {param['name']} {param['id']}")
                     add_res = {}
                 else:
                     # 从 best_result.detail 获取结果（三层嵌套 {name: {id: {res_*: entry}}}）
                     detail = recres.best_result.detail if recres.best_result else {}
                     add_res = json.loads(detail) if isinstance(detail, str) else (detail or {})
-                    if rbox == [0, 0, 0, 0]:
+                    if rbox == [0, 0, 1, 1]:
                         print(f"[DEBUG] Found multiple characters")
                     else:
                         print(f"[DEBUG] Found one character: {param['name']} {param['id']}")
@@ -93,7 +93,7 @@ class SelectSupport(CustomAction):
                             if not res_key.startswith("res_"):
                                 continue
                             # 根据 fpbox 确定该角色在当前页的位置
-                            res_box = res_data.get("box", [0, 0, 0, 0])
+                            res_box = res_data.get("box", [0, 0, 1, 1])
                             for i, fp in enumerate(fpbox):
                                 if actutils.act_mgr.in_roi(fp, res_box):
                                     res_data["pos"] = i + page

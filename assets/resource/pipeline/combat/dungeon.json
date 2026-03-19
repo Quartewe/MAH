@@ -167,7 +167,31 @@
             "Dungeon.Kamuyado.EpisodeSwipe"
         ],
         "next": [
-            "Dungeon.Kamuyado.SelectSupport"
+            "Global.AutoCombat.Entry"
+        ]
+    },
+    "Dungeon.Kamuyado.EpisodeSwipe": {
+        "action": {
+            "type": "Swipe",
+            "param": {
+                "begin": [
+                    850,
+                    590,
+                    50,
+                    10
+                ],
+                "end": [
+                    [
+                        850,
+                        400,
+                        50,
+                        10
+                    ]
+                ]
+            }
+        },
+        "next": [
+            "Dungeon.Kamuyado.Episode"
         ]
     },
     "Dungeon.Kamuyado.Explore": {
@@ -209,134 +233,6 @@
         "pre_wait_freezes": 1000,
         "next": [
             "Dungeon.Lkebukuro.Choice"
-        ]
-    },
-    "Dungeon.Kamuyado.SelectSupport": {
-        "action": {
-            "type": "Custom",
-            "param": {
-                "custom_action": "SelectSupport",
-                "custom_action_param": {
-                    "template_type": "A",
-                    "name": "kyouma",
-                    "id": 2,
-                    "Level": 70,
-                    "S.A.Lv": 1,
-                    "Skill": 100,
-                    "ATK": 0,
-                    "HP": 0,
-                    "AR": {
-                        "name": null,
-                        "matched": false
-                    },
-                    "iffriend": true
-                }
-            }
-        },
-        "pre_delay": 0,
-        "post_delay": 0,
-        "next": [
-            "Dungeon.Kamuyado.TeamSelect0"
-        ]
-    },
-    "Dungeon.Kamuyado.TeamSelect1": {
-        "action": {
-            "type": "Custom",
-            "param": {
-                "custom_action": "TeamSelect",
-                "custom_action_param": "Team 2"
-            }
-        },
-        "next": [
-            "Dungeon.Kamuyado.CleanTeam"
-        ]
-    },
-    "Dungeon.Kamuyado.CleanTeam": {
-        "recognition": {
-            "type": "TemplateMatch",
-            "param": {
-                "template": [
-                    "fight/team_clean.png"
-                ]
-            }
-        },
-        "action": {
-            "type": "Click",
-            "param": {}
-        },
-        "next": [
-            "Dungeon.Kamuyado.Formation"
-        ]
-    },
-    "Dungeon.Kamuyado.Formation": {
-        "action": {
-            "type": "Custom",
-            "param": {
-                "custom_action": "Formation"
-            }
-        },
-        "pre_delay": 0,
-        "post_delay": 0,
-        "next": [
-            "Dungeon.Kamuyado.Start"
-        ]
-    },
-    "Dungeon.Kamuyado.EpisodeSwipe": {
-        "action": {
-            "type": "Swipe",
-            "param": {
-                "begin": [
-                    850,
-                    590,
-                    50,
-                    10
-                ],
-                "end": [
-                    [
-                        850,
-                        400,
-                        50,
-                        10
-                    ]
-                ]
-            }
-        },
-        "next": [
-            "Dungeon.Kamuyado.Episode"
-        ]
-    },
-    "Dungeon.Kamuyado.TeamSelect0": {
-        "recognition": {
-            "type": "TemplateMatch",
-            "param": {
-                "template": [
-                    "fight/team_select.png"
-                ]
-            }
-        },
-        "action": {
-            "type": "Click",
-            "param": {}
-        },
-        "next": [
-            "Dungeon.Kamuyado.TeamSelect1"
-        ]
-    },
-    "Dungeon.Kamuyado.Start": {
-        "recognition": {
-            "type": "TemplateMatch",
-            "param": {
-                "template": [
-                    "fight/team_start.png"
-                ]
-            }
-        },
-        "action": {
-            "type": "Click",
-            "param": {}
-        },
-        "next": [
-            "Global.AutoFight"
         ]
     }
 }

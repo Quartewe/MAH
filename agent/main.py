@@ -18,8 +18,8 @@ def main():
     if len(sys.argv) >= 2:
         Agent_Identifier = sys.argv[1]
     else:
-        Agent_Identifier = "MHA"
-
+        Agent_Identifier = "MAH"
+    os.chdir(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     print(f"[DEBUG] AgentServer 正在启动，频道 ID 为: {Agent_Identifier}")
 
     AgentServer.start_up(Agent_Identifier)

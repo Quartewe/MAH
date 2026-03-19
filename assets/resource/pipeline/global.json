@@ -78,6 +78,5 @@
     "recognition": "OCR",
     "expected": "CLOSE",
     "action": "Click"
-  },
-  "Global.AutoFight": {}
+  }
 }

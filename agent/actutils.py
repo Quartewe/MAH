@@ -11,6 +11,7 @@ from utils import (
     ResourceUtils, resource_mgr,
     MissionUtils, mission_mgr,
     ActUtils, act_mgr,
+    paths, proj_path,
 )
 
 

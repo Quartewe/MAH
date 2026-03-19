@@ -1,8 +1,10 @@
 {
     "UtilsOCR": {
+        "pre_wait_freezes": 500,
         "recognition": {
             "type": "OCR",
             "param": {
+                "threshold": 0.7,
                 "expected": [
                     ""
                 ]
@@ -10,22 +12,28 @@
         }
     },
     "UtilsTemplateMatch": {
+        "pre_wait_freezes": 500,
         "recognition": {
             "type": "TemplateMatch",
             "param": {
+                "threshold": 0.7,
                 "template": ""
             }
         }
     },
     "UtilsFeatureMatch": {
+        "pre_wait_freezes": 500,
         "recognition": {
             "type": "FeatureMatch",
             "param": {
+                "order_by": "Score",
+                "ratio": 0.6,
                 "template": ""
             }
         }
     },
     "UtilsColorMatch": {
+        "pre_wait_freezes": 500,
         "recognition": {
             "type": "ColorMatch",
             "param": {
@@ -43,6 +51,7 @@
         }
     },
     "UtilsSwipe": {
+        "pre_wait_freezes": 500,
         "recognition": "DirectHit",
         "action": "Swipe",
         "begin": [
@@ -61,6 +70,7 @@
         "end_hold": 500
     },
     "UtilsClick": {
+        "pre_wait_freezes": 500,
         "recognition": "DirectHit",
         "action": {
             "type": "Click",
@@ -71,6 +81,22 @@
                     0,
                     0
                 ]
+            }
+        }
+    },
+    "TraverseMatch": {
+        "recognition": {
+            "type": "Custom",
+            "param": {
+                "custom_recognition": "TraverseMatch"
+            }
+        }
+    },
+    "GroupAvatarInfo": {
+        "recognition": {
+            "type": "Custom",
+            "param": {
+                "custom_recognition": "GroupAvatarInfo"
             }
         }
     }

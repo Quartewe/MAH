@@ -4,7 +4,7 @@ from maa.context import Context
 import json
 import re
 from pathlib import Path
-from utils import data_io, match_mgr
+from utils import data_io, match_mgr, proj_path
 
 
 @AgentServer.custom_recognition("TraverseMatch")
@@ -31,9 +31,9 @@ class TraverseMatch(CustomRecognition):
         }
     }
 
-    若为多对象则box返回[0,0,0,0]，detail返回为一个字典，包含每个对象的位置信息和最可能的模板路径
+    若为多对象则box返回[0,0,1,1]，detail返回为一个字典，包含每个对象的位置信息和最可能的模板路径
      {
-        "box": [0, 0, 0, 0],
+        "box": [0, 0, 1, 1],
         "detail": {
             "res_0": {
             "template": str(tpl_rel),
@@ -43,13 +43,33 @@ class TraverseMatch(CustomRecognition):
             }
         }
     }
-    若未识别到则box返回[-1,-1,-1,-1],detail返回None
+    若未识别到则box返回None,detail返回None
     """
     def __init__(self):
         super().__init__()
-        self.BASE_PATH = Path("assets/resource/image")
-        self.CHAR_DATA = data_io.read_data("data/characters.json")
-        self.AR_DATA = data_io.read_data("data/ar.json")
+        self.BASE_PATH = proj_path.IMAGE_DIR
+        self.CHAR_DATA = data_io.read_data(proj_path.CHAR_FILE)
+        self.CHAR_LOWSTAR_DATA = data_io.read_data(proj_path.CHAR_LOWSTAR_FILE)
+        self.AR_DATA = data_io.read_data(proj_path.AR_FILE)
+        self.ELEMENTS = ["all", "dark", "evil", "fire", "god", "hero", "infinity", "light", "none", "water", "wood", "world"]
+
+    def _resolve_image_path(self, raw_path):
+        if not raw_path:
+            return None
+
+        path_str = str(raw_path).replace("\\", "/").lstrip("./")
+        image_root_rel = proj_path.IMAGE_DIR.relative_to(proj_path.PROJECT_ROOT).as_posix()
+        prefix = f"{image_root_rel}/"
+
+        if path_str.startswith(prefix):
+            path_str = path_str[len(prefix):]
+
+        path_obj = Path(path_str)
+        if path_obj.is_absolute():
+            return path_obj
+
+        return proj_path.IMAGE_DIR / path_obj
+
     def analyze(
         self,
         context: Context,
@@ -58,16 +78,14 @@ class TraverseMatch(CustomRecognition):
         # 处理 custom_recognition_param，MAA 框架会自动转换为 JSON 字符串或字典
         param_raw = argv.custom_recognition_param
         param = {}
-        print(f"[DEBUG] param_raw type: {type(param_raw)}, value: {param_raw}")
         
         # 如果是字符串，进行 JSON 解析
         if isinstance(param_raw, str):
             if param_raw:
                 try:
                     param = json.loads(param_raw)
-                    print(f"[DEBUG] JSON 解析成功, param type: {type(param)}")
                 except (json.JSONDecodeError, TypeError) as e:
-                    print(f"[DEBUG] JSON 解析失败: {e}")
+                    print(f"[ERRROR] JSON 解析失败: {e}")
                     param = {}
         elif isinstance(param_raw, dict):
             # 直接传字典时，MAA 会将其转换为字符串，所以这个分支可能不会执行
@@ -80,27 +98,45 @@ class TraverseMatch(CustomRecognition):
         char_id = param.get("id", None)
         if isinstance(param.get("id"), int):
             char_id = f"{param.get('id'):02d}"
+        lowstar_mode = False
+        ar_mode = False
+        ar_name = None
+        char_element = None
         
         print(f"[DEBUG] char_name: {char_name}, char_id: {char_id}")
 
-        # 判断是否为 AR 模式：当没有角色名或角色ID时，尝试 AR 模式
-        if not char_name or not char_id:
+        # 低星模式优先：有角色名、无角色ID、且提供了合法 element
+        if char_name and not char_id:
+            char_element = param.get("element", None)
+            if char_element and char_element in self.ELEMENTS:
+                lowstar_mode = True
+            else:
+                print(f"[ERROR] No valid element({char_element}) provided for low-star character")
+                return CustomRecognition.AnalyzeResult(box=None, detail=None)
+
+        if lowstar_mode:
+            template_path = self._resolve_image_path(
+                self.CHAR_LOWSTAR_DATA.get(char_name, {}).get(char_element, {}).get("path", "").strip().strip('"').strip("'")
+            )
+        elif char_name and char_id:
+            template_path = self._resolve_image_path(
+                self.CHAR_DATA[char_name][char_id]["path"].strip().strip('"').strip("'")
+            )
+        else:
+            # 回退到 AR 模式：仅当无法走角色识别时尝试
             ar_mode = True
-            # 只有当 param 中有 AR 数据时才能进行 AR 识别
-            ar_data = param.get("AR", None).get("name", None)
-            if ar_data and isinstance(ar_data, dict):
-                ar_name = ar_data.get("name", None)
-                if ar_name and ar_name in self.AR_DATA:
-                    template_path = Path(self.AR_DATA[ar_name]["path"].strip().strip('"').strip("'"))
+            ar_name = param.get("AR", None)
+            if ar_name:
+                if ar_name in self.AR_DATA:
+                    ar_data = self.AR_DATA.get(ar_name, {})
+                    ar_raw_path = ar_data.get("path") or param.get("path")
+                    template_path = self._resolve_image_path(ar_raw_path)
                 else:
                     print(f"[DEBUG] Invalid AR name: {ar_name}")
                     return CustomRecognition.AnalyzeResult(box=None, detail=None)
             else:
                 print("[DEBUG] No valid AR data provided")
                 return CustomRecognition.AnalyzeResult(box=None, detail=None)
-        else:
-            ar_mode = False
-            template_path = Path(self.CHAR_DATA[char_name][char_id]["path"].strip().strip('"').strip("'"))
         
         match_detail = None
         template = None
@@ -192,7 +228,7 @@ class TraverseMatch(CustomRecognition):
                             "iffriend": False
                         }
                     return CustomRecognition.AnalyzeResult(
-                        box=[0, 0, 0, 0],
+                        box=[0, 0, 1, 1],
                         detail=multi_detail
                     )
                 else:
@@ -227,7 +263,7 @@ class TraverseMatch(CustomRecognition):
             print(f"[DEBUG] Template path does not exist: {template_path}")
         
         return CustomRecognition.AnalyzeResult(
-            box=match_detail.box if match_detail and match_detail.box else [-1, -1, -1, -1], 
+            box=match_detail.box if match_detail and match_detail.box else None,
             detail={"path": str(template),
                     "name": ar_name,
                      } if match_detail and match_detail.box and ar_mode else None
@@ -260,8 +296,8 @@ class GroupAvatarInfo(CustomRecognition):
         
     Returns:
         若为单对象则box返回为对应的位置，detail返回为该对象的识别信息
-        若为多对象则box返回[0,0,0,0]，detail返回为一个字典
-        若未识别到则box返回[-1,-1,-1,-1], detail返回None
+        若为多对象则box返回[0,0,1,1]，detail返回为一个字典
+        若未识别到则box返回None, detail返回None
     """
     def __init__(self):
         super().__init__()
@@ -274,10 +310,7 @@ class GroupAvatarInfo(CustomRecognition):
             "Skill": 100,
             "ATK": 0,
             "HP": 0,
-            "AR": {
-                "name": None,
-                "matched": False
-                },
+            "AR": None,
             "iffriend": True
         }
         self.DEAFAULT_PARAM_B = {
@@ -288,10 +321,7 @@ class GroupAvatarInfo(CustomRecognition):
             "SSkill": 0,
             "SATK": 0,
             "SHP": 0,
-            "AR": {
-                "name": None,
-                "matched": False
-                },
+            "AR": None,
             "iffriend": True
         }
     
@@ -314,7 +344,12 @@ class GroupAvatarInfo(CustomRecognition):
                 param = self.DEAFAULT_PARAM_A
                 template_type = "A"
         elif isinstance(param, dict):
-            template_type = param.get("template_type", "A")
+            if param.get("Level") or param.get("ATK") or param.get("HP") or param.get("Skill"):
+                template_type =  "A"
+            elif param.get("SLevel") or param.get("SATK") or param.get("SHP") or param.get("SSkill"):
+                template_type = "B"
+            else:                
+                template_type = "A"
         else:
             print(f"[DEBUG] 参数类型错误: {type(param)}, 将使用默认参数")
             param = self.DEAFAULT_PARAM_A
@@ -361,7 +396,6 @@ class GroupAvatarInfo(CustomRecognition):
                 }
             }
         )
-        print(f"[DEBUG] avatar: {avatar}")
         
         # 统一处理 avatar.box：转换为 list 格式
         avatar_box = None
@@ -371,9 +405,9 @@ class GroupAvatarInfo(CustomRecognition):
             except (IndexError, TypeError):
                 avatar_box = None
         
-        if not avatar or not avatar.hit or avatar_box == [-1, -1, -1, -1] or avatar_box is None:
+        if not avatar or not avatar.hit or avatar_box is None:
             print(f"[DEBUG] Failed to find character: {param['name']} {param['id']}")
-            return CustomRecognition.AnalyzeResult(box=[-1, -1, -1, -1], detail=None)
+            return CustomRecognition.AnalyzeResult(box=None, detail=None)
         
         # 获取详细信息，best_result.detail 可能是 dict 或 JSON 字符串
         detail_dict = {}
@@ -388,9 +422,9 @@ class GroupAvatarInfo(CustomRecognition):
                     detail_dict = {}
             print(f"[DEBUG] detail_dict keys: {list(detail_dict.keys())}")
         
-        # 判断是否为多结果（特征：box 为 [0,0,0,0]）
+        # 判断是否为多结果（特征：box 为 [0,0,1,1]）
         is_multi = (avatar_box[0] == 0 and avatar_box[1] == 0
-                    and avatar_box[2] == 0 and avatar_box[3] == 0)
+                and avatar_box[2] == 1 and avatar_box[3] == 1)
 
         # ===== 内部辅助函数：对单个 ROI 执行 OCR 并填充结果到 entry =====
         def _fill_ocr(entry, ROI):
@@ -475,7 +509,7 @@ class GroupAvatarInfo(CustomRecognition):
                 print(f"[DEBUG] Found Seed ATK: {texts[3].text} for character {param['name']} {param['id']}")
 
         def _fill_ar(entry):
-            if param.get("AR").get("name") is not None:
+            if param.get("AR"):
                 ar_name = param.get("AR")
                 ar_result = context.run_recognition(
                     "TraverseMatch",
@@ -511,7 +545,7 @@ class GroupAvatarInfo(CustomRecognition):
                 if not res_key.startswith("res_"):
                     continue
                 res_val = detail_dict[res_key]
-                res_box = res_val.get("box", [0, 0, 0, 0])
+                res_box = res_val.get("box", [0, 0, 1, 1])
                 ROI = [res_box[0] - self.ROI[0], res_box[1] - self.ROI[1], self.ROI[2], self.ROI[3]]
                 print(f"[DEBUG] Multi-result {res_key}: ROI={ROI}, box={res_box}")
 
@@ -538,7 +572,7 @@ class GroupAvatarInfo(CustomRecognition):
                 multi_output[res_key] = entry
 
             return CustomRecognition.AnalyzeResult(
-                box=[0, 0, 0, 0],
+                box=[0, 0, 1, 1],
                 detail={param["name"]: {param["id"]: multi_output}}
             )
 

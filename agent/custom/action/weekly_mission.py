@@ -5,7 +5,7 @@ from maa.context import Context
 from datetime import datetime
 from utils import data_io, mission_mgr, timeout_mgr
 
-
+# TODO: 支持多语言
 @AgentServer.custom_action("WeeklyMission")
 class WeeklyMission(CustomAction):
     def __init__(self):

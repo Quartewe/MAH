@@ -2,7 +2,7 @@ from maa.agent.agent_server import AgentServer
 from maa.custom_action import CustomAction
 from maa.context import Context
 from datetime import datetime
-from utils import data_io, timeout_mgr
+from utils import data_io, timeout_mgr, proj_path
 
 
 @AgentServer.custom_action("MissionLogic")
@@ -20,7 +20,7 @@ class MissionLogic(CustomAction):
         if timeout_mgr.check_timeout(argv.node_name):    
             return False
         
-        self.state = data_io.read_data()
+        self.state = data_io.read_data(proj_path.STATE_FILE)
         # 输出日志
         data_io.organize_ocr_log(argv.node_name, argv.reco_detail)
 

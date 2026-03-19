@@ -1,0 +1,68 @@
+{
+    "element": {
+        "all": "fight/element/element_all.png",
+        "dark": "fight/element/element_dark.png",
+        "evil": "fight/element/element_evil.png",
+        "fire": "fight/element/element_fire.png",
+        "god": "fight/element/element_god.png",
+        "hero": "fight/element/element_hero.png",
+        "infinity": "fight/element/element_infinity.png",
+        "light": "fight/element/element_light.png",
+        "zero": "fight/element/element_zero.png",
+        "water": "fight/element/element_water.png",
+        "wood": "fight/element/element_wood.png",
+        "world": "fight/element/element_world.png"
+    },
+    "weapon": {
+        "knock": "fight/weapon/weapon_knock.png",
+        "longslash": "fight/weapon/weapon_longslash.png",
+        "magic": "fight/weapon/weapon_magic.png",
+        "none": "fight/weapon/weapon_none.png",
+        "shoot": "fight/weapon/weapon_shoot.png",
+        "slash": "fight/weapon/weapon_slash.png",
+        "snipe": "fight/weapon/weapon_snipe.png",
+        "thrust": "fight/weapon/weapon_thrust.png"
+    },
+    "rarity": {
+        "1": "fight/rarity/rarity_1.png",
+        "2": "fight/rarity/rarity_2.png",
+        "3": "fight/rarity/rarity_3.png",
+        "4": "fight/rarity/rarity_4.png",
+        "5": "fight/rarity/rarity_5.png"
+    },
+    "community": {
+        "agents": "fight/community/community_agents.png",
+        "beasttamers": "fight/community/community_beasttamers.png",
+        "berserkers": "fight/community/community_berserkers.png",
+        "crafters": "fight/community/community_crafters.png",
+        "creators": "fight/community/community_creators.png",
+        "entertainers": "fight/community/community_entertainers.png",
+        "exters": "fight/community/community_exters.png",
+        "gamemasters": "fight/community/community_gamemasters.png",
+        "genociders": "fight/community/community_genociders.png",
+        "gurus": "fight/community/community_gurus.png",
+        "invaders": "fight/community/community_invaders.png",
+        "missionaries": "fight/community/community_missionaries.png",
+        "outlaws": "fight/community/community_outlaws.png",
+        "rulemakers": "fight/community/community_rulemakers.png",
+        "summoners": "fight/community/community_summoners.png",
+        "thewisemen": "fight/community/community_thewisemen.png",
+        "tycoons": "fight/community/community_tycoons.png",
+        "wanderers": "fight/community/community_wanderers.png",
+        "warmongers": "fight/community/community_warmongers.png"
+    },
+    "support": {
+        "all": "fight/support/support_all.png",
+        "dark": "fight/support/support_dark.png",
+        "evil": "fight/support/support_evil.png",
+        "fire": "fight/support/support_fire.png",
+        "default": "fight/support/support_default.png",
+        "hero": "fight/support/support_hero.png",
+        "infinity": "fight/support/support_infinity.png",
+        "light": "fight/support/support_light.png",
+        "zero": "fight/support/support_zero.png",
+        "water": "fight/support/support_water.png",
+        "wood": "fight/support/support_wood.png",
+        "world": "fight/support/support_world.png"
+    }
+}

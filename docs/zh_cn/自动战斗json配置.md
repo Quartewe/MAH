@@ -17,19 +17,19 @@
 
 ## 文件位置
 
-请将 JSON 文件放入 `data/auto_fight/` 文件夹中：
+请将 JSON 文件放入 `data/auto_combat/` 文件夹中：
 
 ```
-MAH/data/auto_fight/<文件名>.json
+MAH/data/auto_combat/<文件名>.json
 ```
 
 支持嵌套文件夹：
 
 ```
-MAH/data/auto_fight/abc/cde/<文件名>.json
+MAH/data/auto_combat/abc/cde/<文件名>.json
 ```
 
-程序会自动递归遍历 `auto_fight/` 下所有子目录查找匹配的文件名。
+程序会自动递归遍历 `auto_combat/` 下所有子目录查找匹配的文件名。
 
 ---
 
@@ -79,36 +79,45 @@ MAH/data/auto_fight/abc/cde/<文件名>.json
 
 | 属性 | 类型 | 必需 | 说明 |
 |------|------|:----:|------|
-| [`character`](#角色及-ar-名获取) | `str` | ✅ | 角色英文名，参见索引字典 |
-| [`id`](#角色及-ar-名获取) | `int` | ✅ | 角色卡面序号，参见索引字典 |
-| [`AR`](#ar) | `str` | ❌ | AR 卡文件名，参见索引字典 |
+| `name` | `str` | ✅ | 角色英文名，参见[`索引字典`](#角色及-ar-名获取) |
+| `id` | `int` | ✅ | 角色卡面序号，参见[`索引字典`](#角色及-ar-名获取) |
+| [`AR`](#ar) | `str` | ❌ | AR 卡文件名，参见[`索引字典`](#角色及-ar-名获取) |
+| `element` | `str` | 对[`一卡多类`](#characters_lowstar)必需 | 即同一名字多种属性为必须, ⚠️且对非一卡多类角色为***不可选***⚠️ |
+
+> ⚠️ 如果对非一卡多类角色填入了`element`属性, 程序将会无法运行!!!
 
 **示例：**
 
 ```json
 "team": {
     "LEADER": {
-        "character": "amduscias",
+        "name": "amduscias",
         "id": 3
     },
     "2": {
-        "character": "sanzo",
+        "name": "sanzo",
         "id": 2
     },
     "3": {
-        "character": "yig",
+        "name": "yig",
         "id": 2
     },
     "SUPPORT": {
-        "character": "kyouma",
-        "id": 2
+        "name": "kyouma",
+        "id": 2,
+        "Level": 70,
+        "S.A.Lv": 1,
+        "Skill": 100,
+        "ATK": 0,
+        "HP": 0,
+        "AR": null
     },
     "5": {
-        "character": "maneki",
+        "name": "maneki",
         "id": 1
     },
     "6": {
-        "character": "player",
+        "name": "player",
         "id": 1
     }
 }
@@ -120,9 +129,20 @@ MAH/data/auto_fight/abc/cde/<文件名>.json
 
 - `SUPPORT` 的位置决定它取代哪个槽位（上例中 `SUPPORT` 位于第 4 位，即取代 `4`）
 - 若未取代任何数字槽位，则默认取代 `6`
-- 支持将 `SUPPORT` 放在任意位置，但非标准位置会降低运行效率
+  - 若只填入部分纯数字对象, 就会取代**最后**一个`数字对象`的**下一个**`数字对象`, 如
 
-**`SUPPORT` 专属额外属性** — 用于设定助战角色的筛选要求，不填则不做要求：
+    ```json
+    {
+        "LEADER":{ ... },
+        "2":{ ... },
+        "SUPPORT":{ ... }
+    }
+    ```
+
+    就会取代`3`号位
+- 支持将 `SUPPORT` 放在任意位置，但非标准位置会降低运行效率(而且不好看)
+
+**`SUPPORT` 专属额外属性** — 用于设定助战角色的筛选要求，优先选择[`角色属性最高`](#角色属性选择)的, 不填则不做要求：
 
 | 属性 | 类型 | 说明 |
 |------|------|------|
@@ -136,7 +156,47 @@ MAH/data/auto_fight/abc/cde/<文件名>.json
 | `HP` | `int` | 角色真实生命值 |
 | `SHP` | `int` | 角色种子生命值 |
 
+目前暂时不支持检查自有角色属性
+
 > ⚠️ **互斥规则：** 种子数值（`SLevel`/`SSkill`/`SATK`/`SHP`）与其对应的非种子数值互斥。若同时填入，该 JSON 文件**不会运行**。
+
+##### 角色属性选择
+
+支持在SUPPORT层的`select_mode`键中填入两种属性
+
+| 属性 | 类型 | 说明 |
+|------|------|------|
+| `best` | `str` | 见[`best选择方式`](#best选择方式) |
+| `first` | `str` | 见[`first选择方式`](#first选择方式) |
+
+若不填入`select_mode`键则默认为`best`
+
+###### best选择方式
+
+- 选择keywords中第一个关键词的最大值
+
+###### first选择方式
+
+- 优先从满足条件的keywords中选出现最多的结果，如果都不满足则从所有keywords中选出现最多的
+
+部分源码如下(如果你有更好的想法或想支持更多种选择方式, 欢迎提issue)
+
+```python
+output = output_satisfied if output_satisfied else output_all
+
+if mode == "first":
+    most_common_data = output.get(keywords[0], None)
+elif mode == "best":
+    # 统计output中哪个 res_data 出现最多
+    if output:
+        id_counter = Counter(id(v) for v in output.values())
+        best_id = id_counter.most_common(1)[0][0]
+        most_common_data = next(v for v in output.values() if id(v) == best_id)
+    else:
+        most_common_data = None
+else:
+    most_common_data = None
+```
 
 ---
 
@@ -285,33 +345,39 @@ SIT 中的 `"0"`、`"1"`、... 以及 `loop` 内的每个子对象，均为**动
 
 ### 完整 JSON 示例
 
-> 以下示例对应 `data/auto_fight/dungen_fight.json`
+> 以下示例对应 `data/auto_combat/dungen_fight.json`
 
 ```json
 {
     "team": {
         "LEADER": {
-            "character": "amduscias",
+            "name": "amduscias",
             "id": 3
         },
         "2": {
-            "character": "sanzo",
+            "name": "sanzo",
             "id": 2
         },
         "3": {
-            "character": "yig",
+            "name": "yig",
             "id": 2
         },
         "SUPPORT": {
-            "character": "kyouma",
-            "id": 2
+            "name": "kyouma",
+            "id": 2,
+            "Level": 70,
+            "S.A.Lv": 1,
+            "Skill": 100,
+            "ATK": 0,
+            "HP": 0,
+            "AR": null
         },
         "5": {
-            "character": "maneki",
+            "name": "maneki",
             "id": 1
         },
         "6": {
-            "character": "player",
+            "name": "player",
             "id": 1
         }
     },
@@ -358,7 +424,7 @@ SIT 中的 `"0"`、`"1"`、... 以及 `loop` 内的每个子对象，均为**动
 
 <!-- 该条目预计在前端大更新后废除 -->
 
-角色名、ID 和 AR 卡名称需要查阅 `MAH/data/` 下的索引字典：
+角色名、ID 和 AR 卡名称需要查阅 `MAH/assets/index` 下的索引字典：
 
 | 文件 | 用途 |
 |------|------|

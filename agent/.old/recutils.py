@@ -33,9 +33,9 @@ class TraverseMatch(CustomRecognition):
         }
     }
 
-    若为多对象则box返回[0,0,0,0]，detail返回为一个字典，包含每个对象的位置信息和最可能的模板路径
+    若为多对象则box返回[0,0,1,1]，detail返回为一个字典，包含每个对象的位置信息和最可能的模板路径
      {
-        "box": [0, 0, 0, 0],
+        "box": [0, 0, 1, 1],
         "detail": {
             "res_0": {
             "template": str(tpl_rel),
@@ -45,7 +45,7 @@ class TraverseMatch(CustomRecognition):
             }
         }
     }
-    若未识别到则box返回[-1,-1,-1,-1],detail返回None
+    若未识别到则box返回None,detail返回None
     """
     def __init__(self):
         super().__init__()
@@ -194,7 +194,7 @@ class TraverseMatch(CustomRecognition):
                             "iffriend": False
                         }
                     return CustomRecognition.AnalyzeResult(
-                        box=[0, 0, 0, 0],
+                        box=[0, 0, 1, 1],
                         detail=multi_detail
                     )
                 else:
@@ -229,7 +229,7 @@ class TraverseMatch(CustomRecognition):
             print(f"[DEBUG] Template path does not exist: {template_path}")
         
         return CustomRecognition.AnalyzeResult(
-            box=match_detail.box if match_detail and match_detail.box else [-1, -1, -1, -1], 
+            box=match_detail.box if match_detail and match_detail.box else None,
             detail={"path": str(template),
                     "name": ar_name,
                      } if match_detail and match_detail.box and ar_mode else None
@@ -287,9 +287,9 @@ class GroupAvatarInfo(CustomRecognition):
             }
         }
 
-        若为多对象则box返回[0,0,0,0]，detail返回为一个字典，包含每个对象的位置信息和识别信息
+        若为多对象则box返回[0,0,1,1]，detail返回为一个字典，包含每个对象的位置信息和识别信息
         {
-            "box": [0, 0, 0, 0],
+            "box": [0, 0, 1, 1],
             "detail": {
                 param["name"]: {
                     param["id"]: {
@@ -303,7 +303,7 @@ class GroupAvatarInfo(CustomRecognition):
                 }
             }
         }
-        若未识别到则box返回[-1,-1,-1,-1], detail返回None
+        若未识别到则box返回None, detail返回None
     """
     def __init__(self):
         super().__init__()
@@ -390,6 +390,12 @@ class GroupAvatarInfo(CustomRecognition):
             "TraverseMatch",
             argv.image,
             pipeline_override={
+                "pre_wait_freezes":{
+                    "time": 1000,
+                    "target": [1115,586,165,133],
+                    "threshold": 0.99,
+                    "timeout": -1,
+                },
                 "TraverseMatch": {
                     "recognition": {
                         "type": "Custom",
@@ -414,9 +420,9 @@ class GroupAvatarInfo(CustomRecognition):
             except (IndexError, TypeError):
                 avatar_box = None
         
-        if not avatar or not avatar.hit or avatar_box == [-1, -1, -1, -1] or avatar_box is None:
+        if not avatar or not avatar.hit or avatar_box is None:
             print(f"[DEBUG] Failed to find character: {param['name']} {param['id']}")
-            return CustomRecognition.AnalyzeResult(box=[-1, -1, -1, -1], detail=None)
+            return CustomRecognition.AnalyzeResult(box=None, detail=None)
         
         # 获取详细信息，best_result.detail 可能是 dict 或 JSON 字符串
         detail_dict = {}
@@ -431,9 +437,9 @@ class GroupAvatarInfo(CustomRecognition):
                     detail_dict = {}
             print(f"[DEBUG] detail_dict keys: {list(detail_dict.keys())}")
         
-        # 判断是否为多结果（特征：box 为 [0,0,0,0]）
+        # 判断是否为多结果（特征：box 为 [0,0,1,1]）
         is_multi = (avatar_box[0] == 0 and avatar_box[1] == 0
-                    and avatar_box[2] == 0 and avatar_box[3] == 0)
+                and avatar_box[2] == 1 and avatar_box[3] == 1)
 
         # ===== 内部辅助函数：对单个 ROI 执行 OCR 并填充结果到 entry =====
         def _fill_ocr(entry, ROI):
@@ -554,7 +560,7 @@ class GroupAvatarInfo(CustomRecognition):
                 if not res_key.startswith("res_"):
                     continue
                 res_val = detail_dict[res_key]
-                res_box = res_val.get("box", [0, 0, 0, 0])
+                res_box = res_val.get("box", [0, 0, 1, 1])
                 ROI = [res_box[0] - self.ROI[0], res_box[1] - self.ROI[1], self.ROI[2], self.ROI[3]]
                 print(f"[DEBUG] Multi-result {res_key}: ROI={ROI}, box={res_box}")
 
@@ -581,7 +587,7 @@ class GroupAvatarInfo(CustomRecognition):
                 multi_output[res_key] = entry
 
             return CustomRecognition.AnalyzeResult(
-                box=[0, 0, 0, 0],
+                box=[0, 0, 1, 1],
                 detail={param["name"]: {param["id"]: multi_output}}
             )
 

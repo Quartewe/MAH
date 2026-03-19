@@ -1,6 +1,7 @@
 from maa.agent.agent_server import AgentServer
 from maa.custom_action import CustomAction
 from maa.context import Context
+import time
 import re
 import json
 
@@ -15,13 +16,43 @@ class TeamSelect(CustomAction):
         context: Context,
         argv: CustomAction.RunArg,
     ) -> bool:
-        param = int(argv.custom_action_param)
+        param = json.loads(argv.custom_action_param)
+        if not param:
+            print(f"[DEBUG] TeamSelect 缺少参数, 直接使用当前配队")
+            return True
+        param = int(param.strip("'").strip('"'))
         print( f"[DEBUG] TeamSelect 收到参数: {param}")
         click_box = [0, 0, 100, 45]
         found = False
         max_attempts = 10  # 最多尝试 10 次，防止死循环
         attempt = 0
         
+        context.run_task(
+            "UtilsOCR",
+            pipeline_override={
+                "UtilsOCR": {
+                    "recognition": {
+                        "type": "OCR",
+                        "param": {
+                            "expected": [
+                                "选择",
+                                "队伍"
+                            ],
+                            "roi": [
+                                51,
+                                1,
+                                483,
+                                94
+                            ]
+                        }
+                    },
+                    "action": {
+                        "type": "Click",
+                    }
+                }
+            }
+        )
+
         while attempt < max_attempts:
             attempt += 1
             # 每次循环都重新截屏，获取最新图像
@@ -70,19 +101,35 @@ class TeamSelect(CustomAction):
                     }
                 )
                 print(f"[DEBUG] 已点击目标团队，正在关闭")
-                context.run_action(
-                    "UtilsClick",
-                    click_box,
+                back = context.run_recognition(
+                    "UtilsTemplateMatch",
+                    current_image,
                     pipeline_override={
-                        "UtilsClick": {
-                            "action": {             
+                        "UtilsTemplateMatch": {
+                            "recognition": {
                                 "param": {
-                                    "target": [1192,30,55,55]
+                                    "template": "fight/team_exist.png",
+                                    "threshold": 0.8,
+                                    "roi": [998,4,277,196]
                                 }
                             }
                         }
                     }
                 )
+                if back.best_result:
+                    context.run_action(
+                        "UtilsClick",
+                        back.best_result.box,
+                        pipeline_override={
+                            "UtilsClick": {
+                                "action": {             
+                                    "param": {
+                                        "target": back.best_result.box
+                                    }
+                                }
+                            }
+                        }
+                    )
                 return True
             
             print(f"[DEBUG] 第 {attempt} 次滑动寻找下一支队伍...")

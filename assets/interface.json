@@ -21,8 +21,9 @@
     "agent": {
         "child_exec": "python",
         "child_args": [
-            "sample/python/demo3_agent.py" // 子进程参数。支持相对路径（相对于interface.json所在目录）
-        ]
+            "./agent/main.py" // 子进程参数。支持相对路径（相对于interface.json所在目录）
+        ],
+        "identifier": "MAH" // 连接标识符，需与 AgentServer.start_up() 中的一致
     },
     "controller": [
         {
@@ -35,21 +36,6 @@
             // "display_long_side": 1080, // 默认缩放分辨率的长边长度，与short_side二选一
             "display_raw": false // 是否使用原始分辨率进行截图，与缩放分辨率设置互斥
         },
-        {
-            "name": "Windows",
-            "label": "$电脑端", // 显示名称，支持国际化。所有具有name字段的对象都应添加label字段
-            "description": "通过 Win32 API 连接 Windows 应用程序",
-            "type": "Win32",
-            "win32": {
-                "class_regex": ".*",
-                "window_regex": "Visual Studio",
-                // 截图及控制方式，请根据项目实际情况修改
-                // 文档: https://github.com/MaaXYZ/MaaFramework/blob/main/docs/zh_cn/2.4-%E6%8E%A7%E5%88%B6%E6%96%B9%E5%BC%8F%E8%AF%B4%E6%98%8E.md
-                "screencap": "PrintWindow", // 截图方式
-                "mouse": "PostMessageWithCursorPos", // 鼠标控制方式
-                "keyboard": "PostMessageWithCursorPos" // 键盘控制方式
-            }
-        }
     ],
     "resource": [
         {

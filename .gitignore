@@ -453,3 +453,4 @@ tools/ImageCropper/**/*.png
 *.png
 config
 debug
+data

@@ -1,0 +1,222 @@
+{
+    "Global.AutoCombat": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "AutoCombat",
+                "custom_action_param": "atk_flower.json"
+            }
+        },
+        "next": [
+            "Global.AutoCombat.Replay"
+        ]
+    },
+    "Global.AutoCombat.Replay": {
+        "recognition": {
+            "type": "OCR",
+            "param": {
+                "expected": [
+                    "再次挑战"
+                ]
+            }
+        },
+        "action": {
+            "type": "Click",
+            "param": {}
+        },
+        "post_wait_freezes": {
+            "time": 1000,
+            "target": [
+                1162,
+                610,
+                115,
+                107
+            ],
+            "threshold": 0.999
+        },
+        "next": [
+            "Global.AutoCombat.Replay1",
+            "Global.AutoCombat.Drink1",
+            "Global.AutoCombat.Count"
+        ],
+        "on_error": [
+            "Global.AutoCombat.Back0"
+        ]
+    },
+    "Global.AutoCombat.Count": {
+        "max_hit": 999,
+        "next": [
+            "Global.AutoCombat"
+        ]
+    },
+    "Global.AutoCombat.Replay1": {
+        "max_hit": 1,
+        "recognition": {
+            "type": "TemplateMatch",
+            "param": {
+                "roi": [
+                    192,
+                    116,
+                    894,
+                    535
+                ],
+                "template": [
+                    "fight/ensure.png"
+                ],
+                "threshold": 0.99,
+                "order_by": "Score"
+            }
+        },
+        "action": {
+            "type": "Click",
+            "param": {}
+        },
+        "next": [
+            "Global.AutoCombat.Replay"
+        ]
+    },
+    "Global.AutoCombat.Back0": {
+        "next": [
+            "Global.AutoCombat.Back1"
+        ]
+    },
+    "Global.AutoCombat.Drink1": {
+        "recognition": {
+            "type": "TemplateMatch",
+            "param": {
+                "template": "fight/recovery/apRecoveryAll.png",
+                "order_by": "Score"
+            }
+        },
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "CombatDrink",
+                "custom_action_param": {
+                    "All": 1,
+                    "Half": 1,
+                    "Mini": 1
+                }
+            }
+        },
+        "next": [
+            "Global.AutoCombat.Replay1",
+            "Global.AutoCombat"
+        ],
+        "on_error": [
+            "Global.AutoCombat.Back0"
+        ]
+    },
+    "Global.AutoCombat.SelectSupport": {
+        "pre_wait_freezes": {
+            "time": 1000,
+            "target": [
+                1162,
+                610,
+                115,
+                107
+            ],
+            "threshold": 0.999
+        },
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "SelectSupport",
+                "custom_action_param": "atk_flower.json"
+            }
+        },
+        "next": [
+            "Global.AutoCombat.TeamSelect"
+        ]
+    },
+    "Global.AutoCombat.TeamSelect": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "TeamSelect",
+                "custom_action_param": "3"
+            }
+        },
+        "next": [
+            "Global.AutoCombat.Formation"
+        ]
+    },
+    "Global.AutoCombat.Formation": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "Formation",
+                "custom_action_param": "atk_flower.json"
+            }
+        },
+        "next": [
+            "Global.AutoCombat.Start"
+        ]
+    },
+    "Global.AutoCombat.Start": {
+        "recognition": {
+            "type": "OCR",
+            "param": {
+                "roi": [
+                    1085,
+                    85,
+                    194,
+                    618
+                ],
+                "expected": [
+                    "确定"
+                ]
+            }
+        },
+        "action": {
+            "type": "Click",
+            "param": {}
+        },
+        "next": [
+            "Global.AutoCombat"
+        ]
+    },
+    "Global.AutoCombat.Entry": {
+        "next": [
+            "Global.AutoCombat.PreDrink",
+            "Global.AutoCombat.SelectSupport"
+        ]
+    },
+    "Global.AutoCombat.PreDrink": {
+        "recognition": {
+            "type": "TemplateMatch",
+            "param": {
+                "template": "fight/recovery/apRecoveryAll.png",
+                "order_by": "Score"
+            }
+        },
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "CombatDrink",
+                "custom_action_param": {
+                    "All": 1,
+                    "Half": 1,
+                    "Mini": 1
+                }
+            }
+        },
+        "next": [
+            "Global.AutoCombat.SelectSupport"
+        ]
+    },
+    "Global.AutoCombat.Back1": {
+        "recognition": {
+            "type": "OCR",
+            "param": {
+                "expected": [
+                    "回任务画面"
+                ]
+            }
+        },
+        "action": {
+            "type": "Click",
+            "param": {}
+        }
+    }
+}

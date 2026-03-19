@@ -3,8 +3,9 @@ import json
 import time
 import os
 import copy
+from . import proj_path
 
-DEFAULT_STATE = {
+CN_STATE = {
     "missions": {
         "显示支援者组队画面": {"current": 0, "target": 1, "completed": False},
         "完成攻略3次地城": {"current": 0, "target": 3, "completed": False},
@@ -26,8 +27,11 @@ DEFAULT_STATE = {
     },
 }
 
-STATE_FILE = "data/state.json"
-CHAR_FILE = "data/characters.json"
+DEFAULT_STATE = CN_STATE
+
+# 使用统一的路径管理模块
+STATE_FILE = proj_path.STATE_FILE
+CHAR_FILE = proj_path.CHAR_FILE
 
 
 class IOUtils:
@@ -54,7 +58,7 @@ class IOUtils:
                 # 创建父目录
                 os.makedirs(os.path.dirname(file_path) or ".", exist_ok=True)
                 # 创建文件并写入默认数据
-                default_data = copy.deepcopy(DEFAULT_STATE)
+                default_data = copy.deepcopy(CN_STATE)
                 with open(file_path, "w", encoding="utf-8") as f:
                     json.dump(default_data, f, ensure_ascii=False, indent=4)
                 return default_data
@@ -69,7 +73,7 @@ class IOUtils:
             print(f"[DEBUG] file {file_path} is corrupted, now will create it")
             #
             os.makedirs(os.path.dirname(file_path) or ".", exist_ok=True)
-            default_data = copy.deepcopy(DEFAULT_STATE)
+            default_data = copy.deepcopy(CN_STATE)
             with open(file_path, "w", encoding="utf-8") as f:
                 json.dump(default_data, f, ensure_ascii=False, indent=4)
             # 重新读取文件
@@ -97,12 +101,12 @@ class IOUtils:
 
         match nodename:
             case name if "Missions" in name or "Startup" in name:
-                state["missions"] = copy.deepcopy(DEFAULT_STATE["missions"])
+                state["missions"] = copy.deepcopy(CN_STATE["missions"])
                 # debug
                 print("[DEBUG] missions reset")
                 #
             case name if "Resource" in name:
-                state["resources"] = copy.deepcopy(DEFAULT_STATE["resources"])
+                state["resources"] = copy.deepcopy(CN_STATE["resources"])
                 # 记录重置时的时间戳
                 state["resources"]["AP"]["last_updated"] = time.time()
                 state["resources"]["DP"]["last_updated"] = time.time()
@@ -135,6 +139,39 @@ class IOUtils:
         #
         IOUtils.write_data(state)
         return True
+    
+    @staticmethod
+    def find_target_files(root_path: Path, target_file: str) -> dict:
+        """
+        查找目标文件。支持相对路径和绝对路径。
+        相对路径相对于项目根目录（data_io.py 所在目录的父目录的父目录）
+        """
+        output = {}
+
+        print(f"[DEBUG] Searching for {target_file} in {root_path}...")
+        
+        # 检查路径是否存在
+        if not root_path.exists():
+            print(f"[DEBUG] Search path does not exist: {root_path}")
+            return None
+            
+        files = list(root_path.rglob(target_file))
+        print(f"[DEBUG] {files}")
+        if len(files) != 1:
+            print(f"[DEBUG] Expected 1 file, but found {len(files)}")
+            return None
+        for file in files:
+            # 检查文件是否为空
+            if file.stat().st_size == 0:
+                print(f"[DEBUG] 找到的文件为空: {file}")
+                return None
+            try:
+                with open(file, "r", encoding="utf-8") as f:
+                    output = json.load(f)
+            except json.JSONDecodeError as e:
+                print(f"[DEBUG] JSON解析失败 {file}: {e}")
+                return None
+        return output
 
     # 格式化OCR内容并输出到文件
     @staticmethod

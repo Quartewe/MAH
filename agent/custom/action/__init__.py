@@ -5,7 +5,8 @@ from .resource_record import ResourceRecord
 from .select_support import SelectSupport
 from .team_select import TeamSelect
 from .formation import Formation
-from .auto_fight import AutoFight
+from .auto_combat import AutoCombat
+from .combat_drink import CombatDrink
 
 __all__ = [
     "Debug",
@@ -15,5 +16,6 @@ __all__ = [
     "SelectSupport",
     "TeamSelect",
     "Formation",
-    "AutoFight",
+    "AutoCombat",
+    "CombatDrink",
 ]
