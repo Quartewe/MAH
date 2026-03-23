@@ -206,6 +206,41 @@ jobs:
           python ./install.py ${{ needs.meta.outputs.tag }} ${{ matrix.os }} ${{ matrix.arch }}
           cd ..
 
+      - name: Validate packaged files
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [[ "${{ matrix.os }}" == "android" ]]; then
+            echo "Skip desktop package validation for android"
+            exit 0
+          fi
+
+          required_files=(
+            "install/interface.json"
+            "install/interface_en.json"
+            "install/interface_jp.json"
+            "install/interface_tw.json"
+            "install/interface_zh.json"
+            "install/icon.png"
+            "install/MaaToolkit.dll"
+          )
+
+          missing=0
+          for file in "${required_files[@]}"; do
+            if [[ ! -f "$file" ]]; then
+              echo "[ERROR] missing required file: $file"
+              missing=1
+            fi
+          done
+
+          if [[ $missing -ne 0 ]]; then
+            echo "[ERROR] package validation failed"
+            exit 1
+          fi
+
+          echo "Package validation passed"
+
       - uses: actions/upload-artifact@v4
         with:
           name: MAH-${{ matrix.os }}-${{ matrix.arch }}
