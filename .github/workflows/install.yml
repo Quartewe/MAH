@@ -216,6 +216,23 @@ jobs:
             exit 0
           fi
 
+          toolkit_file=""
+          case "${{ matrix.os }}" in
+            win)
+              toolkit_file="install/MaaToolkit.dll"
+              ;;
+            linux)
+              toolkit_file="install/libMaaToolkit.so"
+              ;;
+            macos)
+              toolkit_file="install/libMaaToolkit.dylib"
+              ;;
+            *)
+              echo "[ERROR] unknown desktop os: ${{ matrix.os }}"
+              exit 1
+              ;;
+          esac
+
           required_files=(
             "install/interface.json"
             "install/interface_en.json"
@@ -223,7 +240,7 @@ jobs:
             "install/interface_tw.json"
             "install/interface_zh.json"
             "install/icon.png"
-            "install/MaaToolkit.dll"
+            "$toolkit_file"
           )
 
           missing=0

@@ -54,27 +54,50 @@ def get_dotnet_platform_tag():
     return platform_tag
 
 
+def resolve_deps_root() -> Path:
+    deps_dir = working_dir / "deps"
+
+    direct_bin = deps_dir / "bin"
+    direct_agent = deps_dir / "share" / "MaaAgentBinary"
+    if direct_bin.exists() and direct_agent.exists():
+        return deps_dir
+
+    for child in sorted(deps_dir.iterdir()):
+        if not child.is_dir():
+            continue
+        child_bin = child / "bin"
+        child_agent = child / "share" / "MaaAgentBinary"
+        if child_bin.exists() and child_agent.exists():
+            return child
+
+    print('[DEBUG] Please download the MaaFramework to "deps" first.')
+    print('[DEBUG] 请先下载 MaaFramework 到 "deps"。')
+    sys.exit(1)
+
+
 def install_deps():
-    if not (working_dir / "deps" / "bin").exists():
-        print('[DEBUG] Please download the MaaFramework to "deps" first.')
-        print('[DEBUG] 请先下载 MaaFramework 到 "deps"。')
-        sys.exit(1)
+    deps_root = resolve_deps_root()
+    deps_bin = deps_root / "bin"
+    deps_agent = deps_root / "share" / "MaaAgentBinary"
 
     if os_name == "android":
         shutil.copytree(
-            working_dir / "deps" / "bin",
+            deps_bin,
             install_path,
             dirs_exist_ok=True,
         )
         shutil.copytree(
-            working_dir / "deps" / "share" / "MaaAgentBinary",
+            deps_agent,
             install_path / "MaaAgentBinary",
             dirs_exist_ok=True,
         )
     else:
+        runtime_native_dir = (
+            install_path / "runtimes" / get_dotnet_platform_tag() / "native"
+        )
         shutil.copytree(
-            working_dir / "deps" / "bin",
-            install_path / "runtimes" / get_dotnet_platform_tag() / "native",
+            deps_bin,
+            runtime_native_dir,
             ignore=shutil.ignore_patterns(
                 "*MaaDbgControlUnit*",
                 "*MaaThriftControlUnit*",
@@ -87,12 +110,12 @@ def install_deps():
             dirs_exist_ok=True,
         )
         shutil.copytree(
-            working_dir / "deps" / "share" / "MaaAgentBinary",
+            deps_agent,
             install_path / "libs" / "MaaAgentBinary",
             dirs_exist_ok=True,
         )
         shutil.copytree(
-            working_dir / "deps" / "bin" / "plugins",
+            deps_bin / "plugins",
             install_path / "plugins" / get_dotnet_platform_tag(),
             dirs_exist_ok=True,
         )
@@ -107,9 +130,24 @@ def install_deps():
             shared_lib_patterns = tuple()
 
         for pattern in shared_lib_patterns:
-            for lib_file in (working_dir / "deps" / "bin").glob(pattern):
+            for lib_file in deps_bin.glob(pattern):
                 if lib_file.is_file():
                     shutil.copy2(lib_file, install_path / lib_file.name)
+
+        toolkit_name = {
+            "win": "MaaToolkit.dll",
+            "linux": "libMaaToolkit.so",
+            "macos": "libMaaToolkit.dylib",
+        }.get(os_name)
+        if toolkit_name:
+            toolkit_sources = [
+                deps_bin / toolkit_name,
+                runtime_native_dir / toolkit_name,
+            ]
+            for toolkit_file in toolkit_sources:
+                if toolkit_file.exists():
+                    shutil.copy2(toolkit_file, install_path / toolkit_name)
+                    break
 
 
 
