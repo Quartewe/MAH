@@ -331,7 +331,7 @@ class GroupAvatarInfo(CustomRecognition):
         context: Context,
         argv: CustomRecognition.AnalyzeArg,
     ) -> CustomRecognition.AnalyzeResult:
-        param = argv.custom_recognition_param
+        param = json.loads(argv.custom_recognition_param)
         
         # 处理参数：可能是字符串（JSON）或字典
         if isinstance(param, str):

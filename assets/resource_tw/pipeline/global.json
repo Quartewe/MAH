@@ -1,0 +1,11 @@
+{
+    "Global.GoBackToHomePage": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "返回"
+                ]
+            }
+        }
+    }
+}

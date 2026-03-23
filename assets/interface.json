@@ -4,20 +4,21 @@
     "interface_version": 2, // ProjectInterface 协议版本号，当前为 2，固定且必须设置
     "languages": { // 多语言支持配置，键为语言代码，值为对应的翻译文件路径
         "zh_cn": "interface_zh.json",
-        "en_us": "interface_en.json"
+        "en_us": "interface_en.json",
+        "ja_jp": "interface_jp.json",
+        "zh_tw": "interface_tw.json"
     },
-    "name": "MyDemo3", // 项目唯一标识符，用作项目ID
-    "label": "$MyDemo3", // 项目显示名称，支持国际化。优先显示label，未设置时显示name
-    "title": "Demo3 v1.0.0", // 窗口标题，Client直接显示该内容不做修饰。默认使用name和version拼接生成，支持国际化
-    "icon": "$demo3.png", // 应用图标文件路径，相对于项目根目录。未设置时使用默认图标
-    "mirrorchyan_rid": "demo3", // MirrorChyan资源包标识符，用于资源管理和分发
-    "mirrorchyan_multiplatform": false, // 是否支持多平台，影响资源包的打包和分发策略
-    "github": "https://github.com/MAA1999/M9A", // 项目GitHub仓库地址，用于版本更新检查和问题反馈
+    "name": "MAH", // 项目唯一标识符，用作项目ID
+    "title": "MAH v1.0.0", // 窗口标题，Client直接显示该内容不做修饰。默认使用name和version拼接生成，支持国际化
+    "icon": "icon.png", // 应用图标文件路径，相对于项目根目录。未设置时使用默认图标
+    "mirrorchyan_rid": "mah", // MirrorChyan资源包标识符，用于资源管理和分发
+    "mirrorchyan_multiplatform": true, // 是否支持多平台，影响资源包的打包和分发策略
+    "github": "https://github.com/Quartewe/MAH", // 项目GitHub仓库地址，用于版本更新检查和问题反馈
     "version": "1.0.0", // 项目版本号，用于版本更新检查和Client显示
-    "contact": "QQ群: 592974962；B站：https://bilibili/xxxx", // 联系方式信息，显示在"关于"页面。支持文件路径、URL或直接文本，内容支持Markdown格式，支持国际化
+    "contact": "$contact_info", // 联系方式信息，显示在"关于"页面。支持文件路径、URL或直接文本，内容支持Markdown格式，支持国际化
     "license": "MIT", // 项目许可证信息，显示在"关于"页面。支持文件路径、URL或直接文本，内容支持Markdown格式，支持国际化
-    "welcome": "欢迎使用MAA!", // 欢迎消息，在用户首次使用时弹窗显示，亦可作为公告使用。支持文件路径、URL或直接文本，内容支持Markdown格式。当内容更新时会再次弹窗，支持国际化
-    "description": "MaaFramework is a framework for building automation applications.", // 项目描述信息，显示在"关于"页面。支持文件路径、URL或直接文本，内容支持Markdown格式，支持国际化
+    "welcome": "$welcome", // 欢迎消息，在用户首次使用时弹窗显示，亦可作为公告使用。支持文件路径、URL或直接文本，内容支持Markdown格式。当内容更新时会再次弹窗，支持国际化
+    "description": "$welcome_description", // 项目描述信息，显示在"关于"页面。支持文件路径、URL或直接文本，内容支持Markdown格式，支持国际化
     "agent": {
         "child_exec": "python",
         "child_args": [
@@ -28,21 +29,18 @@
     "controller": [
         {
             "name": "Android",
-            "label": "$安卓端", // 显示名称，支持国际化。优先显示label，未设置时显示name
-            "description": "通过 ADB 连接安卓设备", // 控制器详细描述。支持文件路径、URL或直接文本，内容支持Markdown格式，支持国际化
-            "icon": "adb.png", // 控制器图标文件路径，相对于项目根目录
+            "description": "Connect to Android devices via ADB", // 控制器详细描述。支持文件路径、URL或直接文本，内容支持Markdown格式，支持国际化
             "type": "Adb",
             "display_short_side": 720, // 默认缩放分辨率的短边长度，用于屏幕适配。与long_side二选一
             // "display_long_side": 1080, // 默认缩放分辨率的长边长度，与short_side二选一
             "display_raw": false // 是否使用原始分辨率进行截图，与缩放分辨率设置互斥
-        },
+        }
     ],
     "resource": [
         {
-            "name": "Official",
-            "label": "$官服资源", // 显示名称，支持国际化。优先显示label，未设置时显示name
-            "description": "官服资源", // 资源详细描述。支持文件路径、URL或直接文本，内容支持Markdown格式，支持国际化
-            "icon": "official.png", // 资源图标文件路径，相对于项目根目录
+            "name": "Official_CN",
+            "label": "Official CN", // 显示名称，支持国际化。优先显示label，未设置时显示name
+            "description": "简中(CHS)", // 资源详细描述。支持文件路径、URL或直接文本，内容支持Markdown格式，支持国际化
             "path": [
                 "resource" // 资源路径，相对于interface.json所在目录
             ],
@@ -51,281 +49,814 @@
             ] // 指定该资源包支持的控制器类型列表。若不指定，则支持所有控制器。当用户选择某控制器时，只有支持该控制器的资源包才会显示
         },
         {
-            "name": "Bilibili",
-            "label": "$B站资源", // 显示名称，支持国际化。优先显示label，未设置时显示name
+            "name": "Official_EN",
+            "label": "Official EN",
+            "description": "English (ENG)",
             "path": [
                 "resource",
-                "resource_bilibili" // 资源路径，相对于interface.json所在目录
+                "resource_en"
+            ],
+            "controller": [
+                "Android"
+            ]
+        },
+        {
+            "name": "Official_TW",
+            "label": "Official TW",
+            "description": "繁体中文 (CHT)",
+            "path": [
+                "resource",
+                "resource_tw"
+            ],
+            "controller": [
+                "Android"
+            ]
+        },
+        {
+            "name": "Official_JP",
+            "label": "Official JP",
+            "description": "日本語 (JPN)",
+            "path": [
+                "resource",
+                "resource_jp"
+            ],
+            "controller": [
+                "Android"
             ]
         }
     ],
     "task": [
         {
-            "name": "收取荒原",
-            "label": "$收取荒原", // 显示名称，支持国际化。优先显示label，未设置时显示name
-            "entry": "Wilderness",
+            "name": "启动游戏",
+            "label": "$start_game", // 显示名称，支持国际化。优先显示label，未设置时显示name
+            "entry": "Startup.Entry",
             "default_check": true, // 是否默认选中该任务。Client初始化时根据该值决定是否勾选
-            "description": "收取荒原资源，若不勾选，则不会执行此任务", // 任务详细描述，帮助用户理解任务功能。支持文件路径、URL或直接文本，内容支持Markdown格式，支持国际化
-            "icon": "wilderness.png" // 任务图标文件路径，相对于项目根目录。用于在用户界面中显示
+            "description": "$start_game_description" // 任务详细描述，帮助用户理解任务功能。支持文件路径、URL或直接文本，内容支持Markdown格式，支持国际化
         },
         {
-            "name": "每日心相（意志解析）",
-            "label": "$每日心相", // 显示名称，支持国际化。优先显示label，未设置时显示name
-            "entry": "Psychube"
-        },
-        {
-            "name": "常规作战",
-            "label": "$常规作战", // 显示名称，支持国际化。优先显示label，未设置时显示name
-            "entry": "Combat",
+            "name": "检查任务进度",
+            "label": "$check_task_progress", // 显示名称，支持国际化。优先显示label，未设置时显示name
+            "entry": "CheckWeeklyMissions.Entry",
+            "default_check": true, // 是否默认选中该任务。Client初始化时根据该值决定是否勾选
+            "description": "$check_task_progress_description", // 任务详细描述，帮助用户理解任务功能。支持文件路径、URL或直接文本，内容支持Markdown格式，支持国际化
             "option": [
-                "作战关卡",
-                "复现次数",
-                "刷完全部体力"
+                "show_progress"
             ]
         },
         {
-            "name": "活动：绿湖噩梦 17 艰难（活动已结束）",
-            "label": "$活动任务", // 显示名称，支持国际化。优先显示label，未设置时显示name
-            "entry": "ANightmareAtGreenLake",
-            "resource": [
-                "Official"
-            ], // 指定该任务支持的资源包列表。若不指定，则在所有资源包中都显示。当用户选择某资源包时，只有支持该资源包的任务才会显示
+            "name": "地城作战",
+            "label": "$dungeon_combat", // 显示名称，支持国际化。优先显示label，未设置时显示name
+            "default_check": true,
+            "description": "$dungeon_combat_description",
+            "entry": "Dungeon.Entry",
             "option": [
-                "复现次数",
-                "刷完全部体力"
-            ],
-            "pipeline_override": {
-                "EnterTheShow": {
-                    "next": "ANightmareAtGreenLake"
-                },
-                "TargetStageName": {
-                    "expected": "17"
-                },
-                "StageDifficulty": {
-                    "next": "ActivityStageDifficulty"
-                }
-            }
+                "choose_stage_dungeon", // 选项列表，元素为字符串，对应外层option中定义的配置项
+                "play_times", // 选项列表，元素为字符串，对应外层option中定义的配置项
+                "use_DP_potion",
+                "select_team",
+                "json_load"
+            ]
+        },
+        {
+            "name": "体力作战",
+            "label": "$AP_combat", // 显示名称，支持国际化。优先显示label，未设置时显示name
+            "default_check": true,
+            "description": "$AP_combat_description",
+            "entry": "Combat.Entry",
+            "option": [
+                "choose_stage_AP",
+                "play_times",
+                "use_AP_potion",
+                "select_team",
+                "json_load"
+            ]
         },
         {
             "name": "领取奖励",
-            "label": "$领取奖励", // 显示名称，支持国际化。优先显示label，未设置时显示name
-            "entry": "Awards"
+            "label": "$claim_rewards", // 显示名称，支持国际化。优先显示label，未设置时显示name
+            "default_check": true,
+            "description": "$claim_rewards_description",
+            "entry": "Reward.Entry"
         }
     ],
     "option": {
-        "作战关卡": {
-            "type": "select", // 配置项类型。select为下拉选项框，用户从预定义选项中选择
-            "label": "$选择作战关卡",
-            "description": "选择要刷的关卡", // 配置项详细描述。支持文件路径、URL或直接文本，内容支持Markdown格式，支持国际化
-            "cases": [
+        "show_progress": {
+            "type": "show",
+            "label": "$current_progress", // 显示名称，支持国际化。优先显示label，未设置时显示name
+            "description": "$current_progress_description", // 选项详细描述。支持文件路径、URL或直接文本，内容支持Markdown格式，支持国际化
+            "shows": [
                 {
-                    "name": "3-9 厄险（百灵百验鸟）",
-                    "label": "$3-9厄险", // 显示名称，支持国际化。优先显示label，未设置时显示name
-                    "description": "刷百灵鸟", // 选项详细描述。支持文件路径、URL或直接文本，内容支持Markdown格式，支持国际化
-                    "icon": "百灵鸟.png", // 选项图标文件路径，相对于项目根目录
-                    "option": [ // 子配置项列表。只有用户选中当前选项时才显示。子选项同样在外层option中定义，支持无限嵌套
-                        "使用理智药",
-                        "刷完xxx"
-                    ],
-                    "pipeline_override": {
-                        "EnterTheShow": {
-                            "next": "MainChapter_3"
-                        },
-                        "TargetStageName": {
-                            "expected": "09"
-                        },
-                        "StageDifficulty": {
-                            "next": "StageDifficulty_Hard"
-                        }
-                    }
-                },
-                {
-                    "name": "4-20 厄险（双头形骨架）",
-                    "label": "$4-20厄险", // 显示名称，支持国际化。优先显示label，未设置时显示name
-                    "pipeline_override": {
-                        "EnterTheShow": {
-                            "next": "MainChapter_4"
-                        },
-                        "TargetStageName": {
-                            "expected": "20"
-                        },
-                        "StageDifficulty": {
-                            "next": "StageDifficulty_Hard"
-                        }
-                    }
+                    "name": "当前进度",
+                    "label": "$current_progress_show", // 显示名称，支持国际化。优先显示label，未设置时显示name
+                    "description": "$current_progress_show_description", // 描述，应支持 文件名、URL、字符串，同时内容支持 markdown，支持国际化
+                    "path": "$current_progress_show_path", // 显示内容的数据来源路径，支持从Agent返回的数据中提取显示。路径格式为"{key1.key2...}"，对应数据中的嵌套结构
+                    "mode": "auto"
                 }
             ]
         },
-        "自定义关卡": {
+        "choose_stage_dungeon": {
+            "type": "select", // 配置项类型。select为下拉选项框，用户从预定义选项中选择
+            "label": "$select_stage", // 显示名称，支持国际化。优先显示label，未设置时显示name
+            "description": "$select_stage_description", // 配置项详细描述。支持文件路径、URL或直接文本，内容支持Markdown格式，支持国际化
+            // "group": "basic", // 分组标识：basic（基础设置）/ advanced（进阶设置）
+            "cases": [
+                {
+                    "name": "神宿学园旧校舍",
+                    "label": "$shinjuku_school", // 显示名称，支持国际化。优先显示label，未设置时显示name
+                    "description": "$shinjuku_school_description", // 选项详细描述。支持文件路径、URL或直接文本，内容支持Markdown格式，支持国际化
+                    "pipeline_override": {
+                        "Dungeon.Change2": {
+                            "next": "Dungeon.Shinjuku.Entry"
+                        }
+                    }
+                },
+                {
+                    "name": "池袋地下大迷宫",
+                    "label": "$ikebukuro_dungeon", // 显示名称，支持国际化。优先显示label，未设置时显示name
+                    "description": "$ikebukuro_dungeon_description", // 选项详细描述。支持文件路径、URL或直接文本，内容支持Markdown格式，支持国际化
+                    "pipeline_override": {
+                        "Dungeon.Change2": {
+                            "next": "Dungeon.Ikebukuro.Entry"
+                        }
+                    }
+                },
+                {
+                    "name": "青山陵园地下墓地",
+                    "label": "$aoyama_cemetery", // 显示名称，支持国际化。优先显示label，未设置时显示name
+                    "description": "$aoyama_cemetery_description", // 选项详细描述。支持文件路径、URL或直接文本，内容支持Markdown格式，支持国际化
+                    "pipeline_override": {
+                        "Dungeon.Change2": {
+                            "next": "Dungeon.Aoyama.Entry"
+                        }
+                    }
+                },
+                {
+                    "name": "五色结界地下灵场",
+                    "label": "$barrier_temple", // 显示名称，支持国际化。优先显示label，未设置时显示name
+                    "description": "$barrier_temple_description", // 选项详细描述。支持文件路径、URL或直接文本，内容支持Markdown格式，支持国际化
+                    "pipeline_override": {
+                        "Dungeon.Change2": {
+                            "next": "Dungeon.Barrier.Entry"
+                        }
+                    }
+                },
+                {
+                    "name": "自定义地城",
+                    "label": "$custom_stage", // 显示名称，支持国际化。优先显示label，未设置时显示name
+                    "description": "$custom_stage_description", // 选项详细描述。支持文件路径、URL或直接文本，内容支持Markdown格式，支持国际化
+                    // 该选项包含子配置项，用户选择该选项后需要进一步输入配置参数才能执行任务
+                    "option": [
+                        "custom_stage_dungeon"
+                    ]
+                }
+            ]
+        },
+        "custom_stage_dungeon": {
             "type": "input", // 用户输入类型
-            "label": "自定义关卡",
-            "description": "自己选打什么关", // 描述，应支持 文件名、URL、字符串，同时内容支持 markdown，支持国际化
-            "icon": "扳手.png", // 图标，可选
+            "label": "$custom_stage", // 显示名称，支持国际化。优先显示label，未设置时显示name
+            "description": "$custom_stage_description", // 描述，应支持 文件名、URL、字符串，同时内容支持 markdown，支持国际化
+            // "group": "basic", // 分组标识
             "inputs": [
                 {
-                    "name": "章节号",
-                    "label": "$章节号", // 显示名称，支持国际化。优先显示label，未设置时显示name
-                    "description": "关卡章节号，用阿拉伯数字表示", // 描述，应支持 文件名、URL、字符串，同时内容支持 markdown，支持国际化
-                    "default": "4",
-                    "pipeline_type": "string", // 拼接到 pipeline_override 中的类型
-                    "verify": "^\\d+$" // 正则表达式校验用户输入
-                },
-                {
-                    "name": "难度",
-                    "label": "$难度", // 显示名称，支持国际化。优先显示label，未设置旰显示name
-                    "default": "Hard",
-                    "pipeline_type": "string",
-                    "verify": "^(Normal|Hard)$" // 正则表达式校验用户输入
-                },
-                {
-                    "name": "超时时间",
-                    "label": "$超时时间", // 显示名称，支持国际化。优先显示label，未设置时显示name
-                    "default": "20000",
-                    "pipeline_type": "int",
-                    "verify": "^\\d+$" // 正则表达式校验用户输入
+                    "name": "自定义关卡",
+                    "label": "$custom_stage_input", // 显示名称，支持国际化。优先显示label，未设置时显示name
+                    "description": "$custom_stage_input_description", // 描述，应支持 文件名、URL、字符串，同时内容支持 markdown，支持国际化
+                    "default": "",
+                    "pipeline_type": "string" // 拼接到 pipeline_override 中的类型
                 }
             ],
             "pipeline_override": {
-                "EnterTheShow": {
-                    "next": "MainChapter_{章节号}",
-                    "timeout": "{超时时间}" // 这里会被拼接成 "timeout": 20000
+                "Dungeon.Change2": {
+                    "next": "Dungeon.Activity.Entry"
                 },
-                "TargetStageName": {
-                    "expected": "{关卡号}"
-                },
-                "StageDifficulty": {
-                    "next": "StageDifficulty_{难度}"
+                "Dungeon.Activity.Choice": {
+                    "recognition": {
+                        "param": {
+                            "expected": "{自定义关卡}"
+                        }
+                    }
                 }
             }
         },
-        "复现次数": {
-            "description": "打几次", // 描述，应支持 文件名、URL、字符串，同时内容支持 markdown，支持国际化
-            "icon": "times.png", // 图标，可选
+        "play_times": {
+            "type": "input",
+            // "group": "basic", // 分组标识
+            "description": "$play_times_description", // 描述，应支持 文件名、URL、字符串，同时内容支持 markdown，支持国际化
+            "inputs": [
+                {
+                    "name": "挑战次数",
+                    "label": "$play_times_input", // 显示名称，支持国际化。优先显示label，未设置时显示name
+                    "description": "$play_times_input_description", // 描述，应支持 文件名、URL、字符串，同时内容支持 markdown，支持国际化
+                    "default": "999",
+                    "pipeline_type": "int", // 拼接到 pipeline_override 中的类型
+                    "verify": "^(0|[1-9]\\d*)$"
+                }
+            ],
+            "pipeline_override": {
+                "Global.AutoCombat.Count": {
+                    "max_hit": "{挑战次数}"
+                }
+            }
+        },
+        "use_AP_potion": {
+            "type": "input", // switch类型示例
+            "label": "$use_AP_potion", // 显示名称，支持国际化。优先显示label，未设置时显示name
+            // "group": "basic", // 分组标识
+            "description": "$use_AP_potion_description", // 描述，应支持 文件名、URL、字符串，同时内容支持 markdown，支持国际化
+            "inputs": [
+                {
+                    "name": "全体力",
+                    "label": "$all_stamina", // 显示名称，支持国际化。优先显示label，未设置时显示name
+                    "description": "$all_stamina_description", // 描述，应支持 文件名、URL、字符串，同时内容支持 markdown，支持国际化
+                    "default": "0",
+                    "pipeline_type": "int", // 拼接到 pipeline_override 中的类型
+                    "verify": "^(0|[1-9]\\d*)$"
+                },
+                {
+                    "name": "半体力",
+                    "label": "$half_stamina", // 显示名称，支持国际化。优先显示label，未设置时显示name
+                    "description": "$half_stamina_description", // 描述，应支持 文件名、URL、字符串，同时内容支持 markdown，支持国际化
+                    "default": "0",
+                    "pipeline_type": "int", // 拼接到 pipeline_override 中的类型
+                    "verify": "^(0|[1-9]\\d*)$"
+                },
+                {
+                    "name": "小体力",
+                    "label": "$mini_stamina", // 显示名称，支持国际化。优先显示label，未设置时显示name
+                    "description": "$mini_stamina_description", // 描述，应支持 文件名、URL、字符串，同时内容支持 markdown，支持国际化
+                    "default": "0",
+                    "pipeline_type": "int", // 拼接到 pipeline_override 中的类型
+                    "verify": "^(0|[1-9]\\d*)$"
+                }
+            ],
+            "pipeline_override": {
+                "Global.AutoCombat.Drink1": {
+                    "action": {
+                        "param": {
+                            "custom_action_param": {
+                                "All": "{全体力}",
+                                "Half": "{半体力}",
+                                "Mini": "{小体力}"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "use_DP_potion": {
+            "type": "input", // switch类型示例
+            "label": "$use_DP_potion", // 显示名称，支持国际化。优先显示label，未设置时显示name
+            // "group": "basic", // 分组标识
+            "description": "$use_DP_potion_description", // 描述，应支持 文件名、URL、字符串，同时内容支持 markdown，支持国际化
+            "inputs": [
+                {
+                    "name": "DP",
+                    "label": "$dp_potion", // 显示名称，支持国际化。优先显示label，未设置时显示name
+                    "description": "$dp_potion_description", // 描述，应支持 文件名、URL、字符串，同时内容支持 markdown，支持国际化
+                    "default": "0",
+                    "pipeline_type": "int", // 拼接到 pipeline_override 中的类型
+                    "verify": "^(0|[1-9]\\d*)$"
+                }
+            ],
+            "pipeline_override": {
+                "Global.AutoCombat.Drink1": {
+                    "action": {
+                        "param": {
+                            "custom_action_param": {
+                                "Ranpoil": "{DP}"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "choose_stage_AP": {
+            "type": "select", // 配置项类型。select为下拉选项框，用户从预定义选项中选择
+            "label": "$select_stage", // 显示名称，支持国际化。优先显示label，未设置时显示name
+            // "group": "basic", // 分组标识
+            "description": "$select_stage_description", // 配置项详细描述。支持文件路径、URL或直接文本，内容支持Markdown格式，支持国际化
             "cases": [
                 {
-                    "name": "x1",
-                    "label": "$1次", // 显示名称，支持国际化。优先显示label，未设置时显示name
-                    "description": "打1次", // 描述，应支持 文件名、URL、字符串，同时内容支持 markdown，支持国际化
-                    "icon": "once.png", // 图标，可选
+                    "name": "14章ATK花本",
+                    "label": "$14_atk", // 显示名称，支持国际化。优先显示label，未设置时显示name
+                    "description": "$14_atk_description", // 选项详细描述。支持文件路径、URL或直接文本，内容支持Markdown格式，支持国际化
                     "pipeline_override": {
-                        "SetReplaysTimes": {
-                            "expected": "1"
+                        "Combat.Entry": {
+                            "next": "Flower.Entry"
+                        },
+                        "Flower.Go1": {
+                            "next": "Flower.Select.ATK"
                         }
                     }
                 },
                 {
-                    "name": "x2",
-                    "label": "$2次", // 显示名称，支持国际化。优先显示label，未设置时显示name
+                    "name": "14章DEF花本",
+                    "label": "$14_def", // 显示名称，支持国际化。优先显示label，未设置时显示name
+                    "description": "$14_def_description", // 选项详细描述。支持文件路径、URL或直接文本，内容支持Markdown格式，支持国际化
                     "pipeline_override": {
-                        "SetReplaysTimes": {
-                            "expected": "2"
+                        "Combat.Entry": {
+                            "next": "Flower.Entry"
+                        },
+                        "Flower.Go1": {
+                            "next": "Flower.Select.DEF"
                         }
                     }
                 },
                 {
-                    "name": "x3",
-                    "label": "$3次", // 显示名称，支持国际化。优先显示label，未设置时显示name
+                    "name": "金币n3",
+                    "label": "$coin_n3", // 显示名称，支持国际化。优先显示label，未设置时显示name
+                    "description": "$coin_n3_description", // 选项详细描述。支持文件路径、URL或直接文本，内容支持Markdown格式，支持国际化
                     "pipeline_override": {
-                        "SetReplaysTimes": {
-                            "expected": "3"
+                        "Combat.Entry": {
+                            "next": "DailyRes.Entry"
+                        },
+                        "DailyRes.Go1": {
+                            "next": "DailyRes.Coin.Entry"
                         }
                     }
                 },
                 {
-                    "name": "x4",
-                    "label": "$4次", // 显示名称，支持国际化。优先显示label，未设置时显示name
+                    "name": "经验n3",
+                    "label": "$exp_n3", // 显示名称，支持国际化。优先显示label，未设置时显示name
+                    "description": "$exp_n3_description", // 选项详细描述。支持文件路径、URL或直接文本，内容支持Markdown格式，支持国际化
                     "pipeline_override": {
-                        "SetReplaysTimes": {
-                            "expected": "4"
+                        "Combat.Entry": {
+                            "next": "DailyRes.Entry"
+                        },
+                        "DailyRes.Go1": {
+                            "next": "DailyRes.Exp.Entry"
+                        }
+                    }
+                },
+                {
+                    "name": "技能n3",
+                    "label": "$skill_n3", // 显示名称，支持国际化。优先显示label，未设置时显示name
+                    "description": "$skill_n3_description", // 选项详细描述。支持文件路径、URL或直接文本，内容支持Markdown格式，支持国际化
+                    "pipeline_override": {
+                        "Combat.Entry": {
+                            "next": "DailyRes.Entry"
+                        },
+                        "DailyRes.Go1": {
+                            "next": "DailyRes.Skill.Entry"
+                        }
+                    }
+                },
+                {
+                    "name": "自定义每日任务",
+                    "label": "$custom_stage_AP", // 显示名称，支持国际化。优先显示label，未设置时显示name
+                    "description": "$custom_stage_AP_description", // 选项详细描述。支持文件路径、URL或直接文本，内容支持Markdown格式，支持国际化
+                    // 该选项包含子配置项，用户选择该选项后需要进一步输入配置参数才能执行任务
+                    "option": [
+                        "custom_stage_AP"
+                    ]
+                },
+                {
+                    "name": "活动关卡",
+                    "label": "$activity_stage", // 显示名称，支持国际化。优先显示label，未设置时显示name
+                    "description": "$activity_stage_description", // 选项详细描述。支持文件路径、URL或直接文本，内容支持Markdown格式，支持国际化
+                    // 该选项包含子配置项，用户选择该选项后需要进一步输入配置参数才能执行任务
+                    "option": [
+                        "custom_stage_Activity"
+                    ]
+                }
+            ]
+        },
+        "custom_stage_AP": {
+            "type": "input",
+            "label": "$custom_stage_AP", // 显示名称，支持国际化。优先显示label，未设置时显示name
+            "description": "$custom_stage_AP_description", // 描述，应支持 文件名、URL、字符串，同时内容支持 markdown，支持国际化
+            // "group": "basic", // 分组标识
+            "inputs": [
+                {
+                    "name": "关卡名称关键词",
+                    "label": "$custom_stage_input", // 显示名称，支持国际化。优先显示label，未设置时显示name
+                    "description": "$custom_stage_input_description", // 描述，应支持 文件名、URL、字符串，同时内容支持 markdown，支持国际化
+                    "default": "",
+                    "pipeline_type": "string", // 拼接到 pipeline_override 中的类型
+                    "verify": "^(?!\\d+$).+$"
+                },
+                {
+                    "name": "难度关键词",
+                    "label": "$difficulty_input",
+                    "description": "$difficulty_input_description",
+                    "default": "",
+                    "pipeline_type": "string",
+                    "verify": "^(?!\\d+$).+$"
+                }
+            ],
+            "pipeline_override": {
+                "DailyRes.Custom.Entry": {
+                    "action": {
+                        "param": {
+                            "custom_action_param": {
+                                "name": "{关卡名称关键词}",
+                                "difficulty": "{难度关键词}"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "custom_stage_Activity": {
+            "type": "input",
+            // "group": "basic", // 分组标识
+            "label": "$custom_stage_activity",
+            "description": "$custom_stage_activity_description",
+            "inputs": [
+                {
+                    "name": "兑换物种类",
+                    "label": "$item_choice",
+                    "description": "$item_choice_description",
+                    "default": "",
+                    "pipeline_type": "string",
+                    "verify": "^(?!\\d+$).+$"
+                },
+                {
+                    "name": "难度",
+                    "label": "$difficulty",
+                    "description": "$difficulty_description",
+                    "default": "",
+                    "pipeline_type": "string",
+                    "verify": "^(?!\\d+$).+$"
+                }
+            ],
+            "pipeline_override": {
+                "Combat.Entry": {
+                    "next": "Activity.Entry"
+                },
+                "Activity.Select": {
+                    "recognition": {
+                        "param": {
+                            "custom_action_param": {
+                                "name": "{兑换物种类}",
+                                "difficulty": "{难度}"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "json_load": {
+            "type": "select",
+            "label": "$json_load", // 显示名称，支持国际化。优先显示label，未设置时显示name
+            "description": "$json_load_description", // 配置项详细描述。支持文件路径
+            "cases": [
+                {
+                    "name": "统一从选择的json文件中自动获取",
+                    "label": "$select_json", // 显示名称，支持国际化。优先显示label，未设置时显示name
+                    "description": "$select_json_description", // 选项详细描述。支持文件路径、URL或直接文本，内容支持Markdown格式，支持国际化
+                    "option": [
+                        "select_json"
+                    ]
+                },
+                {
+                    "name": "自定义选择组合",
+                    "label": "$custom_select_json", // 显示名称，支持国际化。优先显示label，未设置时显示name
+                    "description": "$custom_select_json_description", // 选项详细描述。支持文件路径
+                    "option": [
+                        "select_support",
+                        "select_formation",
+                        "select_combat_list"
+                    ]
+                }
+            ]
+        },
+        "select_json": {
+            "type": "input",
+            "label": "$select_json", // 显示名称，支持国际化。优先显示label，未设置时显示name
+            "description": "$select_json_description", // 描述，应支持 文件名、URL、
+            "inputs": [
+                {
+                    "name": "全部文件名",
+                    "label": "$json_path", // 显示名称，支持国际化。优先显示label，未设置时显示name
+                    "description": "$json_path_description", // 描述，应支持 文件名、URL、字符串，同时内容支持 markdown，支持国际化
+                    "default": "",
+                    "pipeline_type": "string", // 拼接到 pipeline_override 中的类型
+                    "verify": ".+\\.json$"
+                }
+            ],
+            "pipeline_override": {
+                "Global.AutoCombat.SelectSupport": {
+                    "action": {
+                        "param": {
+                            "custom_action_param": "{全部文件名}"
+                        }
+                    }
+                },
+                "Global.AutoCombat.Formation": {
+                    "action": {
+                        "param": {
+                            "custom_action_param": "{全部文件名}"
+                        }
+                    }
+                },
+                "Global.AutoCombat": {
+                    "action": {
+                        "param": {
+                            "custom_action_param": "{全部文件名}"
+                        }
+                    }
+                }
+            }
+        },
+        "select_support": {
+            "type": "select",
+            // "group": "advanced", // 分组标识
+            "label": "$select_support", // 显示名称，支持国际化。优先显示label，未设置时显示name
+            "description": "$select_support_description", // 配置项详细描述。支持文件路径、URL或直接文本，内容支持Markdown格式，支持国际化
+            "cases": [
+                {
+                    "name": "从选择的json文件中自动获取",
+                    "label": "$select_from_list", // 显示名称，支持国际化。优先显示label，未设置时显示name
+                    "description": "$select_from_list_description", // 选项详细描述。支持文件路径、URL或直接文本，内容支持Markdown格式，支持国际化
+                    "option": [
+                        "select_json_support"
+                    ]
+                },
+                {
+                    "name": "自定义选择组合",
+                    "label": "$custom_select", // 显示名称，支持国际化。优先显示label，未设置时显示name
+                    "description": "$custom_select_description", // 选项详细描述。支持文件路径、URL或直接文本，内容支持Markdown格式，支持国际化
+                    // 该选项包含子配置项，用户选择该选项后需要进一步输入配置参数才能执行任务
+                    "option": [
+                        "select_support_notlist_basic_info",
+                        "select_support_notlist"
+                    ]
+                }
+            ]
+        },
+        "select_json_support": {
+            "type": "input",
+            "label": "$select_json", // 显示名称，支持国际化。优先显示label，未设置时显示name
+            "description": "$select_json_description", // 描述，应支持 文件名、URL、
+            "inputs": [
+                {
+                    "name": "助战文件名",
+                    "label": "$json_path", // 显示名称，支持国际化。优先显示label，未设置时显示name
+                    "description": "$json_path_description", // 描述，应支持 文件名、URL、字符串，同时内容支持 markdown，支持国际化
+                    "default": "",
+                    "pipeline_type": "string", // 拼接到 pipeline_override 中的类型
+                    "verify": ".+\\.json$"
+                }
+            ],
+            "pipeline_override": {
+                "Global.AutoCombat.SelectSupport": {
+                    "action": {
+                        "param": {
+                            "custom_action_param": "{助战文件名}"
+                        }
+                    }
+                }
+            }
+        },
+        "select_support_notlist_basic_info": {
+            "type": "input",
+            "label": "$basic_info",
+            "description": "$basic_info_description",
+            "inputs": [
+                {
+                    "name": "name",
+                    "label": "$name",
+                    "description": "$name_description",
+                    "default": "",
+                    "pipeline_type": "string",
+                    "verify": ".+"
+                },
+                {
+                    "name": "id",
+                    "label": "$id",
+                    "description": "$id_description",
+                    "default": "",
+                    "pipeline_type": "int",
+                    "verify": "^(0|[1-9]\\d*)$"
+                },
+                {
+                    "name": "S.A.Lv",
+                    "label": "$S.A.Lv",
+                    "description": "$S.A.Lv_description",
+                    "default": "",
+                    "pipeline_type": "int",
+                    "verify": "^(0|[1-9]\\d*)$"
+                },
+                {
+                    "name": "AR",
+                    "label": "$AR",
+                    "description": "$AR_description",
+                    "default": "",
+                    "pipeline_type": "string",
+                    "verify": ".+"
+                }
+            ],
+            "pipeline_override": {
+                "Global.AutoCombat.SelectSupport": {
+                    "action": {
+                        "param": {
+                            "name": "{name}",
+                            "id": "{id}",
+                            "S.A.Lv": "{S.A.Lv}",
+                            "AR": "{AR}"
+                        }
+                    }
+                }
+            }
+        },
+        "select_support_notlist": {
+            "type": "select", // 复选框类型示例，用户可以勾选多个选项
+            // "group": "advanced", // 分组标识
+            "label": "$select_support_distinct", // 显示名称，支持国际化。优先显示label，未设置时显示name
+            "description": "$select_support_distinct_description", // 配置项详细描述。支持文件路径
+            "cases": [
+                {
+                    "name": "数值筛选",
+                    "label": "$template_A",
+                    "description": "$template_A_description",
+                    "option": [
+                        "A"
+                    ],
+                    "pipeline_override": {
+                        "Global.AutoCombat.SelectSupport": {
+                            "action": {
+                                "param": {
+                                    "Level": "{Level}",
+                                    "Skill": "{Skill}",
+                                    "ATK": "{ATK}",
+                                    "HP": "{HP}"
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "种子筛选",
+                    "label": "$template_B",
+                    "description": "$template_B_description",
+                    "option": [
+                        "B"
+                    ],
+                    "pipeline_override": {
+                        "Global.AutoCombat.SelectSupport": {
+                            "action": {
+                                "param": {
+                                    "SLevel": "{SLevel}",
+                                    "SSkill": "{SSkill}",
+                                    "SATK": "{SATK}",
+                                    "SHP": "{SHP}"
+                                }
+                            }
                         }
                     }
                 }
             ]
         },
-        "刷完全部体力": {
-            "type": "switch", // switch类型，Yes or No 二选一
-            "label": "$刷完全部体力",
-            "description": "是否刷完全部体力",
-            "cases": [
+        "A": {
+            "type": "input",
+            "label": "$template_A",
+            "description": "$template_A_description",
+            "inputs": [
                 {
-                    "name": "Yes",
-                    "label": "$是", // 显示名称，支持国际化。优先显示label，未设置时显示name
-                    "pipeline_override": {
-                        "AllIn": {
-                            "enabled": true
-                        }
-                    }
+                    "name": "输入等级",
+                    "label": "$level",
+                    "description": "$level_description",
+                    "default": "",
+                    "pipeline_type": "int",
+                    "verify": "^(0|[1-9]\\d*)$"
                 },
                 {
-                    "name": "No",
-                    "label": "$否", // 显示名称，支持国际化。优先显示label，未设置时显示name
-                    "pipeline_override": {
-                        "AllIn": {
-                            "enabled": false
-                        }
-                    }
+                    "name": "输入技能等级",
+                    "label": "$Skill",
+                    "description": "$Skill_description",
+                    "default": "",
+                    "pipeline_type": "int",
+                    "verify": "^(0|[1-9]\\d*)$"
+                },
+                {
+                    "name": "输入攻击力",
+                    "label": "$atk",
+                    "description": "$atk_description",
+                    "default": "",
+                    "pipeline_type": "int",
+                    "verify": "^(0|[1-9]\\d*)$"
+                },
+                {
+                    "name": "输入生命值",
+                    "label": "$hp",
+                    "description": "$hp_description",
+                    "default": "",
+                    "pipeline_type": "int",
+                    "verify": "^(0|[1-9]\\d*)$"
                 }
             ]
         },
-        "使用理智药": {
-            "type": "switch", // switch类型示例
-            "label": "$使用理智药",
-            "description": "体力不足时是否使用理智药",
-            "cases": [
+        "B": {
+            "type": "input",
+            "label": "$template_B",
+            "description": "$template_B_description",
+            "inputs": [
                 {
-                    "name": "Yes",
-                    "label": "$使用",
-                    "pipeline_override": {
-                        "UseSanityPotion": {
-                            "enabled": true
-                        }
-                    }
+                    "name": "输入种子等级",
+                    "label": "$SLevel",
+                    "description": "$SLevel_description",
+                    "default": "",
+                    "pipeline_type": "int",
+                    "verify": "^(0|[1-9]\\d*)$"
                 },
                 {
-                    "name": "No",
-                    "label": "$不使用",
-                    "pipeline_override": {
-                        "UseSanityPotion": {
-                            "enabled": false
-                        }
-                    }
+                    "name": "输入种子技能等级",
+                    "label": "$SSkill",
+                    "description": "$SSkill_description",
+                    "default": "",
+                    "pipeline_type": "int",
+                    "verify": "^(0|[1-9]\\d*)$"
+                },
+                {
+                    "name": "输入种子攻击力",
+                    "label": "$SATK",
+                    "description": "$SATK_description",
+                    "default": "",
+                    "pipeline_type": "int",
+                    "verify": "^(0|[1-9]\\d*)$"
+                },
+                {
+                    "name": "输入种子生命值",
+                    "label": "$SHP",
+                    "description": "$SHP_description",
+                    "default": "",
+                    "pipeline_type": "int",
+                    "verify": "^(0|[1-9]\\d*)$"
                 }
             ]
         },
-        "刷完xxx": {
-            "type": "select", // 子配置项示例
-            "label": "$刷完后操作",
-            "description": "刷完关卡后执行的操作",
-            "default_case": "返回主界面",
-            "cases": [
+        "select_team": {
+            "type": "input",
+            "label": "$select_team",
+            "description": "$select_team_description",
+            "inputs": [
                 {
-                    "name": "返回主界面",
-                    "label": "$返回主界面",
-                    "pipeline_override": {
-                        "AfterFarming": {
-                            "next": "ReturnToMainMenu"
-                        }
-                    }
-                },
-                {
-                    "name": "继续战斗",
-                    "label": "$继续战斗",
-                    "pipeline_override": {
-                        "AfterFarming": {
-                            "next": "ContinueBattle"
-                        }
-                    }
-                },
-                {
-                    "name": "退出游戏",
-                    "label": "$退出游戏",
-                    "pipeline_override": {
-                        "AfterFarming": {
-                            "next": "ExitGame"
+                    "name": "输入队伍ID",
+                    "label": "$team_id_input",
+                    "description": "$team_id_input_description",
+                    "default": "",
+                    "pipeline_type": "int",
+                    "verify": "^([1-9]|1[0-5])$"
+                }
+            ],
+            "pipeline_override": {
+                "Global.AutoCombat.TeamSelect": {
+                    "action": {
+                        "param": {
+                            "custom_action_param": "{输入队伍ID}"
                         }
                     }
                 }
-            ]
+            }
+        },
+        "select_formation": {
+            "type": "input",
+            "label": "$select_formation", // 显示名称，支持国际化。优先显示label，未设置时显示name
+            "description": "$select_formation_description", // 描述，应支持 文件名、URL、
+            "inputs": [
+                {
+                    "name": "编队文件名",
+                    "label": "$json_path", // 显示名称，支持国际化。优先显示label，未设置时显示name
+                    "description": "$json_path_description", // 描述，应支持 文件名、URL、字符串，同时内容支持 markdown，支持国际化
+                    "default": "",
+                    "pipeline_type": "string", // 拼接到 pipeline_override 中的类型
+                    "verify": ".+\\.json$"
+                }
+            ],
+            "pipeline_override": {
+                "Global.AutoCombat.Formation": {
+                    "action": {
+                        "param": {
+                            "custom_action_param": "{编队文件名}"
+                        }
+                    }
+                }
+            }
+        },
+        "select_combat_list": {
+            "type": "input",
+            "label": "$select_combat_list", // 显示名称，支持国际化。优先显示label，未设置时显示name
+            "description": "$select_combat_list_description", // 描述，应支持 文件名、URL、
+            "inputs": [
+                {
+                    "name": "战斗列表文件名",
+                    "label": "$json_path", // 显示名称，支持国际化。优先显示label，未设置时显示name
+                    "description": "$json_path_description", // 描述，应支持 文件名、URL、字符串，同时内容支持 markdown，支持国际化
+                    "default": "",
+                    "pipeline_type": "string", // 拼接到 pipeline_override 中的类型
+                    "verify": ".+\\.json$"
+                }
+            ],
+            "pipeline_override": {
+                "Global.AutoCombat": {
+                    "action": {
+                        "param": {
+                            "custom_action_param": "{战斗列表文件名}"
+                        }
+                    }
+                }
+            }
         }
     }
 }

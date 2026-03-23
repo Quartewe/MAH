@@ -1,0 +1,20 @@
+{
+    "ShowSupporterScreen.Completed": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "サポ一卜編成"
+                ]
+            }
+        }
+    },
+    "ShowSupporterScreen.GoBack": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "戻る"
+                ]
+            }
+        }
+    }
+}

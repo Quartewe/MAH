@@ -1,0 +1,56 @@
+{
+    "Reward.Click": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "任務"
+                ]
+            }
+        }
+    },
+    "Reward.Get": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "一次領取"
+                ]
+            }
+        }
+    },
+    "Reward.Back": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "返回"
+                ]
+            }
+        }
+    },
+    "Reward.Gift": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "禮物"
+                ]
+            }
+        }
+    },
+    "Reward.Gift.Get": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "饼领取"
+                ]
+            }
+        }
+    },
+    "Reward.Gift.Back": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "返回"
+                ]
+            }
+        }
+    }
+}

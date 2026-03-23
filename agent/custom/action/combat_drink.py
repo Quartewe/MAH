@@ -16,8 +16,7 @@ class CombatDrink(CustomAction):
         self.IGNORE_LIST = info_share.IGNORE_LIST
         self.DRINK_ITEMS = {"All": "apRecoveryAll.png", 
                             "Half": "apRecoveryHalf.png", 
-                            "Mini": "apRecoveryMini.png",
-                            "Ranpoil": "ranpoil.png" 
+                            "Mini": "apRecoveryMini.png"
                             }
         self.drink_times = info_share.drink_times.copy()
 

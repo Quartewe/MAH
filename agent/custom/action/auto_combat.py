@@ -665,8 +665,6 @@ class AutoCombat(CustomAction):
                     if list_completed:
                         print("[DEBUG] List combat completed.")
                         return True
-
-
             return False
 
         try:

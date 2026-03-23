@@ -1,0 +1,150 @@
+{
+    "DailyRes.Go1": {
+        "recognition": {
+            "type": "OCR",
+            "param": {
+                "expected": [
+                    "每日任务"
+                ]
+            }
+        },
+        "action": {
+            "type": "Click",
+            "param": {}
+        }
+    },
+    "DailyRes.Entry": {
+        "next": [
+            "DailyRes.Go0"
+        ]
+    },
+    "DailyRes.Go0": {
+        "recognition": {
+            "type": "FeatureMatch",
+            "param": {
+                "roi": [
+                    562,
+                    547,
+                    716,
+                    170
+                ],
+                "template": [
+                    "homepage/quest_off.png",
+                    "homepage/quest_on.png"
+                ]
+            }
+        },
+        "action": {
+            "type": "Click",
+            "param": {}
+        },
+        "post_delay": 10000,
+        "next": [
+            "DailyRes.Go0.1"
+        ]
+    },
+    "DailyRes.Go0.1": {
+        "action": {
+            "type": "Swipe",
+            "param": {
+                "begin": [
+                    481,
+                    129,
+                    44,
+                    37
+                ],
+                "end": [
+                    [
+                        871,
+                        475,
+                        39,
+                        35
+                    ]
+                ],
+                "end_hold": [
+                    200
+                ]
+            }
+        },
+        "repeat": 3,
+        "next": [
+            "DailyRes.Go1"
+        ]
+    },
+    "DailyRes.Coin.Entry": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "QuestSelect",
+                "custom_action_param": {
+                    "name": "金币",
+                    "difficulty": [
+                        "（3）",
+                        "(3)"
+                    ]
+                }
+            }
+        },
+        "next": [
+            "Global.AutoCombat.Entry"
+        ],
+        "on_error": [
+            "Global.GoBackToHomePage"
+        ]
+    },
+    "DailyRes.Exp.Entry": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "QuestSelect",
+                "custom_action_param": {
+                    "name": "经验",
+                    "difficulty": [
+                        "（3）"
+                    ]
+                }
+            }
+        },
+        "next": [
+            "Global.AutoCombat.Entry"
+        ],
+        "on_error": [
+            "Global.GoBackToHomePage"
+        ]
+    },
+    "DailyRes.Skill.Entry": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "QuestSelect",
+                "custom_action_param": {
+                    "name": "技能",
+                    "difficulty": [
+                        "（3）"
+                    ]
+                }
+            }
+        },
+        "next": [
+            "Global.AutoCombat.Entry"
+        ],
+        "on_error": [
+            "Global.GoBackToHomePage"
+        ]
+    },
+    "DailyRes.Custom.Entry": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "QuestSelect",
+                "custom_action_param": {
+                    "name": "",
+                    "difficulty": ""
+                }
+            }
+        },
+        "next": [
+            "Global.AutoCombat.Entry"
+        ]
+    }
+}

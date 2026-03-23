@@ -1,0 +1,20 @@
+{
+    "ShowSupporterScreen.Completed": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "support"
+                ]
+            }
+        }
+    },
+    "ShowSupporterScreen.GoBack": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "Back"
+                ]
+            }
+        }
+    }
+}

@@ -12,6 +12,7 @@ PROJECT_ROOT = Path(__file__).parent.parent.parent
 DATA_DIR = PROJECT_ROOT / "data"
 AUTO_COMBAT_DIR = DATA_DIR / "auto_combat"
 DEBUG_DIR = PROJECT_ROOT / "debug"
+ON_ERROR_DIR = str(PROJECT_ROOT / "debug" / "on_error")
 
 # 数据文件
 STATE_FILE = str(DATA_DIR / "state.json")

@@ -1,0 +1,29 @@
+{
+    "Global.AutoCombat.Replay": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "Play Again"
+                ]
+            }
+        }
+    },
+    "Global.AutoCombat.Back1": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "Return to Quests"
+                ]
+            }
+        }
+    },
+    "Global.AutoCombat.Start": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "OK"
+                ]
+            }
+        }
+    }
+}

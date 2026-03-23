@@ -1,20 +1,24 @@
 {
     "Dungeon.Aoyama.Choice": {
         "recognition": {
-            "type": "FeatureMatch",
+            "type": "OCR",
             "param": {
-                "template": [
-                    "map/aoyama.png"
+                "expected": [
+                    "青山"
                 ]
             }
         },
+        "pre_wait_freezes": 1000,
         "action": {
             "type": "Click",
             "param": {}
         },
-        "pre_wait_freezes": 1000,
         "next": [
-            "Dungeon.Kamuyado.Explore"
+            "Dungeon.Explore"
+        ],
+        "on_error": [
+            "Dungeon.Swipe",
+            "Global.GoBackToHomePage"
         ]
     },
     "Dungeon.Aoyama.Entry": {
@@ -34,7 +38,8 @@
                     200
                 ],
                 "template": [
-                    "homepage/quest_off.png"
+                    "homepage/quest_off.png",
+                    "homepage/quest_on.png"
                 ]
             }
         },
@@ -42,8 +47,9 @@
             "type": "Click",
             "param": {}
         },
-        "pre_wait_freezes": 1000,
+        "post_wait_freezes": 1000,
         "next": [
+            "Dungeon.Change1.1",
             "Dungeon.Change2"
         ]
     },
@@ -57,57 +63,14 @@
                     200,
                     300
                 ],
-                "template": [
-                    "map/changemap.png"
-                ]
+                "template": "map/changemap.png"
             }
         },
         "action": {
             "type": "Click",
             "param": {}
         },
-        "pre_wait_freezes": 1000,
-        "next": [
-            "Dungeon.Change3"
-        ]
-    },
-    "Dungeon.Change3": {
-        "recognition": {
-            "type": "OCR",
-            "param": {
-                "expected": [
-                    "请选择目的地"
-                ],
-                "roi": [
-                    0,
-                    0,
-                    300,
-                    100
-                ]
-            }
-        },
-        "action": {
-            "type": "Swipe",
-            "param": {
-                "begin": [
-                    250,
-                    600,
-                    50,
-                    50
-                ],
-                "end": [
-                    [
-                        250,
-                        200,
-                        50,
-                        50
-                    ]
-                ]
-            }
-        },
-        "next": [
-            "Dungeon.Kamuyado.Entry"
-        ]
+        "post_wait_freezes": 1000
     },
     "Dungeon.Entry": {
         "action": {
@@ -118,39 +81,42 @@
         },
         "next": [
             "Dungeon.Change1",
-            "Dungeon.Change2",
-            "Dungeon.Change3"
+            "Dungeon.Change2"
         ],
         "on_error": [
             "Global.HomePage",
             "Global.GoBackToHomePage"
         ]
     },
-    "Dungeon.Kamuyado.Choice": {
+    "Dungeon.Shinjuku.Choice": {
         "recognition": {
-            "type": "FeatureMatch",
+            "type": "OCR",
             "param": {
-                "template": [
-                    "map/kamuyado.png"
+                "expected": [
+                    "神宿"
                 ]
             }
         },
+        "pre_wait_freezes": 1000,
         "action": {
             "type": "Click",
             "param": {}
         },
-        "pre_wait_freezes": 1000,
         "next": [
-            "Dungeon.Kamuyado.Explore"
+            "Dungeon.Explore"
+        ],
+        "on_error": [
+            "Dungeon.Swipe",
+            "Global.GoBackToHomePage"
         ]
     },
-    "Dungeon.Kamuyado.Entry": {
+    "Dungeon.Shinjuku.Entry": {
         "pre_wait_freezes": 1000,
         "next": [
-            "Dungeon.Kamuyado.Choice"
+            "Dungeon.Shinjuku.Choice"
         ]
     },
-    "Dungeon.Kamuyado.Episode": {
+    "Dungeon.Episode": {
         "recognition": {
             "type": "OCR",
             "param": {
@@ -163,14 +129,14 @@
             "type": "Click",
             "param": {}
         },
-        "on_error": [
-            "Dungeon.Kamuyado.EpisodeSwipe"
-        ],
         "next": [
             "Global.AutoCombat.Entry"
+        ],
+        "on_error": [
+            "Dungeon.EpisodeSwipe"
         ]
     },
-    "Dungeon.Kamuyado.EpisodeSwipe": {
+    "Dungeon.EpisodeSwipe": {
         "action": {
             "type": "Swipe",
             "param": {
@@ -191,15 +157,154 @@
             }
         },
         "next": [
-            "Dungeon.Kamuyado.Episode"
+            "Dungeon.Episode"
         ]
     },
-    "Dungeon.Kamuyado.Explore": {
+    "Dungeon.Explore": {
         "recognition": {
-            "type": "TemplateMatch",
+            "type": "OCR",
             "param": {
-                "template": [
-                    "map/dungeon_exploration.png"
+                "expected": [
+                    "探索"
+                ]
+            }
+        },
+        "pre_wait_freezes": 1000,
+        "action": {
+            "type": "Click",
+            "param": {}
+        },
+        "next": [
+            "Dungeon.Episode"
+        ]
+    },
+    "Dungeon.Ikebukuro.Choice": {
+        "recognition": {
+            "type": "OCR",
+            "param": {
+                "expected": [
+                    "池袋"
+                ]
+            }
+        },
+        "pre_wait_freezes": 1000,
+        "action": {
+            "type": "Click",
+            "param": {}
+        },
+        "next": [
+            "Dungeon.Explore"
+        ],
+        "on_error": [
+            "Dungeon.Swipe",
+            "Global.GoBackToHomePage"
+        ]
+    },
+    "Dungeon.Ikebukuro.Entry": {
+        "pre_wait_freezes": 1000,
+        "next": [
+            "Dungeon.Ikebukuro.Choice"
+        ]
+    },
+    "Dungeon.Swipe": {
+        "action": {
+            "type": "Swipe",
+            "param": {
+                "begin": [
+                    281,
+                    577,
+                    110,
+                    76
+                ],
+                "end": [
+                    [
+                        283,
+                        212,
+                        143,
+                        86
+                    ]
+                ],
+                "end_hold": [
+                    200
+                ]
+            }
+        },
+        "max_hit": 5,
+        "next": [
+            "Dungeon.Aoyama.Choice",
+            "Dungeon.Shinjuku.Choice",
+            "Dungeon.Ikebukuro.Choice",
+            "Dungeon.Barrier.Choice",
+            "Dungeon.Activity.Choice"
+        ]
+    },
+    "Dungeon.Barrier.Entry": {
+        "pre_wait_freezes": 1000,
+        "next": [
+            "Dungeon.Barrier.Choice"
+        ]
+    },
+    "Dungeon.Barrier.Choice": {
+        "recognition": {
+            "type": "OCR",
+            "param": {
+                "expected": [
+                    "结界"
+                ]
+            }
+        },
+        "pre_wait_freezes": 1000,
+        "action": {
+            "type": "Click",
+            "param": {}
+        },
+        "next": [
+            "Dungeon.Explore"
+        ],
+        "on_error": [
+            "Dungeon.Swipe",
+            "Global.GoBackToHomePage"
+        ]
+    },
+    "Dungeon.Activity.Entry": {
+        "next": [
+            "Dungeon.Activity.Choice"
+        ]
+    },
+    "Dungeon.Activity.Choice": {
+        "recognition": {
+            "type": "OCR",
+            "param": {
+                "expected": [
+                    ""
+                ]
+            }
+        },
+        "pre_wait_freezes": 1000,
+        "action": {
+            "type": "Click",
+            "param": {}
+        },
+        "next": [
+            "Dungeon.Explore"
+        ],
+        "on_error": [
+            "Dungeon.Swipe",
+            "Global.GoBackToHomePage"
+        ]
+    },
+    "Dungeon.Change1.1": {
+        "recognition": {
+            "type": "OCR",
+            "param": {
+                "roi": [
+                    0,
+                    0,
+                    376,
+                    117
+                ],
+                "expected": [
+                    "返回"
                 ]
             }
         },
@@ -207,32 +312,9 @@
             "type": "Click",
             "param": {}
         },
+        "post_wait_freezes": 1000,
         "next": [
-            "Dungeon.Kamuyado.Episode"
-        ]
-    },
-    "Dungeon.Lkebukuro.Choice": {
-        "recognition": {
-            "type": "FeatureMatch",
-            "param": {
-                "template": [
-                    "map/Ikebukuro.png"
-                ]
-            }
-        },
-        "action": {
-            "type": "Click",
-            "param": {}
-        },
-        "pre_wait_freezes": 1000,
-        "next": [
-            "Dungeon.Kamuyado.Explore"
-        ]
-    },
-    "Dungeon.Lkebukuro.Entry": {
-        "pre_wait_freezes": 1000,
-        "next": [
-            "Dungeon.Lkebukuro.Choice"
+            "Dungeon.Change2"
         ]
     }
 }

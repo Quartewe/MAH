@@ -4,11 +4,15 @@
             "type": "Custom",
             "param": {
                 "custom_action": "AutoCombat",
-                "custom_action_param": "atk_flower.json"
+                "custom_action_param": ""
             }
         },
         "next": [
             "Global.AutoCombat.Replay"
+        ],
+        "on_error": [
+            "Global.AutoCombat.Back0",
+            "Global.GoBackToHomePage"
         ]
     },
     "Global.AutoCombat.Replay": {
@@ -92,16 +96,12 @@
             "type": "Custom",
             "param": {
                 "custom_action": "CombatDrink",
-                "custom_action_param": {
-                    "All": 1,
-                    "Half": 1,
-                    "Mini": 1
-                }
+                "custom_action_param": {}
             }
         },
         "next": [
             "Global.AutoCombat.Replay1",
-            "Global.AutoCombat"
+            "Global.AutoCombat.Count"
         ],
         "on_error": [
             "Global.AutoCombat.Back0"
@@ -122,11 +122,14 @@
             "type": "Custom",
             "param": {
                 "custom_action": "SelectSupport",
-                "custom_action_param": "atk_flower.json"
+                "custom_action_param": ""
             }
         },
         "next": [
             "Global.AutoCombat.TeamSelect"
+        ],
+        "on_error": [
+            "Global.GoBackToHomePage"
         ]
     },
     "Global.AutoCombat.TeamSelect": {
@@ -134,11 +137,14 @@
             "type": "Custom",
             "param": {
                 "custom_action": "TeamSelect",
-                "custom_action_param": "3"
+                "custom_action_param": ""
             }
         },
         "next": [
             "Global.AutoCombat.Formation"
+        ],
+        "on_error": [
+            "Global.GoBackToHomePage"
         ]
     },
     "Global.AutoCombat.Formation": {
@@ -146,11 +152,14 @@
             "type": "Custom",
             "param": {
                 "custom_action": "Formation",
-                "custom_action_param": "atk_flower.json"
+                "custom_action_param": ""
             }
         },
         "next": [
             "Global.AutoCombat.Start"
+        ],
+        "on_error": [
+            "Global.GoBackToHomePage"
         ]
     },
     "Global.AutoCombat.Start": {
@@ -179,6 +188,7 @@
     "Global.AutoCombat.Entry": {
         "next": [
             "Global.AutoCombat.PreDrink",
+            "Global.AutoCombat.Filter",
             "Global.AutoCombat.SelectSupport"
         ]
     },
@@ -194,14 +204,11 @@
             "type": "Custom",
             "param": {
                 "custom_action": "CombatDrink",
-                "custom_action_param": {
-                    "All": 1,
-                    "Half": 1,
-                    "Mini": 1
-                }
+                "custom_action_param": {}
             }
         },
         "next": [
+            "Global.AutoCombat.Filter",
             "Global.AutoCombat.SelectSupport"
         ]
     },
@@ -217,6 +224,42 @@
         "action": {
             "type": "Click",
             "param": {}
-        }
+        },
+        "next": [
+            "Global.GoBackToHomePage"
+        ]
+    },
+    "Global.AutoCombat.Filter": {
+        "recognition": {
+            "type": "OCR",
+            "param": {
+                "roi": [
+                    913,
+                    94,
+                    362,
+                    65
+                ],
+                "expected": [
+                    "1"
+                ]
+            }
+        },
+        "pre_wait_freezes": {
+            "time": 1000,
+            "target": [
+                1162,
+                610,
+                115,
+                107
+            ],
+            "threshold": 0.99
+        },
+        "action": {
+            "type": "Click",
+            "param": {}
+        },
+        "next": [
+            "Global.AutoCombat.SelectSupport"
+        ]
     }
 }

@@ -1,0 +1,237 @@
+{
+    "Reward.Back": {
+        "recognition": {
+            "type": "OCR",
+            "param": {
+                "roi": [
+                    4,
+                    3,
+                    238,
+                    119
+                ],
+                "expected": [
+                    "返回"
+                ]
+            }
+        },
+        "action": {
+            "type": "Click",
+            "param": {}
+        },
+        "post_wait_freezes": 1000,
+        "next": [
+            "Reward.Gift"
+        ]
+    },
+    "Reward.Gift": {
+        "recognition": {
+            "type": "OCR",
+            "param": {
+                "roi": [
+                    11,
+                    444,
+                    312,
+                    136
+                ],
+                "expected": [
+                    "礼物"
+                ]
+            }
+        },
+        "post_wait_freezes": {
+            "time": 1000,
+            "target": [
+                1166,
+                626,
+                115,
+                93
+            ],
+            "threshold": 0.99
+        },
+        "next": [
+            "Reward.Gift.Get"
+        ]
+    },
+    "Reward.Gift.Get": {
+        "recognition": {
+            "type": "OCR",
+            "param": {
+                "roi": [
+                    512,
+                    15,
+                    520,
+                    122
+                ],
+                "expected": [
+                    "全部领取"
+                ]
+            }
+        },
+        "action": {
+            "type": "Click",
+            "param": {}
+        },
+        "next": [
+            "Reward.Gift.Get1"
+        ]
+    },
+    "Reward.Gift.Get1": {
+        "recognition": {
+            "type": "ColorMatch",
+            "param": {
+                "lower": [
+                    [
+                        108,
+                        208,
+                        138
+                    ]
+                ],
+                "upper": [
+                    [
+                        128,
+                        228,
+                        158
+                    ]
+                ]
+            }
+        },
+        "action": {
+            "type": "Click",
+            "param": {}
+        },
+        "post_wait_freezes": {
+            "time": 1000,
+            "target": [
+                1166,
+                626,
+                115,
+                93
+            ],
+            "threshold": 0.99
+        },
+        "next": [
+            "Reward.Gift.Get2"
+        ]
+    },
+    "Reward.Gift.Get2": {
+        "recognition": {
+            "type": "OCR",
+            "param": {
+                "roi": [
+                    429,
+                    197,
+                    455,
+                    322
+                ],
+                "expected": [
+                    "CLOSE"
+                ]
+            }
+        },
+        "action": {
+            "type": "Click",
+            "param": {}
+        },
+        "post_wait_freezes": {
+            "time": 1000,
+            "target": [
+                1166,
+                626,
+                115,
+                93
+            ],
+            "threshold": 0.99
+        },
+        "next": [
+            "Reward.Gift.Back"
+        ]
+    },
+    "Reward.Gift.Back": {
+        "recognition": {
+            "type": "OCR",
+            "param": {
+                "roi": [
+                    4,
+                    3,
+                    238,
+                    119
+                ],
+                "expected": [
+                    "返回"
+                ]
+            }
+        },
+        "action": {
+            "type": "Click",
+            "param": {}
+        },
+        "post_wait_freezes": 1000
+    },
+    "Reward.Entry": {
+        "next": [
+            "Reward.Click"
+        ]
+    },
+    "Reward.Click": {
+        "recognition": {
+            "type": "OCR",
+            "param": {
+                "roi": [
+                    5,
+                    433,
+                    229,
+                    150
+                ],
+                "expected": [
+                    "任务"
+                ]
+            }
+        },
+        "action": {
+            "type": "Click",
+            "param": {}
+        },
+        "post_wait_freezes": 1000,
+        "next": [
+            "Reward.Get"
+        ]
+    },
+    "Reward.Get": {
+        "recognition": {
+            "type": "OCR",
+            "param": {
+                "roi": [
+                    858,
+                    92,
+                    412,
+                    89
+                ],
+                "expected": [
+                    "全部领取"
+                ]
+            }
+        },
+        "post_wait_freezes": 1000,
+        "next": [
+            "Reward.Get1"
+        ]
+    },
+    "Reward.Get1": {
+        "recognition": {
+            "type": "OCR",
+            "param": {
+                "expected": [
+                    "CLOSE"
+                ]
+            }
+        },
+        "action": {
+            "type": "Click",
+            "param": {}
+        },
+        "post_wait_freezes": 1000,
+        "next": [
+            "Reward.Back"
+        ]
+    }
+}

@@ -1,0 +1,56 @@
+{
+    "Flower.GoLU": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "練馬区"
+                ]
+            }
+        }
+    },
+    "Flower.GoRU": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "葛飾区"
+                ]
+            }
+        }
+    },
+    "Flower.GoRD": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "品川区"
+                ]
+            }
+        }
+    },
+    "Flower.Select.ATK": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "例外領域·有楽町"
+                ]
+            }
+        }
+    },
+    "Flower.Select.DEF": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "ザッツエンタティメント"
+                ]
+            }
+        }
+    },
+    "Flower.Go1": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "千代田区"
+                ]
+            }
+        }
+    }
+}

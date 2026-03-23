@@ -1,0 +1,65 @@
+{
+    "Dungeon.Aoyama.Choice": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "Aoyama"
+                ]
+            }
+        }
+    },
+    "Dungeon.Shinjuku.Choice": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "Shinjuku"
+                ]
+            }
+        }
+    },
+    "Dungeon.Episode": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "Elite"
+                ]
+            }
+        }
+    },
+    "Dungeon.Explore": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "Exploration"
+                ]
+            }
+        }
+    },
+    "Dungeon.Ikebukuro.Choice": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "Ikebukuro"
+                ]
+            }
+        }
+    },
+    "Dungeon.Barrier.Choice": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "Fudo"
+                ]
+            }
+        }
+    },
+    "Dungeon.Change1.1": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "Back"
+                ]
+            }
+        }
+    }
+}

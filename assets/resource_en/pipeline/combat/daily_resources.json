@@ -1,0 +1,50 @@
+{
+    "DailyRes.Go1": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "Daily"
+                ]
+            }
+        }
+    },
+    "DailyRes.Coin.Entry": {
+        "action": {
+            "param": {
+                "custom_action_param": {
+                    "name": "Coin",
+                    "difficulty": [
+                        "（3）",
+                        "(3)"
+                    ]
+                }
+            }
+        }
+    },
+    "DailyRes.Exp.Entry": {
+        "action": {
+            "param": {
+                "custom_action_param": {
+                    "name": "Experience",
+                    "difficulty": [
+                        "（3）",
+                        "(3)"
+                    ]
+                }
+            }
+        }
+    },
+    "DailyRes.Skill.Entry": {
+        "action": {
+            "param": {
+                "custom_action_param": {
+                    "name": "Skill",
+                    "difficulty": [
+                        "（3）",
+                        "(3)"
+                    ]
+                }
+            }
+        }
+    }
+}

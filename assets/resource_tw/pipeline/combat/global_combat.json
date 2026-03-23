@@ -1,0 +1,29 @@
+{
+    "Global.AutoCombat.Replay": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "再次挑戰"
+                ]
+            }
+        }
+    },
+    "Global.AutoCombat.Back1": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "回任務畫面"
+                ]
+            }
+        }
+    },
+    "Global.AutoCombat.Start": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "OK"
+                ]
+            }
+        }
+    }
+}

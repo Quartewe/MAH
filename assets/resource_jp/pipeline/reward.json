@@ -1,0 +1,76 @@
+{
+    "Reward.Click": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "ミッション"
+                ]
+            }
+        },
+        "action": {
+            "param": {
+                "target_offset": [
+                    0,
+                    0,
+                    -100,
+                    0
+                ]
+            }
+        }
+    },
+    "Reward.Get": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "まとめて受け取る"
+                ]
+            }
+        }
+    },
+    "Reward.Back": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "戻る"
+                ]
+            }
+        }
+    },
+    "Reward.Gift": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "プルゼント"
+                ]
+            }
+        },
+        "action": {
+            "param": {
+                "target_offset": [
+                    90,
+                    0,
+                    -100,
+                    0
+                ]
+            }
+        }
+    },
+    "Reward.Gift.Get": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "まとめて"
+                ]
+            }
+        }
+    },
+    "Reward.Gift.Back": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "戻る"
+                ]
+            }
+        }
+    }
+}

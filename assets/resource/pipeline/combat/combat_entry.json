@@ -1,0 +1,8 @@
+{
+    "Combat.Entry": {
+        "post_wait_freezes": 1000,
+        "recognition": "DirectHit",
+        "action": "DoNothing",
+        "next": []
+    }
+}

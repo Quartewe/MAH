@@ -1,0 +1,267 @@
+{
+    "Flower.GoLU": {
+        "recognition": {
+            "type": "OCR",
+            "param": {
+                "expected": [
+                    "丰岛区"
+                ]
+            }
+        },
+        "action": {
+            "type": "Swipe",
+            "param": {
+                "begin": [
+                    1030,
+                    533,
+                    60,
+                    51
+                ],
+                "end": [
+                    [
+                        476,
+                        119,
+                        101,
+                        71
+                    ]
+                ],
+                "end_hold": [
+                    500
+                ]
+            }
+        },
+        "next": [
+            "Flower.Go1"
+        ]
+    },
+    "Flower.GoRU": {
+        "recognition": {
+            "type": "OCR",
+            "param": {
+                "expected": [
+                    "葛饰区"
+                ]
+            }
+        },
+        "action": {
+            "type": "Swipe",
+            "param": {
+                "begin": [
+                    495,
+                    516,
+                    59,
+                    44
+                ],
+                "end": [
+                    [
+                        500,
+                        45,
+                        35,
+                        28
+                    ]
+                ],
+                "end_hold": [
+                    500
+                ]
+            }
+        },
+        "next": [
+            "Flower.Go1"
+        ]
+    },
+    "Flower.GoRD": {
+        "recognition": {
+            "type": "OCR",
+            "param": {
+                "roi": [
+                    8,
+                    15,
+                    503,
+                    691
+                ],
+                "expected": [
+                    "品川区"
+                ]
+            }
+        },
+        "action": {
+            "type": "Swipe",
+            "param": {
+                "begin": [
+                    787,
+                    28,
+                    47,
+                    35
+                ],
+                "end": [
+                    [
+                        776,
+                        505,
+                        59,
+                        45
+                    ]
+                ],
+                "end_hold": [
+                    500
+                ]
+            }
+        },
+        "next": [
+            "Flower.Go1"
+        ]
+    },
+    "Flower.GoLD": {
+        "recognition": {
+            "type": "OCR",
+            "param": {
+                "expected": [
+                    "CS"
+                ]
+            }
+        },
+        "action": {
+            "type": "Swipe",
+            "param": {
+                "begin": [
+                    1024,
+                    52,
+                    49,
+                    38
+                ],
+                "end": [
+                    [
+                        541,
+                        443,
+                        58,
+                        45
+                    ]
+                ],
+                "end_hold": [
+                    500
+                ]
+            }
+        },
+        "next": [
+            "Flower.Go1"
+        ]
+    },
+    "Flower.Entry": {
+        "next": [
+            "Flower.Go0"
+        ]
+    },
+    "Flower.Go0": {
+        "post_delay": 10000,
+        "recognition": {
+            "type": "FeatureMatch",
+            "param": {
+                "roi": [
+                    562,
+                    547,
+                    716,
+                    170
+                ],
+                "template": [
+                    "homepage/quest_off.png",
+                    "homepage/quest_on.png"
+                ]
+            }
+        },
+        "action": {
+            "type": "Click",
+            "param": {}
+        },
+        "next": [
+            "Flower.Go1",
+            "Flower.GoLU",
+            "Flower.GoRU",
+            "Flower.GoRD",
+            "Flower.GoLD"
+        ]
+    },
+    "Flower.Select.ATK": {
+        "recognition": {
+            "type": "OCR",
+            "param": {
+                "expected": [
+                    "“例外领域”·有乐町"
+                ]
+            }
+        },
+        "action": {
+            "type": "Click",
+            "param": {}
+        },
+        "next": [
+            "Global.AutoCombat.Entry"
+        ],
+        "on_error": [
+            "Global.GoHomePage",
+            "Flower.Swipe"
+        ]
+    },
+    "Flower.Swipe": {
+        "max_hit": 20,
+        "pre_wait_freezes": 1000,
+        "action": {
+            "type": "Swipe",
+            "param": {
+                "begin": [
+                    796,
+                    611,
+                    20,
+                    20
+                ],
+                "end": [
+                    [
+                        796,
+                        66,
+                        20,
+                        20
+                    ]
+                ],
+                "end_hold": [
+                    500
+                ]
+            }
+        },
+        "next": [
+            "Flower.Select.ATK",
+            "Flower.Select.DEF"
+        ]
+    },
+    "Flower.Go1": {
+        "recognition": {
+            "type": "OCR",
+            "param": {
+                "expected": [
+                    "千代田区"
+                ]
+            }
+        },
+        "action": {
+            "type": "Click",
+            "param": {}
+        }
+    },
+    "Flower.Select.DEF": {
+        "recognition": {
+            "type": "OCR",
+            "param": {
+                "expected": [
+                    "演艺家"
+                ]
+            }
+        },
+        "action": {
+            "type": "Click",
+            "param": {}
+        },
+        "on_error": [
+            "Flower.Swipe"
+        ],
+        "next": [
+            "Global.AutoCombat.Entry"
+        ]
+    }
+}

@@ -1,0 +1,20 @@
+{
+    "ShowSupporterScreen.Completed": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "編組協助"
+                ]
+            }
+        }
+    },
+    "ShowSupporterScreen.GoBack": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "返回"
+                ]
+            }
+        }
+    }
+}

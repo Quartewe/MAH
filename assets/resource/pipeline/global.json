@@ -1,82 +1,184 @@
 {
   "Global.GoBackToHomePage": {
-    "pre_wait_freezes": 1000,
-    "recognition": {
-      "type": "TemplateMatch",
-      "param": {
-        "roi": [
-          0,
-          0,
-          150,
-          150
-        ],
-        "template": [
-          "returnhome.png"
-        ]
-      }
-    },
-    "action": {
-      "type": "Click",
-      "param": {}
-    },
-    "next": [
-      "Global.HomePage",
-      "Global.LoginReward"
-    ]
-  },
-  "Global.HomePage": {
-    "anchor": "HOMEPAGE",
-    "recognition": "FeatureMatch",
-    "template": "homepage/homepage.png",
-    "roi": [
-      680,
-      520,
-      600,
-      200
-    ],
-    "post_wait_freezes": 2000,
-    "action": "DoNothing"
-  },
-  "Global.LoginReward": {
-    "post_wait_freezes": {
-      "time": 2000,
-      "timeout": 300000
-    },
-    "timeout": 300000,
     "recognition": {
       "type": "OCR",
       "param": {
-        "expected": "登录奖励",
         "roi": [
-          200,
-          50,
-          350,
-          100
+          4,
+          12,
+          301,
+          102
+        ],
+        "expected": [
+          "返回"
         ]
+      }
+    },
+    "pre_wait_freezes": {
+      "time": 1000,
+      "target": [
+        1105,
+        551,
+        175,
+        170
+      ]
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "rate_limit": 2000,
+    "next": [
+      "Global.GoBackToHomePage.Wait"
+    ],
+    "on_error": [
+      "Global.HomePage"
+    ]
+  },
+  "Global.LoginReward": {
+    "pre_wait_freezes": {
+      "time": 1000,
+      "target": [
+        306,
+        209,
+        938,
+        213
+      ],
+      "threshold": 0.999
+    },
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "roi": [
+          306,
+          209,
+          938,
+          213
+        ],
+        "expected": "GET!"
       }
     },
     "action": {
       "type": "Click",
       "param": {}
     },
+    "next": [
+      "Global.HomePage"
+    ],
     "on_error": [
       "[JumpBack]Global.NetworkError"
-    ],
-    "next": [
-      "ResourceRecord.Entry"
     ]
   },
   "Global.NetworkError": {
-    "recognition": "OCR",
-    "expected": "Unable to complete SSL connection",
-    "action": "DoNothing",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "Unable to complete SSL connection"
+      }
+    },
     "next": [
       "Global.GetRidOfNetworkError"
     ]
   },
   "Global.GetRidOfNetworkError": {
-    "recognition": "OCR",
-    "expected": "CLOSE",
-    "action": "Click"
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "CLOSE"
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    }
+  },
+  "Global.GoBackToHomePage.Wait": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "roi": [
+          9,
+          572,
+          522,
+          149
+        ],
+        "expected": [
+          "LOADING"
+        ]
+      }
+    },
+    "next": [
+      "Global.LoginReward",
+      "Global.HomePage"
+    ],
+    "on_error": [
+      "Global.GoBackToHomePage"
+    ]
+  },
+  "Global.GoHomePage": {
+    "recognition": {
+      "type": "ColorMatch",
+      "param": {
+        "roi": [
+          757,
+          604,
+          92,
+          83
+        ],
+        "lower": [
+          [
+            32,
+            43,
+            119
+          ]
+        ],
+        "upper": [
+          [
+            52,
+            63,
+            139
+          ]
+        ]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "post_wait_freezes": 500,
+    "next": [
+      "Global.HomePage"
+    ]
+  },
+  "Global.HomePage": {
+    "recognition": {
+      "type": "ColorMatch",
+      "param": {
+        "roi": [
+          757,
+          604,
+          92,
+          83
+        ],
+        "lower": [
+          [
+            244,
+            237,
+            0
+          ]
+        ],
+        "upper": [
+          [
+            255,
+            255,
+            11
+          ]
+        ]
+      }
+    },
+    "post_wait_freezes": 2000,
+    "on_error": [
+      "Global.GoHomePage"
+    ]
   }
 }

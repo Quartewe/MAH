@@ -1,0 +1,71 @@
+{
+    "CheckWeeklyMissions.OpenMissionInterface": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "ミッション"
+                ]
+            }
+        },
+        "action": {
+            "param": {
+                "target_offset": [
+                    0,
+                    0,
+                    -100,
+                    0
+                ]
+            }
+        }
+    },
+    "CheckWeeklyMissions.Back": {
+        "recognition": {
+            "param": {
+                "expected": "進行中のミッション"
+            }
+        }
+    },
+    "CheckWeeklyMissions.Select": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "全て表示する"
+                ]
+            }
+        }
+    },
+    "CheckWeeklyMissions.Select_1": {
+        "recognition": {
+            "param": {
+                "expected": "進行中のミッション"
+            }
+        }
+    },
+    "CheckWeeklyMissions.Search": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "表示する内容がありません。"
+                ]
+            }
+        }
+    },
+    "CheckWeeklyMissions.Back_1": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "全て表示する"
+                ]
+            }
+        }
+    },
+    "CheckWeeklyMissions.Get": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "まとめて受け取る"
+                ]
+            }
+        }
+    }
+}

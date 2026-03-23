@@ -1,0 +1,58 @@
+{
+    "Reward.Click": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "Missions"
+                ]
+            }
+        }
+    },
+    "Reward.Get": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "Accept All",
+                    "Accept AII"
+                ]
+            }
+        }
+    },
+    "Reward.Back": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "Back"
+                ]
+            }
+        }
+    },
+    "Reward.Gift": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "Presents"
+                ]
+            }
+        }
+    },
+    "Reward.Gift.Get": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "Accept",
+                    "AII"
+                ]
+            }
+        }
+    },
+    "Reward.Gift.Back": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "Back"
+                ]
+            }
+        }
+    }
+}

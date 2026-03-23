@@ -1,6 +1,5 @@
 {
   "Startup.Entry": {
-    "recognition": "DirectHit",
     "action": {
       "type": "Custom",
       "param": {
@@ -8,102 +7,40 @@
       }
     },
     "next": [
-      "[JumpBack]Global.NetworkError",
       "Global.LoginReward",
-      "Startup.HomePage",
-      "Startup.Login",
+      "Global.HomePage",
+      "Startup.OpenGame.Title",
       "Startup.OpenGame"
     ]
   },
-  "Startup.Login": {
-    "rate_limit": 5000,
-    "timeout": 600000,
-    "recognition": {
-      "type": "OCR",
-      "param": {
-        "expected": "重新获取游戏数据",
-        "roi": [
-          900,
-          630,
-          380,
-          90
-        ]
-      }
-    },
-    "action": {
-      "type": "Click",
-      "param": {
-        "target_offset": [
-          -604,
-          -119,
-          285,
-          41
-        ]
-      }
-    },
-    "next": [
-      "[JumpBack]Global.NetworkError",
-      "Startup.Login_1"
-    ]
-  },
-  "Startup.Login_1": {
-    "rate_limit": 10000,
-    "timeout": 600000,
-    "focus": [
-      1140,
-      596,
-      139,
-      123
-    ],
-    "post_wait_freezes": {
-      "rate_limit": 700,
-      "threshold": 0.98,
-      "time": 2000,
-      "timeout": 300000
-    },
-    "pre_delay": 2000,
-    "on_error": [
-      "[JumpBack]Global.NetworkError"
-    ],
-    "next": [
-      "Global.LoginReward",
-      "Startup.HomePage"
-    ]
-  },
   "Startup.OpenGame": {
-    "rate_limit": 5000,
-    "timeout": 300000,
     "recognition": {
-      "type": "OCR",
-      "param": {
-        "expected": "housamo"
-      }
+      "type": "DirectHit"
     },
     "action": {
-      "type": "Click",
-      "param": {}
-    },
-    "next": [
-      "[JumpBack]Global.NetworkError",
-      "Startup.Update",
-      "Startup.Login"
-    ]
-  },
-  "Startup.Update": {
-    "recognition": {
-      "type": "OCR",
+      "type": "Shell",
       "param": {
-        "expected": "游戏数据更新"
+        "cmd": "am start -n jp.co.lifewonders.housamo/com.google.firebase.MessagingUnityPlayerActivity"
       }
     },
+    "post_wait_freezes": {
+      "time": 2000,
+      "target": [
+        1134,
+        589,
+        143,
+        129
+      ],
+      "threshold": 0.999
+    },
     "next": [
       "[JumpBack]Global.NetworkError",
-      "Startup.Update_1"
+      "[JumpBack]Startup.Update_1",
+      "Startup.OpenGame.Wait",
+      "Global.HomePage"
     ]
   },
   "Startup.Update_1": {
-    "rate_limit": 20000,
-    "timeout": 300000,
     "recognition": {
       "type": "OCR",
       "param": {
@@ -115,24 +52,63 @@
       "param": {}
     },
     "next": [
-      "[JumpBack]Global.NetworkError",
-      "Startup.Login"
+      "[JumpBack]Global.NetworkError"
     ]
   },
-  "Startup.HomePage": {
-      "anchor": "HOMEPAGE",
-      "recognition": "FeatureMatch",
-      "template": "homepage/homepage.png",
-      "roi": [
-        680,
-        520,
-        600,
-        200
+  "Startup.OpenGame.Wait": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": [
+          "login.png"
+        ]
+      }
+    },
+    "post_wait_freezes": {
+      "time": 2000,
+      "target": [
+        1134,
+        589,
+        143,
+        129
       ],
-      "post_wait_freezes": 2000,
-      "action": "DoNothing",
-      "next": [
-        "ResourceRecord.Entry"
-      ]
+      "threshold": 0.999
+    },
+    "timeout": 200000,
+    "rate_limit": 5000,
+    "next": [
+      "Startup.OpenGame.Title",
+      "[JumpBack]Global.NetworkError"
+    ]
+  },
+  "Startup.OpenGame.Title": {
+    "recognition": {
+      "type": "FeatureMatch",
+      "param": {
+        "template": [
+          "titlelogo.png"
+        ],
+        "ratio": 0.4
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "post_wait_freezes": {
+      "time": 2000,
+      "target": [
+        1134,
+        589,
+        143,
+        129
+      ],
+      "threshold": 0.999
+    },
+    "next": [
+      "Global.HomePage",
+      "[JumpBack]Global.NetworkError",
+      "Global.LoginReward"
+    ]
   }
 }

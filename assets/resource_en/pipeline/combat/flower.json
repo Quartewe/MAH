@@ -1,0 +1,56 @@
+{
+    "Flower.GoLU": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "Nerima"
+                ]
+            }
+        }
+    },
+    "Flower.GoRU": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "Katsushika"
+                ]
+            }
+        }
+    },
+    "Flower.GoRD": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "Shinagawa"
+                ]
+            }
+        }
+    },
+    "Flower.Select.ATK": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "Exception Territory/Yurakucho"
+                ]
+            }
+        }
+    },
+    "Flower.Select.DEF": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "Entertainment"
+                ]
+            }
+        }
+    },
+    "Flower.Go1": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "Chiyoda"
+                ]
+            }
+        }
+    }
+}

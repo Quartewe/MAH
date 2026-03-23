@@ -1,0 +1,45 @@
+{
+    "Activity.Entry": {
+        "next": [
+            "Activity.Go"
+        ]
+    },
+    "Activity.Go": {
+        "recognition": {
+            "type": "OCR",
+            "param": {
+                "roi": [
+                    434,
+                    583,
+                    339,
+                    117
+                ],
+                "expected": [
+                    "活动"
+                ]
+            }
+        },
+        "action": {
+            "type": "Click",
+            "param": {}
+        },
+        "next": [
+            "Activity.Select"
+        ]
+    },
+    "Activity.Select": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "QuestSelect",
+                "custom_action_param": {}
+            }
+        },
+        "next": [
+            "Global.AutoCombat.Entry"
+        ],
+        "on_error": [
+            "Global.GoBackToHomePage"
+        ]
+    }
+}

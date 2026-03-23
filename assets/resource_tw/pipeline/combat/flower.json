@@ -1,0 +1,56 @@
+{
+    "Flower.GoLU": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "練馬區"
+                ]
+            }
+        }
+    },
+    "Flower.GoRU": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "葛飾區"
+                ]
+            }
+        }
+    },
+    "Flower.GoRD": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "品川區"
+                ]
+            }
+        }
+    },
+    "Flower.Select.ATK": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "大演藝家"
+                ]
+            }
+        }
+    },
+    "Flower.Select.DEF": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "例外領域·有樂町"
+                ]
+            }
+        }
+    },
+    "Flower.Go1": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "千代田區"
+                ]
+            }
+        }
+    }
+}

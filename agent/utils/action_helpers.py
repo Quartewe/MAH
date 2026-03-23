@@ -172,15 +172,17 @@ class ActUtils:
                         "recognition": {
                             "param": {
                                 "roi": roi,
-                                "expected": [""]
+                                "expected": [""],
                             }
                         }
                     }
                 }
             )
             
+
+            print(f"OCR best_results: {ocrresults.best_result}, total filtered results: {len(ocrresults.filtered_results)}")
             # 如果成功获取结果，则跳出循环
-            if ocrresults.best_result and ocrresults.best_result.score > 0.8:
+            if ocrresults.best_result:
                 has_valid_text = any(res.text and res.text.strip() for res in ocrresults.filtered_results)
                 if has_valid_text:
                     break
@@ -194,12 +196,16 @@ class ActUtils:
         
         # 统计各语言数量
         for res in ocrresults.filtered_results:
-            print(f"[DEBUG] OCR result text: {res.text}")
+            ignore_match = False
             if ignore:
                 for ign in ignore:
                     if match_mgr.fuzzy_match(ign, res.text):
                         print(f"[DEBUG] Ignoring result due to ignore keyword: {ign}")
-                        continue
+                        ignore_match = True
+                        break
+            
+            if ignore_match:
+                continue
 
             # 检查日文假名（平假名和片假名）
             if re.search(r'[\u3040-\u309f\u30a0-\u30ff]', res.text):
@@ -223,7 +229,10 @@ class ActUtils:
 
     @staticmethod
     def detect_lang(context, roi, ignore: list = None):
-        """检测 ROI 区域的语言类型"""
+        """
+        returns:
+            str: "jp"（日文）、"cn"（简体中文）、"tw"（繁体中文）或 "en"（英文），表示检测到的主要语言类型
+        """
         jp = cn = tw = en = 0
         max_retries = 30
         

@@ -3,31 +3,8 @@ import json
 import time
 import os
 import copy
+import shutil
 from . import proj_path
-
-CN_STATE = {
-    "missions": {
-        "显示支援者组队画面": {"current": 0, "target": 1, "completed": False},
-        "完成攻略3次地城": {"current": 0, "target": 3, "completed": False},
-        "累计消耗100点体力": {"current": 100, "target": 100, "completed": False},
-        "累计消耗300点体力": {"current": 0, "target": 300, "completed": False},
-        "累计消耗450点体力": {"current": 0, "target": 450, "completed": False},
-        "累计打倒60个敌人": {"current": 0, "target": 60, "completed": False},
-        "累计打倒100个敌人": {"current": 0, "target": 100, "completed": False},
-        "完成5次任务": {"current": 0, "target": 5, "completed": False},
-        "完成10次任务": {"current": 0, "target": 10, "completed": False},
-        "完成每周任务9个": {"current": 0, "target": 9, "completed": False},
-        "if_all_completed": False,
-    },
-    "resources": {
-        "AP": {"value": 0, "upper_limit": 0, "last_updated": 0},
-        "DP": {"value": 0, "upper_limit": 3, "last_updated": 0},
-        "Stone": 0,
-        "RF": 0,
-    },
-}
-
-DEFAULT_STATE = CN_STATE
 
 # 使用统一的路径管理模块
 STATE_FILE = proj_path.STATE_FILE
@@ -58,10 +35,9 @@ class IOUtils:
                 # 创建父目录
                 os.makedirs(os.path.dirname(file_path) or ".", exist_ok=True)
                 # 创建文件并写入默认数据
-                default_data = copy.deepcopy(CN_STATE)
                 with open(file_path, "w", encoding="utf-8") as f:
-                    json.dump(default_data, f, ensure_ascii=False, indent=4)
-                return default_data
+                    json.dump({}, f, ensure_ascii=False, indent=4)
+                return {}
 
             with open(file_path, "r", encoding="utf-8") as f:
                 # debug
@@ -73,9 +49,8 @@ class IOUtils:
             print(f"[DEBUG] file {file_path} is corrupted, now will create it")
             #
             os.makedirs(os.path.dirname(file_path) or ".", exist_ok=True)
-            default_data = copy.deepcopy(CN_STATE)
             with open(file_path, "w", encoding="utf-8") as f:
-                json.dump(default_data, f, ensure_ascii=False, indent=4)
+                json.dump({}, f, ensure_ascii=False, indent=4)
             # 重新读取文件
             with open(file_path, "r", encoding="utf-8") as f:
                 return json.load(f)
@@ -94,27 +69,8 @@ class IOUtils:
             print(f"[DEBUG] writing file: {file_path}...")
             #
             json.dump(data, f, ensure_ascii=False, indent=4)
-
-    @staticmethod
-    def reset_data(nodename: str):
-        state = IOUtils.read_data()
-
-        match nodename:
-            case name if "Missions" in name or "Startup" in name:
-                state["missions"] = copy.deepcopy(CN_STATE["missions"])
-                # debug
-                print("[DEBUG] missions reset")
-                #
-            case name if "Resource" in name:
-                state["resources"] = copy.deepcopy(CN_STATE["resources"])
-                # 记录重置时的时间戳
-                state["resources"]["AP"]["last_updated"] = time.time()
-                state["resources"]["DP"]["last_updated"] = time.time()
-                # debug
-                print("[DEBUG] resources reset, last_updated set to now")
-                #
-
-        IOUtils.write_data(state)
+        
+        return True
 
     @staticmethod
     def set_to_completed():
@@ -230,6 +186,17 @@ class IOUtils:
             #
 
         return organized_log
+
+    @staticmethod
+    def clear_folder(folder_path: str) -> None:
+        folder = Path(folder_path)
+        if not folder.exists():
+            return  # 路径不存在，直接跳过，不删除
+        for item in folder.iterdir():
+            if item.is_dir():
+                shutil.rmtree(item)
+            else:
+                item.unlink()
 
 
 data_io = IOUtils

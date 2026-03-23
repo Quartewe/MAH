@@ -1,0 +1,11 @@
+{
+    "Activity.Go": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "活動"
+                ]
+            }
+        }
+    }
+}

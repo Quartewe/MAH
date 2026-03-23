@@ -1,0 +1,991 @@
+{
+  "agent": {
+    "rarity": 2,
+    "weapon": "snipe",
+    "dark": {
+      "path": "character/agent/dark"
+    },
+    "wood": {
+      "path": "character/agent/wood"
+    },
+    "evil": {
+      "path": "character/agent/evil"
+    },
+    "fire": {
+      "path": "character/agent/fire"
+    },
+    "hero": {
+      "path": "character/agent/hero"
+    },
+    "light": {
+      "path": "character/agent/light"
+    },
+    "water": {
+      "path": "character/agent/water"
+    },
+    "world": {
+      "path": "character/agent/world"
+    }
+  },
+  "alchemist": {
+    "rarity": 2,
+    "weapon": "knock",
+    "dark": {
+      "path": "character/alchemist/dark"
+    },
+    "wood": {
+      "path": "character/alchemist/wood"
+    },
+    "evil": {
+      "path": "character/alchemist/evil"
+    },
+    "fire": {
+      "path": "character/alchemist/fire"
+    },
+    "hero": {
+      "path": "character/alchemist/hero"
+    },
+    "light": {
+      "path": "character/alchemist/light"
+    },
+    "water": {
+      "path": "character/alchemist/water"
+    },
+    "world": {
+      "path": "character/alchemist/world"
+    }
+  },
+  "angel": {
+    "rarity": 1,
+    "weapon": "thrust",
+    "dark": {
+      "path": "character/angel/dark"
+    },
+    "wood": {
+      "path": "character/angel/wood"
+    },
+    "evil": {
+      "path": "character/angel/evil"
+    },
+    "fire": {
+      "path": "character/angel/fire"
+    },
+    "hero": {
+      "path": "character/angel/hero"
+    },
+    "light": {
+      "path": "character/angel/light"
+    },
+    "water": {
+      "path": "character/angel/water"
+    },
+    "world": {
+      "path": "character/angel/world"
+    }
+  },
+  "camouflager": {
+    "rarity": 2,
+    "weapon": "none",
+    "dark": {
+      "path": "character/camouflager/dark"
+    },
+    "wood": {
+      "path": "character/camouflager/wood"
+    },
+    "evil": {
+      "path": "character/camouflager/evil"
+    },
+    "fire": {
+      "path": "character/camouflager/fire"
+    },
+    "hero": {
+      "path": "character/camouflager/hero"
+    },
+    "light": {
+      "path": "character/camouflager/light"
+    },
+    "water": {
+      "path": "character/camouflager/water"
+    },
+    "world": {
+      "path": "character/camouflager/world"
+    }
+  },
+  "ciramantep": {
+    "rarity": 2,
+    "weapon": "slash",
+    "dark": {
+      "path": "character/ciramantep/dark"
+    },
+    "wood": {
+      "path": "character/ciramantep/wood"
+    },
+    "evil": {
+      "path": "character/ciramantep/evil"
+    },
+    "fire": {
+      "path": "character/ciramantep/fire"
+    },
+    "hero": {
+      "path": "character/ciramantep/hero"
+    },
+    "light": {
+      "path": "character/ciramantep/light"
+    },
+    "water": {
+      "path": "character/ciramantep/water"
+    },
+    "world": {
+      "path": "character/ciramantep/world"
+    }
+  },
+  "dronepilot": {
+    "rarity": 2,
+    "weapon": "none",
+    "dark": {
+      "path": "character/dronepilot/dark"
+    },
+    "wood": {
+      "path": "character/dronepilot/wood"
+    },
+    "evil": {
+      "path": "character/dronepilot/evil"
+    },
+    "fire": {
+      "path": "character/dronepilot/fire"
+    },
+    "hero": {
+      "path": "character/dronepilot/hero"
+    },
+    "light": {
+      "path": "character/dronepilot/light"
+    },
+    "water": {
+      "path": "character/dronepilot/water"
+    },
+    "world": {
+      "path": "character/dronepilot/world"
+    }
+  },
+  "einherjar": {
+    "rarity": 2,
+    "weapon": "slash",
+    "dark": {
+      "path": "character/einherjar/dark"
+    },
+    "wood": {
+      "path": "character/einherjar/wood"
+    },
+    "fire": {
+      "path": "character/einherjar/fire"
+    },
+    "light": {
+      "path": "character/einherjar/light"
+    },
+    "water": {
+      "path": "character/einherjar/water"
+    }
+  },
+  "fighter": {
+    "rarity": 1,
+    "weapon": "slash",
+    "dark": {
+      "path": "character/fighter/dark"
+    },
+    "wood": {
+      "path": "character/fighter/wood"
+    },
+    "fire": {
+      "path": "character/fighter/fire"
+    },
+    "light": {
+      "path": "character/fighter/light"
+    },
+    "water": {
+      "path": "character/fighter/water"
+    }
+  },
+  "genin": {
+    "rarity": 1,
+    "weapon": "shoot",
+    "dark": {
+      "path": "character/genin/dark"
+    },
+    "wood": {
+      "path": "character/genin/wood"
+    },
+    "fire": {
+      "path": "character/genin/fire"
+    },
+    "light": {
+      "path": "character/genin/light"
+    },
+    "water": {
+      "path": "character/genin/water"
+    }
+  },
+  "giant": {
+    "rarity": 2,
+    "weapon": "knock",
+    "dark": {
+      "path": "character/giant/dark"
+    },
+    "wood": {
+      "path": "character/giant/wood"
+    },
+    "evil": {
+      "path": "character/giant/evil"
+    },
+    "fire": {
+      "path": "character/giant/fire"
+    },
+    "hero": {
+      "path": "character/giant/hero"
+    },
+    "light": {
+      "path": "character/giant/light"
+    },
+    "water": {
+      "path": "character/giant/water"
+    },
+    "world": {
+      "path": "character/giant/world"
+    }
+  },
+  "goblin": {
+    "rarity": 2,
+    "weapon": "thrust",
+    "dark": {
+      "path": "character/goblin/dark"
+    },
+    "wood": {
+      "path": "character/goblin/wood"
+    },
+    "evil": {
+      "path": "character/goblin/evil"
+    },
+    "fire": {
+      "path": "character/goblin/fire"
+    },
+    "light": {
+      "path": "character/goblin/light"
+    },
+    "water": {
+      "path": "character/goblin/water"
+    }
+  },
+  "governer": {
+    "rarity": 2,
+    "weapon": "none",
+    "dark": {
+      "path": "character/governer/dark"
+    },
+    "wood": {
+      "path": "character/governer/wood"
+    },
+    "fire": {
+      "path": "character/governer/fire"
+    },
+    "light": {
+      "path": "character/governer/light"
+    },
+    "water": {
+      "path": "character/governer/water"
+    }
+  },
+  "imp": {
+    "rarity": 1,
+    "weapon": "shoot",
+    "dark": {
+      "path": "character/imp/dark"
+    },
+    "wood": {
+      "path": "character/imp/wood"
+    },
+    "evil": {
+      "path": "character/imp/evil"
+    },
+    "fire": {
+      "path": "character/imp/fire"
+    },
+    "light": {
+      "path": "character/imp/light"
+    },
+    "water": {
+      "path": "character/imp/water"
+    }
+  },
+  "jiangshi": {
+    "rarity": 2,
+    "weapon": "thrust",
+    "dark": {
+      "path": "character/jiangshi/dark"
+    },
+    "wood": {
+      "path": "character/jiangshi/wood"
+    },
+    "evil": {
+      "path": "character/jiangshi/evil"
+    },
+    "fire": {
+      "path": "character/jiangshi/fire"
+    },
+    "hero": {
+      "path": "character/jiangshi/hero"
+    },
+    "light": {
+      "path": "character/jiangshi/light"
+    },
+    "water": {
+      "path": "character/jiangshi/water"
+    },
+    "world": {
+      "path": "character/jiangshi/world"
+    }
+  },
+  "kurohuku": {
+    "rarity": 2,
+    "weapon": "snipe",
+    "dark": {
+      "path": "character/kurohuku/dark"
+    },
+    "wood": {
+      "path": "character/kurohuku/wood"
+    },
+    "fire": {
+      "path": "character/kurohuku/fire"
+    },
+    "light": {
+      "path": "character/kurohuku/light"
+    },
+    "water": {
+      "path": "character/kurohuku/water"
+    }
+  },
+  "lantern": {
+    "rarity": 1,
+    "weapon": "magic",
+    "dark": {
+      "path": "character/lantern/dark"
+    },
+    "wood": {
+      "path": "character/lantern/wood"
+    },
+    "fire": {
+      "path": "character/lantern/fire"
+    },
+    "light": {
+      "path": "character/lantern/light"
+    },
+    "water": {
+      "path": "character/lantern/water"
+    }
+  },
+  "livestreamer": {
+    "rarity": 2,
+    "weapon": "shoot",
+    "dark": {
+      "path": "character/livestreamer/dark"
+    },
+    "wood": {
+      "path": "character/livestreamer/wood"
+    },
+    "evil": {
+      "path": "character/livestreamer/evil"
+    },
+    "fire": {
+      "path": "character/livestreamer/fire"
+    },
+    "hero": {
+      "path": "character/livestreamer/hero"
+    },
+    "light": {
+      "path": "character/livestreamer/light"
+    },
+    "water": {
+      "path": "character/livestreamer/water"
+    },
+    "world": {
+      "path": "character/livestreamer/world"
+    }
+  },
+  "mage": {
+    "rarity": 1,
+    "weapon": "magic",
+    "dark": {
+      "path": "character/mage/dark"
+    },
+    "wood": {
+      "path": "character/mage/wood"
+    },
+    "fire": {
+      "path": "character/mage/fire"
+    },
+    "light": {
+      "path": "character/mage/light"
+    },
+    "water": {
+      "path": "character/mage/water"
+    }
+  },
+  "maid": {
+    "rarity": 1,
+    "weapon": "longslash",
+    "dark": {
+      "path": "character/maid/dark"
+    },
+    "wood": {
+      "path": "character/maid/wood"
+    },
+    "fire": {
+      "path": "character/maid/fire"
+    },
+    "light": {
+      "path": "character/maid/light"
+    },
+    "water": {
+      "path": "character/maid/water"
+    }
+  },
+  "mermaid": {
+    "rarity": 2,
+    "weapon": "magic",
+    "dark": {
+      "path": "character/mermaid/dark"
+    },
+    "wood": {
+      "path": "character/mermaid/wood"
+    },
+    "evil": {
+      "path": "character/mermaid/evil"
+    },
+    "fire": {
+      "path": "character/mermaid/fire"
+    },
+    "hero": {
+      "path": "character/mermaid/hero"
+    },
+    "light": {
+      "path": "character/mermaid/light"
+    },
+    "water": {
+      "path": "character/mermaid/water"
+    }
+  },
+  "merman": {
+    "rarity": 2,
+    "weapon": "shoot",
+    "dark": {
+      "path": "character/merman/dark"
+    },
+    "wood": {
+      "path": "character/merman/wood"
+    },
+    "evil": {
+      "path": "character/merman/evil"
+    },
+    "fire": {
+      "path": "character/merman/fire"
+    },
+    "light": {
+      "path": "character/merman/light"
+    },
+    "water": {
+      "path": "character/merman/water"
+    }
+  },
+  "missing": {
+    "rarity": 2,
+    "weapon": "snipe",
+    "all": {
+      "path": "character/missing/all"
+    },
+    "infinity": {
+      "path": "character/missing/infinity"
+    },
+    "zero": {
+      "path": "character/missing/zero"
+    }
+  },
+  "newgen": {
+    "rarity": 2,
+    "weapon": "thrust",
+    "dark": {
+      "path": "character/newgen/dark"
+    },
+    "wood": {
+      "path": "character/newgen/wood"
+    },
+    "evil": {
+      "path": "character/newgen/evil"
+    },
+    "fire": {
+      "path": "character/newgen/fire"
+    },
+    "hero": {
+      "path": "character/newgen/hero"
+    },
+    "light": {
+      "path": "character/newgen/light"
+    },
+    "water": {
+      "path": "character/newgen/water"
+    },
+    "world": {
+      "path": "character/newgen/world"
+    }
+  },
+  "nightgaunt": {
+    "rarity": 2,
+    "weapon": "slash",
+    "dark": {
+      "path": "character/nightgaunt/dark"
+    },
+    "wood": {
+      "path": "character/nightgaunt/wood"
+    },
+    "evil": {
+      "path": "character/nightgaunt/evil"
+    },
+    "fire": {
+      "path": "character/nightgaunt/fire"
+    },
+    "hero": {
+      "path": "character/nightgaunt/hero"
+    },
+    "light": {
+      "path": "character/nightgaunt/light"
+    },
+    "water": {
+      "path": "character/nightgaunt/water"
+    },
+    "world": {
+      "path": "character/nightgaunt/world"
+    }
+  },
+  "ouroboros": {
+    "rarity": 2,
+    "weapon": "none",
+    "all": {
+      "path": "character/ouroboros/all"
+    },
+    "infinity": {
+      "path": "character/ouroboros/infinity"
+    },
+    "zero": {
+      "path": "character/ouroboros/zero"
+    }
+  },
+  "pirate": {
+    "rarity": 1,
+    "weapon": "varies",
+    "dark": {
+      "weapon": "slash",
+      "path": "character/pirate/dark"
+    },
+    "wood": {
+      "weapon": "thrust",
+      "path": "character/pirate/wood"
+    },
+    "fire": {
+      "weapon": "knock",
+      "path": "character/pirate/fire"
+    },
+    "light": {
+      "weapon": "shoot",
+      "path": "character/pirate/light"
+    },
+    "water": {
+      "weapon": "magic",
+      "path": "character/pirate/water"
+    }
+  },
+  "ranger": {
+    "rarity": 2,
+    "weapon": "longslash",
+    "dark": {
+      "path": "character/ranger/dark"
+    },
+    "wood": {
+      "path": "character/ranger/wood"
+    },
+    "evil": {
+      "path": "character/ranger/evil"
+    },
+    "fire": {
+      "path": "character/ranger/fire"
+    },
+    "hero": {
+      "path": "character/ranger/hero"
+    },
+    "light": {
+      "path": "character/ranger/light"
+    },
+    "water": {
+      "path": "character/ranger/water"
+    },
+    "world": {
+      "path": "character/ranger/world"
+    }
+  },
+  "senri": {
+    "rarity": 2,
+    "weapon": "slash",
+    "dark": {
+      "path": "character/senri/dark"
+    },
+    "wood": {
+      "path": "character/senri/wood"
+    },
+    "evil": {
+      "path": "character/senri/evil"
+    },
+    "fire": {
+      "path": "character/senri/fire"
+    },
+    "hero": {
+      "path": "character/senri/hero"
+    },
+    "light": {
+      "path": "character/senri/light"
+    },
+    "water": {
+      "path": "character/senri/water"
+    },
+    "world": {
+      "path": "character/senri/world"
+    }
+  },
+  "slime": {
+    "rarity": 1,
+    "weapon": "knock",
+    "dark": {
+      "path": "character/slime/dark"
+    },
+    "wood": {
+      "path": "character/slime/wood"
+    },
+    "evil": {
+      "path": "character/slime/evil"
+    },
+    "fire": {
+      "path": "character/slime/fire"
+    },
+    "light": {
+      "path": "character/slime/light"
+    },
+    "water": {
+      "path": "character/slime/water"
+    }
+  },
+  "starman": {
+    "rarity": 2,
+    "weapon": "knock",
+    "all": {
+      "path": "character/starman/all"
+    },
+    "infinity": {
+      "path": "character/starman/infinity"
+    },
+    "zero": {
+      "path": "character/starman/zero"
+    }
+  },
+  "tenjin": {
+    "rarity": 2,
+    "weapon": "knock",
+    "dark": {
+      "path": "character/tenjin/dark"
+    },
+    "wood": {
+      "path": "character/tenjin/wood"
+    },
+    "evil": {
+      "path": "character/tenjin/evil"
+    },
+    "fire": {
+      "path": "character/tenjin/fire"
+    },
+    "light": {
+      "path": "character/tenjin/light"
+    },
+    "water": {
+      "path": "character/tenjin/water"
+    }
+  },
+  "tribe": {
+    "rarity": 2,
+    "weapon": "varies",
+    "dark": {
+      "weapon": "slash",
+      "path": "character/tribe/dark"
+    },
+    "wood": {
+      "weapon": "thrust",
+      "path": "character/tribe/wood"
+    },
+    "evil": {
+      "weapon": "shoot",
+      "path": "character/tribe/evil"
+    },
+    "fire": {
+      "weapon": "thrust",
+      "path": "character/tribe/fire"
+    },
+    "hero": {
+      "weapon": "shoot",
+      "path": "character/tribe/hero"
+    },
+    "light": {
+      "weapon": "slash",
+      "path": "character/tribe/light"
+    },
+    "water": {
+      "weapon": "slash",
+      "path": "character/tribe/water"
+    },
+    "world": {
+      "weapon": "shoot",
+      "path": "character/tribe/world"
+    }
+  },
+  "trickster": {
+    "rarity": 2,
+    "weapon": "magic",
+    "dark": {
+      "path": "character/trickster/dark"
+    },
+    "wood": {
+      "path": "character/trickster/wood"
+    },
+    "evil": {
+      "path": "character/trickster/evil"
+    },
+    "fire": {
+      "path": "character/trickster/fire"
+    },
+    "hero": {
+      "path": "character/trickster/hero"
+    },
+    "light": {
+      "path": "character/trickster/light"
+    },
+    "water": {
+      "path": "character/trickster/water"
+    },
+    "world": {
+      "path": "character/trickster/world"
+    }
+  },
+  "trooper": {
+    "rarity": 2,
+    "weapon": "shoot",
+    "dark": {
+      "path": "character/trooper/dark"
+    },
+    "wood": {
+      "path": "character/trooper/wood"
+    },
+    "evil": {
+      "path": "character/trooper/evil"
+    },
+    "fire": {
+      "path": "character/trooper/fire"
+    },
+    "hero": {
+      "path": "character/trooper/hero"
+    },
+    "light": {
+      "path": "character/trooper/light"
+    },
+    "water": {
+      "path": "character/trooper/water"
+    },
+    "world": {
+      "path": "character/trooper/world"
+    }
+  },
+  "valkyrie": {
+    "rarity": 2,
+    "weapon": "magic",
+    "dark": {
+      "path": "character/valkyrie/dark"
+    },
+    "wood": {
+      "path": "character/valkyrie/wood"
+    },
+    "fire": {
+      "path": "character/valkyrie/fire"
+    },
+    "light": {
+      "path": "character/valkyrie/light"
+    },
+    "water": {
+      "path": "character/valkyrie/water"
+    }
+  },
+  "werewolf": {
+    "rarity": 1,
+    "weapon": "thrust",
+    "dark": {
+      "path": "character/werewolf/dark"
+    },
+    "wood": {
+      "path": "character/werewolf/wood"
+    },
+    "evil": {
+      "path": "character/werewolf/evil"
+    },
+    "fire": {
+      "path": "character/werewolf/fire"
+    },
+    "light": {
+      "path": "character/werewolf/light"
+    },
+    "water": {
+      "path": "character/werewolf/water"
+    }
+  },
+  "wraith": {
+    "rarity": 2,
+    "weapon": "shoot",
+    "dark": {
+      "path": "character/wraith/dark"
+    },
+    "wood": {
+      "path": "character/wraith/wood"
+    },
+    "evil": {
+      "path": "character/wraith/evil"
+    },
+    "fire": {
+      "path": "character/wraith/fire"
+    },
+    "hero": {
+      "path": "character/wraith/hero"
+    },
+    "light": {
+      "path": "character/wraith/light"
+    },
+    "water": {
+      "path": "character/wraith/water"
+    },
+    "world": {
+      "path": "character/wraith/world"
+    }
+  },
+  "wrestler": {
+    "rarity": 2,
+    "weapon": "knock",
+    "dark": {
+      "path": "character/wrestler/dark"
+    },
+    "wood": {
+      "path": "character/wrestler/wood"
+    },
+    "evil": {
+      "path": "character/wrestler/evil"
+    },
+    "fire": {
+      "path": "character/wrestler/fire"
+    },
+    "hero": {
+      "path": "character/wrestler/hero"
+    },
+    "light": {
+      "path": "character/wrestler/light"
+    },
+    "water": {
+      "path": "character/wrestler/water"
+    },
+    "world": {
+      "path": "character/wrestler/world"
+    }
+  },
+  "wyvern": {
+    "rarity": 2,
+    "weapon": "thrust",
+    "dark": {
+      "path": "character/wyvern/dark"
+    },
+    "wood": {
+      "path": "character/wyvern/wood"
+    },
+    "evil": {
+      "path": "character/wyvern/evil"
+    },
+    "fire": {
+      "path": "character/wyvern/fire"
+    },
+    "light": {
+      "path": "character/wyvern/light"
+    },
+    "water": {
+      "path": "character/wyvern/water"
+    }
+  },
+  "yaksha": {
+    "rarity": 2,
+    "weapon": "varies",
+    "dark": {
+      "weapon": "shoot",
+      "path": "character/yaksha/dark"
+    },
+    "wood": {
+      "weapon": "knock",
+      "path": "character/yaksha/wood"
+    },
+    "evil": {
+      "weapon": "magic",
+      "path": "character/yaksha/evil"
+    },
+    "fire": {
+      "weapon": "slash",
+      "path": "character/yaksha/fire"
+    },
+    "hero": {
+      "weapon": "snipe",
+      "path": "character/yaksha/hero"
+    },
+    "light": {
+      "weapon": "longslash",
+      "path": "character/yaksha/light"
+    },
+    "water": {
+      "weapon": "thrust",
+      "path": "character/yaksha/water"
+    },
+    "world": {
+      "weapon": "magic",
+      "path": "character/yaksha/world"
+    }
+  },
+  "yatagarasu": {
+    "rarity": 2,
+    "weapon": "knock",
+    "dark": {
+      "path": "character/yatagarasu/dark"
+    },
+    "wood": {
+      "path": "character/yatagarasu/wood"
+    },
+    "evil": {
+      "path": "character/yatagarasu/evil"
+    },
+    "fire": {
+      "path": "character/yatagarasu/fire"
+    },
+    "hero": {
+      "path": "character/yatagarasu/hero"
+    },
+    "light": {
+      "path": "character/yatagarasu/light"
+    },
+    "water": {
+      "path": "character/yatagarasu/water"
+    },
+    "world": {
+      "path": "character/yatagarasu/world"
+    }
+  }
+}

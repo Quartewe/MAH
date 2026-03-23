@@ -68,6 +68,8 @@ class SelectSupport(CustomAction):
                     keywords.remove(key_to_remove)
         select_mode = support_data.get("select_mode", "best")
 
+        support_data["name"] = support_data.get("name", "").lower()
+
         # 扫描并选择最佳支援
         page = 0
         if not self._scan_and_select_support(context, support_data if not default_mode else None, keywords, select_mode, idroi, page):

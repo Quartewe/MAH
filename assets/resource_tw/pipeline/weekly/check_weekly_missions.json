@@ -1,0 +1,61 @@
+{
+    "CheckWeeklyMissions.OpenMissionInterface": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "任務"
+                ]
+            }
+        }
+    },
+    "CheckWeeklyMissions.Back": {
+        "recognition": {
+            "param": {
+                "expected": "進行中的任務"
+            }
+        }
+    },
+    "CheckWeeklyMissions.Select": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "顯示全部"
+                ]
+            }
+        }
+    },
+    "CheckWeeklyMissions.Select_1": {
+        "recognition": {
+            "param": {
+                "expected": "進行中的任務"
+            }
+        }
+    },
+    "CheckWeeklyMissions.Search": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "無內容顯示"
+                ]
+            }
+        }
+    },
+    "CheckWeeklyMissions.Back_1": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "顯示全部"
+                ]
+            }
+        }
+    },
+    "CheckWeeklyMissions.Get": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "一次領取"
+                ]
+            }
+        }
+    }
+}

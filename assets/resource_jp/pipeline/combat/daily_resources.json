@@ -1,0 +1,50 @@
+{
+    "DailyRes.Go1": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "曜日"
+                ]
+            }
+        }
+    },
+    "DailyRes.Coin.Entry": {
+        "action": {
+            "param": {
+                "custom_action_param": {
+                    "name": "コイン",
+                    "difficulty": [
+                        "（3）",
+                        "(3)"
+                    ]
+                }
+            }
+        }
+    },
+    "DailyRes.Exp.Entry": {
+        "action": {
+            "param": {
+                "custom_action_param": {
+                    "name": "経験",
+                    "difficulty": [
+                        "（3）",
+                        "(3)"
+                    ]
+                }
+            }
+        }
+    },
+    "DailyRes.Skill.Entry": {
+        "action": {
+            "param": {
+                "custom_action_param": {
+                    "name": "スキル",
+                    "difficulty": [
+                        "（3）",
+                        "(3)"
+                    ]
+                }
+            }
+        }
+    }
+}
