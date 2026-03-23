@@ -96,52 +96,66 @@ jobs:
           out-file-path: "deps"
           extract: true
 
-      - name: Sync external resource repository
+      - name: Sync external resource repository (incremental)
         shell: bash
         env:
           INPUT_RESOURCE_REPO: ${{ github.event.inputs.resource_repo }}
           INPUT_RESOURCE_REF: ${{ github.event.inputs.resource_ref }}
-          INPUT_RESOURCE_PATH: ${{ github.event.inputs.resource_path }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           DEFAULT_RESOURCE_REPO="quartawa/mah_res"
-          DEFAULT_RESOURCE_REF="main"
-          DEFAULT_RESOURCE_PATH="assets/resource"
 
           RESOURCE_REPO="$INPUT_RESOURCE_REPO"
-          RESOURCE_REF="$INPUT_RESOURCE_REF"
-          RESOURCE_PATH="$INPUT_RESOURCE_PATH"
-
           if [[ -z "$RESOURCE_REPO" ]]; then
             RESOURCE_REPO="$DEFAULT_RESOURCE_REPO"
           fi
-          if [[ -z "$RESOURCE_REF" ]]; then
-            RESOURCE_REF="$DEFAULT_RESOURCE_REF"
-          fi
-          if [[ -z "$RESOURCE_PATH" ]]; then
-            RESOURCE_PATH="$DEFAULT_RESOURCE_PATH"
+
+          echo "Downloading incremental resources from $RESOURCE_REPO"
+          mkdir -p assets/resource
+
+          # 获取最新 release 信息
+          RELEASES_API="https://api.github.com/repos/$RESOURCE_REPO/releases?per_page=10"
+          RELEASE_JSON=$(curl -s -H "Authorization: token $GITHUB_TOKEN" "$RELEASES_API")
+
+          # 优先查找 hotfix 包，如果没有则用 full 包
+          HOTFIX_URL=$(echo "$RELEASE_JSON" | jq -r '.[] | .assets[] | select(.name | contains("hotfix") or contains("incremental") or contains("patch")) | .browser_download_url' | head -1)
+          
+          if [[ -n "$HOTFIX_URL" ]]; then
+            echo "Found incremental package: $HOTFIX_URL"
+            PACKAGE_URL="$HOTFIX_URL"
+          else
+            echo "No incremental package found, falling back to full package"
+            PACKAGE_URL=$(echo "$RELEASE_JSON" | jq -r '.[] | .assets[] | select(.name | contains("full")) | .browser_download_url' | head -1)
           fi
 
-          if [[ -z "$RESOURCE_REPO" ]]; then
-            echo "No external resource repo configured, skip syncing."
+          if [[ -z "$PACKAGE_URL" ]]; then
+            # 最后兜底：任何 zip/tar.gz 都算 full 包
+            PACKAGE_URL=$(echo "$RELEASE_JSON" | jq -r '.[] | .assets[] | select(.name | endswith(".zip") or endswith(".tar.gz")) | select(.name | contains("hotfix") | not) | .browser_download_url' | head -1)
+          fi
+
+          if [[ -z "$PACKAGE_URL" ]]; then
+            echo "[WARNING] No resource package found in releases, keep local assets unchanged"
             exit 0
           fi
 
-          echo "Syncing resources from $RESOURCE_REPO@$RESOURCE_REF:$RESOURCE_PATH"
-          rm -rf .external_resource_tmp
+          echo "Downloading from: $PACKAGE_URL"
+          TEMP_PACKAGE="/tmp/mah_res_package.$(echo $PACKAGE_URL | grep -oE '\.[^.]+$' | tr -d '.')"
+          curl -L -H "Authorization: token $GITHUB_TOKEN" -o "$TEMP_PACKAGE" "$PACKAGE_URL"
 
-          git clone --depth 1 --branch "$RESOURCE_REF" "https://x-access-token:${GITHUB_TOKEN}@github.com/${RESOURCE_REPO}.git" .external_resource_tmp
-
-          if [[ ! -d ".external_resource_tmp/${RESOURCE_PATH}" ]]; then
-            echo "[ERROR] resource path not found in external repo: ${RESOURCE_PATH}"
+          if [[ ! -f "$TEMP_PACKAGE" ]]; then
+            echo "[ERROR] Failed to download resource package"
             exit 1
           fi
 
-          rm -rf assets/resource
-          mkdir -p assets/resource
-          rsync -av --delete ".external_resource_tmp/${RESOURCE_PATH}/" assets/resource/
-          rm -rf .external_resource_tmp
-          echo "External resources synced to assets/resource."
+          # 解压到 assets/resource（不删除本地已有文件，只增量更新）
+          if [[ "$TEMP_PACKAGE" == *.zip ]]; then
+            unzip -o -q "$TEMP_PACKAGE" -d "assets/resource/"
+          elif [[ "$TEMP_PACKAGE" == *.tar.gz ]]; then
+            tar -xzf "$TEMP_PACKAGE" -C "assets/resource/"
+          fi
+
+          rm -f "$TEMP_PACKAGE"
+          echo "Resources synced successfully (incremental mode)"
 
       - name: Download MAH-UI
         if: matrix.os != 'android'
