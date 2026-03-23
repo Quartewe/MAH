@@ -1,0 +1,75 @@
+{
+    "team": {
+        "LEADER": {
+            "name": "sanzo",
+            "id": 2,
+            "AR": "ar_genociders_kirito"
+        },
+        "2": {
+            "name": "yig",
+            "id": 2,
+            "AR": "ar_9thAnniversary_exchange"
+        },
+        "SUPPORT": {
+            "name": "kyouma",
+            "id": 2,
+            "Level": 70,
+            "S.A.Lv": 1,
+            "Skill": 100,
+            "ATK": 0,
+            "HP": 0,
+            "AR": null
+        },
+        "4": {
+            "name": "amduscias",
+            "id": 3,
+            "AR": "ar_crafters_kurogane2"
+        },
+        "5": {
+            "name": "maneki",
+            "id": 1,
+            "AR": "ar_moritaka_horkeukamui"
+        },
+        "6": {
+            "name": "player",
+            "id": 1,
+            "AR": "ar_8thAnniversary_exchange"
+        },
+        "community": "summoners"
+    },
+    "fight": {
+        "pos": {
+            "1": [
+                0,
+                0
+            ],
+            "2": [
+                1,
+                0
+            ],
+            "3": [
+                0,
+                1
+            ],
+            "4": [
+                1,
+                1
+            ]
+        },
+        "action": {
+            "0": {
+                "char": 3,
+                "action": [
+                    "U"
+                ]
+            },
+            "1": {
+                "char": 4,
+                "action": [
+                    "U",
+                    "L"
+                ]
+            }
+        }
+    }
+}
