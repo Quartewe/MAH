@@ -122,10 +122,18 @@ def install_resource():
         install_path / "resource",
         dirs_exist_ok=True,
     )
-    shutil.copy2(
-        working_dir / "assets" / "interface.json",
-        install_path,
-    )
+        shutil.copy2(
+            working_dir / "assets" / "interface.json",
+            install_path,
+        )
+
+        for interface_file in (working_dir / "assets").glob("interface_*.json"):
+            if interface_file.is_file():
+                shutil.copy2(interface_file, install_path / interface_file.name)
+
+        assets_icon_path = working_dir / "assets" / "icon.png"
+        if assets_icon_path.exists():
+            shutil.copy2(assets_icon_path, install_path / "icon.png")
 
     with open(install_path / "interface.json", "r", encoding="utf-8") as f:
         interface = jsonc.load(f)
@@ -163,12 +171,17 @@ def install_agent():
 
 
 def install_data():
-    source_data_dir = working_dir / "data"
-    target_data_dir = install_path / "data"
-
-    if source_data_dir.exists():
-        shutil.copytree(
-            source_data_dir,
+        if not (install_path / "icon.png").exists():
+            fallback_icons = [
+                working_dir / "assets" / "icon.png",
+                working_dir / "icon.png",
+                install_path / "app" / "assets" / "icons" / "logo.png",
+                install_path / "_internal" / "app" / "assets" / "icons" / "logo.png",
+            ]
+            for fallback_icon in fallback_icons:
+                if fallback_icon.exists():
+                    shutil.copy2(fallback_icon, install_path / "icon.png")
+                    break
             target_data_dir,
             dirs_exist_ok=True,
         )
