@@ -12,7 +12,7 @@
     "title": "MAH v1.0.0", // 窗口标题，Client直接显示该内容不做修饰。默认使用name和version拼接生成，支持国际化
     "icon": "icon.png", // 应用图标文件路径，相对于项目根目录。未设置时使用默认图标
     "mirrorchyan_rid": "mah", // MirrorChyan资源包标识符，用于资源管理和分发
-    "mirrorchyan_multiplatform": false, // 是否支持多平台，影响资源包的打包和分发策略
+    "mirrorchyan_multiplatform": true, // 是否支持多平台，影响资源包的打包和分发策略
     "github": "https://github.com/Quartewe/MAH", // 项目GitHub仓库地址，用于版本更新检查和问题反馈
     "version": "1.0.0", // 项目版本号，用于版本更新检查和Client显示
     "contact": "$contact_info", // 联系方式信息，显示在"关于"页面。支持文件路径、URL或直接文本，内容支持Markdown格式，支持国际化
