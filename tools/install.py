@@ -97,6 +97,20 @@ def install_deps():
             dirs_exist_ok=True,
         )
 
+        if os_name == "win":
+            shared_lib_patterns = ("*.dll",)
+        elif os_name == "linux":
+            shared_lib_patterns = ("*.so", "*.so.*")
+        elif os_name == "macos":
+            shared_lib_patterns = ("*.dylib",)
+        else:
+            shared_lib_patterns = tuple()
+
+        for pattern in shared_lib_patterns:
+            for lib_file in (working_dir / "deps" / "bin").glob(pattern):
+                if lib_file.is_file():
+                    shutil.copy2(lib_file, install_path / lib_file.name)
+
 
 
 def install_resource():
@@ -131,6 +145,13 @@ def install_chores():
         working_dir / "LICENSE",
         install_path,
     )
+
+    icon_path = working_dir / "icon.png"
+    if icon_path.exists():
+        shutil.copy2(
+            icon_path,
+            install_path / "icon.png",
+        )
 
 
 def install_agent():
