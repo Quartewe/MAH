@@ -18,6 +18,19 @@ on:
       - "assets/**"
       - "**.py"
   workflow_dispatch:
+    inputs:
+      resource_repo:
+        description: "External resource repo (owner/repo), leave empty to disable"
+        required: false
+        default: "quartawa/mah_res"
+      resource_ref:
+        description: "External resource branch or tag"
+        required: false
+        default: "main"
+      resource_path:
+        description: "Path inside external repo to sync to assets/resource"
+        required: false
+        default: "assets/resource"
 
 jobs:
   meta:
@@ -82,6 +95,53 @@ jobs:
           latest: true
           out-file-path: "deps"
           extract: true
+
+      - name: Sync external resource repository
+        shell: bash
+        env:
+          INPUT_RESOURCE_REPO: ${{ github.event.inputs.resource_repo }}
+          INPUT_RESOURCE_REF: ${{ github.event.inputs.resource_ref }}
+          INPUT_RESOURCE_PATH: ${{ github.event.inputs.resource_path }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          DEFAULT_RESOURCE_REPO="quartawa/mah_res"
+          DEFAULT_RESOURCE_REF="main"
+          DEFAULT_RESOURCE_PATH="assets/resource"
+
+          RESOURCE_REPO="$INPUT_RESOURCE_REPO"
+          RESOURCE_REF="$INPUT_RESOURCE_REF"
+          RESOURCE_PATH="$INPUT_RESOURCE_PATH"
+
+          if [[ -z "$RESOURCE_REPO" ]]; then
+            RESOURCE_REPO="$DEFAULT_RESOURCE_REPO"
+          fi
+          if [[ -z "$RESOURCE_REF" ]]; then
+            RESOURCE_REF="$DEFAULT_RESOURCE_REF"
+          fi
+          if [[ -z "$RESOURCE_PATH" ]]; then
+            RESOURCE_PATH="$DEFAULT_RESOURCE_PATH"
+          fi
+
+          if [[ -z "$RESOURCE_REPO" ]]; then
+            echo "No external resource repo configured, skip syncing."
+            exit 0
+          fi
+
+          echo "Syncing resources from $RESOURCE_REPO@$RESOURCE_REF:$RESOURCE_PATH"
+          rm -rf .external_resource_tmp
+
+          git clone --depth 1 --branch "$RESOURCE_REF" "https://x-access-token:${GITHUB_TOKEN}@github.com/${RESOURCE_REPO}.git" .external_resource_tmp
+
+          if [[ ! -d ".external_resource_tmp/${RESOURCE_PATH}" ]]; then
+            echo "[ERROR] resource path not found in external repo: ${RESOURCE_PATH}"
+            exit 1
+          fi
+
+          rm -rf assets/resource
+          mkdir -p assets/resource
+          rsync -av --delete ".external_resource_tmp/${RESOURCE_PATH}/" assets/resource/
+          rm -rf .external_resource_tmp
+          echo "External resources synced to assets/resource."
 
       - name: Download MAH-UI
         if: matrix.os != 'android'
