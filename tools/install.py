@@ -141,10 +141,26 @@ def install_agent():
     )
 
 
+def install_data():
+    source_data_dir = working_dir / "data"
+    target_data_dir = install_path / "data"
+
+    if source_data_dir.exists():
+        shutil.copytree(
+            source_data_dir,
+            target_data_dir,
+            dirs_exist_ok=True,
+        )
+    else:
+        target_data_dir.mkdir(parents=True, exist_ok=True)
+        (target_data_dir / "auto_combat").mkdir(parents=True, exist_ok=True)
+
+
 if __name__ == "__main__":
     install_deps()
     install_resource()
     install_chores()
     install_agent()
+    install_data()
 
     print(f"[DEBUG] Install to {install_path} successfully.")

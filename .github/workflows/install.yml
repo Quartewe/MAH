@@ -83,24 +83,24 @@ jobs:
           out-file-path: "deps"
           extract: true
 
-      - name: Download MFAAvalonia
+      - name: Download MAH-UI
         if: matrix.os != 'android'
         id: download_mfa
         uses: robinraju/release-downloader@v1
         with:
-          repository: SweetSmellFox/MFAAvalonia
-          fileName: "MFAAvalonia-*-${{ (matrix.os == 'win' && 'win') || (matrix.os == 'macos' && 'osx') || (matrix.os == 'linux' && 'linux') }}-${{ (matrix.arch == 'x86_64' && 'x64') || (matrix.arch == 'aarch64' && 'arm64') }}*"
+          repository: Quartewe/MAH-UI
+          fileName: "MFW-PyQt6-${{ matrix.os }}-${{ matrix.arch }}-*"
           latest: true
           out-file-path: "MFA"
           extract: true
 
-      - name: Clean up MFAAvalonia archive
+      - name: Clean up MAH-UI archive
         if: matrix.os != 'android'
         shell: bash
         run: |
           ARCHIVE_FILE_PATH="${{ fromJson(steps.download_mfa.outputs.downloaded_files)[0] }}"
           rm -f "${ARCHIVE_FILE_PATH}"
-          echo "Archive cleanup command executed for MFAAvalonia."
+          echo "Archive cleanup command executed for MAH-UI."
 
       - name: Remove built-in runtime in MFA
         if: matrix.os != 'android'
@@ -133,6 +133,7 @@ jobs:
         with:
           name: MaaXXX-${{ matrix.os }}-${{ matrix.arch }}
           path: "install"
+          retention-days: 1
 
   changelog:
     name: Generate changelog
