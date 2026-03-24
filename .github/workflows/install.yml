@@ -206,6 +206,17 @@ jobs:
           python ./install.py ${{ needs.meta.outputs.tag }} ${{ matrix.os }} ${{ matrix.arch }}
           cd ..
 
+      - name: Include docs in package root
+        shell: bash
+        run: |
+          if [[ -d "docs" ]]; then
+            mkdir -p install/docs
+            rsync -av docs/ install/docs/
+            echo "Docs copied to install/docs"
+          else
+            echo "[WARNING] docs directory not found, skipping"
+          fi
+
       - name: Validate packaged files
         shell: bash
         run: |

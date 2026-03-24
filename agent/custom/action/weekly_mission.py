@@ -162,7 +162,7 @@ class WeeklyMission(CustomAction):
                                     "begin": [770, 577, 50, 10],
                                     "end": [770,93,50,10],
                                     "duration": 500,
-                                    "end_hold": 200
+                                    "end_hold": 500
                                 }
                             }
                         }

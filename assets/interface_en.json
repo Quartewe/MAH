@@ -123,5 +123,5 @@
     "current_progress_description": "Display current weekly task completion status",
     "current_progress_show": "Current Weekly Task Progress",
     "current_progress_show_description": "Display current weekly task completion status",
-    "current_progress_show_path": "state.json"
+    "current_progress_show_path": "./data/state.json"
 }

@@ -123,5 +123,5 @@
     "current_progress_description": "現在の毎週のタスクの進捗状況を表示する",
     "current_progress_show": "今週の定期任務の進行状況",
     "current_progress_show_description": "現在の毎週のタスクの進捗状況を表示する",
-    "current_progress_show_path": "state.json"
+    "current_progress_show_path": "./data/state.json"
 }

@@ -123,5 +123,5 @@
     "current_progress_description": "顯示当前每周任務的完成情况",
     "current_progress_show": "當前周常任务进度",
     "current_progress_show_description": "顯示当前每周任務的完成情况",
-    "current_progress_show_path": "state.json"
+    "current_progress_show_path": "./data/state.json"
 }
