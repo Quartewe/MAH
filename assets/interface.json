@@ -22,7 +22,7 @@
     "welcome": "$welcome", // 欢迎消息，在用户首次使用时弹窗显示，亦可作为公告使用。支持文件路径、URL或直接文本，内容支持Markdown格式。当内容更新时会再次弹窗，支持国际化
     "description": "$welcome_description", // 项目描述信息，显示在"关于"页面。支持文件路径、URL或直接文本，内容支持Markdown格式，支持国际化
     "agent": {
-        "child_exec": "python",
+        "child_exec": "py",
         "child_args": [
             "./agent/main.py" // 子进程参数。支持相对路径（相对于interface.json所在目录）
         ],
