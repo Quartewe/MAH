@@ -159,6 +159,23 @@ def install_resource():
         install_path / "resource",
         dirs_exist_ok=True,
     )
+
+    install_resource_path = install_path / "resource"
+    base_path = install_resource_path / "base"
+
+    def merge_into_base(src_name: str, dst_name: str) -> None:
+        src = install_resource_path / src_name
+        if not src.exists() or not src.is_dir():
+            return
+        dst = base_path / dst_name
+        dst.mkdir(parents=True, exist_ok=True)
+        shutil.copytree(src, dst, dirs_exist_ok=True)
+        shutil.rmtree(src)
+
+    merge_into_base("image", "image")
+    merge_into_base("model", "model")
+    merge_into_base("pipeline", "pipeline")
+
     shutil.copy2(
         working_dir / "assets" / "interface.json",
         install_path,
