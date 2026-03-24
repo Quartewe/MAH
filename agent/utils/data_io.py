@@ -20,6 +20,8 @@ class IOUtils:
         """
         if file_path is None:
             file_path = STATE_FILE
+
+        is_state_file = Path(file_path).resolve() == Path(STATE_FILE).resolve()
             
         try:
             if not os.path.exists("data"):
@@ -29,14 +31,15 @@ class IOUtils:
                 #
 
             if not os.path.exists(file_path):
-                # debug
-                print(f"[DEBUG] file not found: {file_path}, creating default file")
-                #
-                # 创建父目录
-                os.makedirs(os.path.dirname(file_path) or ".", exist_ok=True)
-                # 创建文件并写入默认数据
-                with open(file_path, "w", encoding="utf-8") as f:
-                    json.dump({}, f, ensure_ascii=False, indent=4)
+                if is_state_file:
+                    # debug
+                    print(f"[DEBUG] file not found: {file_path}, creating default file")
+                    #
+                    os.makedirs(os.path.dirname(file_path) or ".", exist_ok=True)
+                    with open(file_path, "w", encoding="utf-8") as f:
+                        json.dump({}, f, ensure_ascii=False, indent=4)
+                else:
+                    print(f"[ERROR] file not found: {file_path}")
                 return {}
 
             with open(file_path, "r", encoding="utf-8") as f:
@@ -45,15 +48,18 @@ class IOUtils:
                 #
                 return json.load(f)
         except (json.JSONDecodeError, FileNotFoundError):
-            # debug
-            print(f"[DEBUG] file {file_path} is corrupted, now will create it")
-            #
-            os.makedirs(os.path.dirname(file_path) or ".", exist_ok=True)
-            with open(file_path, "w", encoding="utf-8") as f:
-                json.dump({}, f, ensure_ascii=False, indent=4)
-            # 重新读取文件
-            with open(file_path, "r", encoding="utf-8") as f:
-                return json.load(f)
+            if is_state_file:
+                # debug
+                print(f"[DEBUG] file {file_path} is corrupted, now will create it")
+                #
+                os.makedirs(os.path.dirname(file_path) or ".", exist_ok=True)
+                with open(file_path, "w", encoding="utf-8") as f:
+                    json.dump({}, f, ensure_ascii=False, indent=4)
+                with open(file_path, "r", encoding="utf-8") as f:
+                    return json.load(f)
+
+            print(f"[ERROR] file {file_path} is corrupted")
+            return {}
 
     @staticmethod
     def write_data(data: dict, file_path: str = None):

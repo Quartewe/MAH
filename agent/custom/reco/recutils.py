@@ -47,28 +47,62 @@ class TraverseMatch(CustomRecognition):
     """
     def __init__(self):
         super().__init__()
-        self.BASE_PATH = proj_path.IMAGE_DIR
+        self.BASE_PATH = self._detect_image_base_dir()
         self.CHAR_DATA = data_io.read_data(proj_path.CHAR_FILE)
         self.CHAR_LOWSTAR_DATA = data_io.read_data(proj_path.CHAR_LOWSTAR_FILE)
         self.AR_DATA = data_io.read_data(proj_path.AR_FILE)
         self.ELEMENTS = ["all", "dark", "evil", "fire", "god", "hero", "infinity", "light", "none", "water", "wood", "world"]
+
+    def _detect_image_base_dir(self) -> Path:
+        candidates = [
+            proj_path.RESOURCE_DIR / "base" / "image",
+            proj_path.PROJECT_ROOT / "resource" / "base" / "image",
+            proj_path.PROJECT_ROOT / "assets" / "resource" / "base" / "image",
+            proj_path.IMAGE_DIR,
+            proj_path.RESOURCE_DIR / "image",
+            proj_path.PROJECT_ROOT / "resource" / "image",
+            proj_path.PROJECT_ROOT / "assets" / "resource" / "image",
+        ]
+
+        for candidate in candidates:
+            if candidate.exists():
+                print(f"[DEBUG] TraverseMatch image base dir: {candidate}")
+                return candidate
+
+        fallback = candidates[0]
+        print(f"[ERROR] TraverseMatch image base dir not found, fallback to: {fallback}")
+        return fallback
 
     def _resolve_image_path(self, raw_path):
         if not raw_path:
             return None
 
         path_str = str(raw_path).replace("\\", "/").lstrip("./")
-        image_root_rel = proj_path.IMAGE_DIR.relative_to(proj_path.PROJECT_ROOT).as_posix()
-        prefix = f"{image_root_rel}/"
 
-        if path_str.startswith(prefix):
-            path_str = path_str[len(prefix):]
+        removable_prefixes = [
+            "assets/resource/base/image/",
+            "resource/base/image/",
+            "assets/resource/image/",
+            "resource/image/",
+        ]
+        for prefix in removable_prefixes:
+            if path_str.startswith(prefix):
+                path_str = path_str[len(prefix):]
+                break
+
+        try:
+            image_root_rel = self.BASE_PATH.relative_to(proj_path.PROJECT_ROOT).as_posix()
+            prefix = f"{image_root_rel}/"
+            if path_str.startswith(prefix):
+                path_str = path_str[len(prefix):]
+        except ValueError:
+            pass
 
         path_obj = Path(path_str)
         if path_obj.is_absolute():
             return path_obj
 
-        return proj_path.IMAGE_DIR / path_obj
+        return self.BASE_PATH / path_obj
 
     def analyze(
         self,
@@ -248,7 +282,10 @@ class TraverseMatch(CustomRecognition):
                 print("[DEBUG] 未找到任何匹配项")
 
         elif template_path and template_path.exists() and ar_mode:
-            template = template_path.relative_to(self.BASE_PATH)
+            try:
+                template = template_path.relative_to(self.BASE_PATH)
+            except ValueError:
+                template = Path(str(template_path).replace("\\", "/"))
             print(f"[DEBUG] Finding AR: {template}")
             match_detail = context.run_recognition_direct(
                 "FeatureMatch",

@@ -36,16 +36,6 @@
     ]
   },
   "Global.LoginReward": {
-    "pre_wait_freezes": {
-      "time": 1000,
-      "target": [
-        306,
-        209,
-        938,
-        213
-      ],
-      "threshold": 0.999
-    },
     "recognition": {
       "type": "OCR",
       "param": {
@@ -57,6 +47,16 @@
         ],
         "expected": "GET!"
       }
+    },
+    "pre_wait_freezes": {
+      "time": 1000,
+      "target": [
+        306,
+        209,
+        938,
+        213
+      ],
+      "threshold": 0.999
     },
     "action": {
       "type": "Click",
@@ -108,11 +108,11 @@
       }
     },
     "next": [
-      "Global.LoginReward",
-      "Global.HomePage"
+      "Global.GoBackToHomePage"
     ],
     "on_error": [
-      "Global.GoBackToHomePage"
+      "Global.LoginReward",
+      "Global.HomePage"
     ]
   },
   "Global.GoHomePage": {

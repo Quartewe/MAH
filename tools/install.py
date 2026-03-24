@@ -216,6 +216,12 @@ def install_chores():
                 shutil.copy2(fallback_icon, install_path / "icon.png")
                 break
 
+    maa_option_src = working_dir / "config" / "maa_option.json"
+    if maa_option_src.exists():
+        install_config_dir = install_path / "config"
+        install_config_dir.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(maa_option_src, install_config_dir / "maa_option.json")
+
 
 def install_agent():
     shutil.copytree(
