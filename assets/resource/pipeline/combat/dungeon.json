@@ -59,9 +59,9 @@
             "param": {
                 "roi": [
                     1100,
-                    400,
-                    200,
-                    300
+                    300,
+                    300,
+                    400
                 ],
                 "template": "map/changemap.png"
             }

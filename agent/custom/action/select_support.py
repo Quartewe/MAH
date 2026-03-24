@@ -44,6 +44,9 @@ class SelectSupport(CustomAction):
         if isinstance(param, str):
             param = param.strip('"')
             print(f"[DEBUG] Target files: {param}")
+            if not param:
+                print(f"[DEBUG] No target file specified for searching.")
+                return False
             try:
                 raw_data = data_io.find_target_files(self.DATA_PATH, param)
                 team_data = raw_data.get("team", {})

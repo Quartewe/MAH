@@ -17,7 +17,7 @@ class TeamSelect(CustomAction):
         argv: CustomAction.RunArg,
     ) -> bool:
         param = json.loads(argv.custom_action_param)
-        if not param:
+        if not param or param <= 0 or param > 15:
             print(f"[DEBUG] TeamSelect 缺少参数, 直接使用当前配队")
             return True
         param = int(param.strip("'").strip('"'))

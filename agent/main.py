@@ -1,5 +1,39 @@
 import sys
 import os
+import builtins
+from datetime import datetime
+from pathlib import Path
+from threading import Lock
+
+
+_ORIGINAL_PRINT = builtins.print
+_PRINT_LOCK = Lock()
+
+
+def _setup_backend_log_print() -> None:
+    project_root = Path(__file__).resolve().parent.parent
+    log_dir = project_root / "debug"
+    log_dir.mkdir(parents=True, exist_ok=True)
+    log_file = log_dir / "backend.log"
+
+    def _patched_print(*args, **kwargs):
+        timestamp = datetime.now().strftime("[%Y-%m-%d %H:%M:%S]")
+        _ORIGINAL_PRINT(timestamp, *args, **kwargs)
+
+        sep = kwargs.get("sep", " ")
+        end = kwargs.get("end", "\n")
+        message = sep.join(str(arg) for arg in args)
+        if end is None:
+            end = ""
+
+        with _PRINT_LOCK:
+            with log_file.open("a", encoding="utf-8") as f:
+                f.write(f"{timestamp} {message}{end}")
+
+    builtins.print = _patched_print
+
+
+_setup_backend_log_print()
 
 # 将 agent 目录加入 sys.path，使 utils/custom 包可被导入
 agent_dir = os.path.dirname(os.path.abspath(__file__))

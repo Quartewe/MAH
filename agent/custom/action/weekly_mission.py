@@ -70,6 +70,59 @@ class WeeklyMission(CustomAction):
         self.last_scan_index = -1
         self.last_info_scan_index = -1
 
+    @staticmethod
+    def _normalize_ocr_text(text: str) -> str:
+        if text is None:
+            return ""
+        return str(text).strip().strip('"').strip("'").replace(" ", "")
+
+    def _extract_progress(self, text: str):
+        normalized = self._normalize_ocr_text(text).replace("／", "/")
+        if "/" not in normalized:
+            return None
+        numbers = re.findall(r"\d+", normalized)
+        if len(numbers) < 2:
+            return None
+        return int(numbers[0]), int(numbers[1])
+
+    def _pick_mission_info(self, mission_item, ocr_results):
+        mission_x, mission_y = mission_item.box[0], mission_item.box[1]
+        best_progress = None
+        best_cost = None
+
+        for info in ocr_results:
+            if info is mission_item:
+                continue
+
+            info_text = self._normalize_ocr_text(info.text)
+            if not info_text:
+                continue
+            if info_text in ["進行度", "进行度"]:
+                continue
+            if "期限" in info_text or "小时" in info_text or "分鐘" in info_text or "分钟" in info_text:
+                continue
+
+            dx = info.box[0] - mission_x
+            dy = info.box[1] - mission_y
+            if not (50 <= dx <= 420 and -20 <= dy <= 140):
+                continue
+
+            if info_text.upper() == "COMPLETED":
+                return "completed", None
+
+            progress = self._extract_progress(info_text)
+            if not progress:
+                continue
+
+            cost = abs(dx - 180) + abs(dy - 55) * 4
+            if best_cost is None or cost < best_cost:
+                best_cost = cost
+                best_progress = progress
+
+        if best_progress is not None:
+            return "progress", best_progress
+        return None, None
+
     def _catch_mission_data(self, context):
         mission_data = data_io.read_data(proj_path.STATE_FILE)
         if mission_data == {}:
@@ -85,7 +138,7 @@ class WeeklyMission(CustomAction):
 
         while True:
             current_fingerprint = []
-            rec_compeleted = False
+            should_swipe = False
             context.tasker.controller.post_screencap().wait()
             current_image = context.tasker.controller.cached_image
             mission_res = context.run_recognition(
@@ -102,57 +155,32 @@ class WeeklyMission(CustomAction):
                     }
                 }
             )
-            print(mission_res.all_results)
-            indexed_results = list(enumerate(mission_res.all_results))
-            if indexed_results and self.last_scan_index >= 0:
-                start_index = (self.last_scan_index + 1) % len(indexed_results)
-                scan_results = indexed_results[start_index:] + indexed_results[:start_index]
-            else:
-                scan_results = indexed_results
+            ocr_results = list(mission_res.all_results)
+            print(ocr_results)
 
-            indexed_info_results = list(enumerate(mission_res.filtered_results))
-            if indexed_info_results and self.last_info_scan_index >= 0:
-                info_start_index = (self.last_info_scan_index + 1) % len(indexed_info_results)
-                info_scan_results = indexed_info_results[info_start_index:] + indexed_info_results[:info_start_index]
-            else:
-                info_scan_results = indexed_info_results
-
-            round_last_scan_index = self.last_scan_index
-            round_last_info_scan_index = self.last_info_scan_index
             for mission in mission_data.keys():
-                for idx, item in scan_results:
-                    if mission in item.text:
-                        round_last_scan_index = idx
-                        print(f"[DEBUG] 任务 {mission} 匹配到文本: {item.text}")
-                        current_fingerprint.append((item.text))
-                        for info_idx, info in info_scan_results:
-                            if info.text.strip().strip('"').strip("'") in ["進行度", "进行度"]:
-                                continue
-                            if 0 < item.box[1] - info.box[1] < self.COMPELETED_Y_RANGE and info.text.strip().strip('"').strip("'") == "COMPLETED":
-                                mission_data[mission]["completed"] = True
-                                mission_data[mission]["current"] = mission_data[mission]["target"]
-                                print(f"[DEBUG] 任务 {mission} 已完成")
-                                rec_compeleted = True
-                                round_last_info_scan_index = info_idx
-                                break
-                            elif "/" in info.text and info.box[1] - item.box[1] in range(0, self.NUM_Y_RANGE) and info.box[0] - item.box[0] in range(0, self.NUM_X_RANGE):
-                                print(f"[DEBUG] 任务 {mission} 匹配到可能的进度文本: {info.text}")     
-                                numbers = re.findall(r'\d+', info.text)
-                                if len(numbers) < 2:
-                                    continue
-                                current, target = int(numbers[0]), int(numbers[1])
-                                mission_data[mission]["current"] = current
-                                mission_data[mission]["target"] = target
-                                if current >= target:
-                                    mission_data[mission]["completed"] = True
-                                print(f"[DEBUG] 任务 {mission} 当前进度: {current}/{target}")
-                                rec_compeleted = True
-                                round_last_info_scan_index = info_idx
-                                break
-                        break
-            self.last_scan_index = round_last_scan_index
-            self.last_info_scan_index = round_last_info_scan_index
-            if rec_compeleted:
+                matched_items = [res for res in ocr_results if mission in self._normalize_ocr_text(res.text)]
+                if not matched_items:
+                    continue
+
+                mission_item = max(matched_items, key=lambda item: item.score)
+                print(f"[DEBUG] 任务 {mission} 匹配到文本: {mission_item.text}")
+                current_fingerprint.append(mission)
+                should_swipe = True
+
+                info_type, progress = self._pick_mission_info(mission_item, ocr_results)
+                if info_type == "completed":
+                    mission_data[mission]["completed"] = True
+                    mission_data[mission]["current"] = mission_data[mission]["target"]
+                    print(f"[DEBUG] 任务 {mission} 已完成")
+                elif info_type == "progress" and progress is not None:
+                    current, target = progress
+                    mission_data[mission]["current"] = current
+                    mission_data[mission]["target"] = target
+                    mission_data[mission]["completed"] = current >= target
+                    print(f"[DEBUG] 任务 {mission} 当前进度: {current}/{target}")
+
+            if should_swipe:
                 context.run_action(
                     "UtilsSwipe",
                     pipeline_override={

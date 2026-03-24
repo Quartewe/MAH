@@ -532,7 +532,7 @@
                     "name": "全部文件名",
                     "label": "$json_path", // 显示名称，支持国际化。优先显示label，未设置时显示name
                     "description": "$json_path_description", // 描述，应支持 文件名、URL、字符串，同时内容支持 markdown，支持国际化
-                    "default": "",
+                    "default": "default.json",
                     "pipeline_type": "string", // 拼接到 pipeline_override 中的类型
                     "verify": ".+\\.json$"
                 }
@@ -596,7 +596,7 @@
                     "name": "助战文件名",
                     "label": "$json_path", // 显示名称，支持国际化。优先显示label，未设置时显示name
                     "description": "$json_path_description", // 描述，应支持 文件名、URL、字符串，同时内容支持 markdown，支持国际化
-                    "default": "",
+                    "default": "default.json",
                     "pipeline_type": "string", // 拼接到 pipeline_override 中的类型
                     "verify": ".+\\.json$"
                 }

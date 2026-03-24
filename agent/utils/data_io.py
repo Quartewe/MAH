@@ -104,6 +104,10 @@ class IOUtils:
         """
         output = {}
 
+        if not target_file:
+            print(f"[DEBUG] No target file specified for searching.")
+            return None
+
         print(f"[DEBUG] Searching for {target_file} in {root_path}...")
         
         # 检查路径是否存在

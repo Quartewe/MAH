@@ -614,7 +614,10 @@ class AutoCombat(CustomAction):
             if isinstance(param, str):
                 param = param.strip('"')
 
-            raw_data = data_io.find_target_files(self.DATA_PATH, param)
+            if param:
+                raw_data = data_io.find_target_files(self.DATA_PATH, param)
+            else:
+                auto_mode = True
             fight_data = raw_data.get("fight", {}) if raw_data else {}
             pos_data = fight_data.get("pos", {})
             action_data = fight_data.get("action", {})
