@@ -31,7 +31,8 @@
         143,
         129
       ],
-      "threshold": 0.999
+      "threshold": 0.999,
+      "timeout": -1
     },
     "next": [
       "[JumpBack]Global.NetworkError",
@@ -72,7 +73,8 @@
         143,
         129
       ],
-      "threshold": 0.999
+      "threshold": 0.999,
+      "timeout": -1
     },
     "timeout": 200000,
     "rate_limit": 5000,
@@ -103,7 +105,8 @@
         143,
         129
       ],
-      "threshold": 0.999
+      "threshold": 0.999,
+      "timeout": -1
     },
     "next": [
       "Global.HomePage",

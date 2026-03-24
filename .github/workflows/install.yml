@@ -141,11 +141,25 @@ jobs:
             tar -xzf "$TEMP_PACKAGE" -C "assets/resource/"
           fi
 
-          # 兼容旧资源包结构：将 image 统一归并到 assets/resource/base
+          # 兼容旧资源包结构：统一归并到 assets/resource/base
+          # image 应位于 base/image（不能打散到 base 根目录）
           if [[ -d "assets/resource/image" ]]; then
-            mkdir -p assets/resource/base
-            rsync -a "assets/resource/image/" "assets/resource/base/"
+            mkdir -p assets/resource/base/image
+            rsync -a "assets/resource/image/" "assets/resource/base/image/"
             rm -rf "assets/resource/image"
+          fi
+
+          # 旧包可能将 model/pipeline 放在 resource 根目录，归并到 base 下
+          if [[ -d "assets/resource/model" ]]; then
+            mkdir -p assets/resource/base/model
+            rsync -a "assets/resource/model/" "assets/resource/base/model/"
+            rm -rf "assets/resource/model"
+          fi
+
+          if [[ -d "assets/resource/pipeline" ]]; then
+            mkdir -p assets/resource/base/pipeline
+            rsync -a "assets/resource/pipeline/" "assets/resource/base/pipeline/"
+            rm -rf "assets/resource/pipeline"
           fi
 
           rm -f "$TEMP_PACKAGE"

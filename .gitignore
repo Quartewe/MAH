@@ -452,3 +452,7 @@ tools/ImageCropper/**/*.png
 
 config
 debug
+
+.nicegui/
+
+storage-general.json
