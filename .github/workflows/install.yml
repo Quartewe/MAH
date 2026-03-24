@@ -141,6 +141,13 @@ jobs:
             tar -xzf "$TEMP_PACKAGE" -C "assets/resource/"
           fi
 
+          # 兼容旧资源包结构：将 image 统一归并到 assets/resource/base
+          if [[ -d "assets/resource/image" ]]; then
+            mkdir -p assets/resource/base
+            rsync -a "assets/resource/image/" "assets/resource/base/"
+            rm -rf "assets/resource/image"
+          fi
+
           rm -f "$TEMP_PACKAGE"
           echo "Resources synced successfully (incremental mode)"
 
@@ -246,10 +253,6 @@ jobs:
 
           required_files=(
             "install/interface.json"
-            "install/interface_en.json"
-            "install/interface_jp.json"
-            "install/interface_tw.json"
-            "install/interface_zh.json"
             "install/icon.png"
             "$toolkit_file"
           )

@@ -49,9 +49,12 @@ class SelectSupport(CustomAction):
                 return False
             try:
                 raw_data = data_io.find_target_files(self.DATA_PATH, param)
-                team_data = raw_data.get("team", {})
-                support_data = team_data.get("SUPPORT", {})
-                print(f"[DEBUG] SUPPORT data: {support_data}")
+                if raw_data:
+                    team_data = raw_data.get("team", {})
+                    support_data = team_data.get("SUPPORT", {})
+                    print(f"[DEBUG] SUPPORT data: {support_data}")
+                else:
+                    support_data = None
             except Exception as e:
                 print(f"[ERROR] Failed to find target files: {e}")
                 return False

@@ -3,10 +3,10 @@
     // https://github.com/MaaXYZ/MaaFramework/blob/main/docs/zh_cn/3.3-ProjectInterfaceV2%E5%8D%8F%E8%AE%AE.md
     "interface_version": 2, // ProjectInterface 协议版本号，当前为 2，固定且必须设置
     "languages": { // 多语言支持配置，键为语言代码，值为对应的翻译文件路径
-        "zh_cn": "interface_zh.json",
-        "en_us": "interface_en.json",
-        "ja_jp": "interface_jp.json",
-        "zh_tw": "interface_tw.json"
+        "zh_cn": "resource/base/interface_zh.json",
+        "en_us": "resource/resource_en/interface_en.json",
+        "ja_jp": "resource/resource_jp/interface_jp.json",
+        "zh_tw": "resource/resource_tw/interface_tw.json"
     },
     "name": "MAH", // 项目唯一标识符，用作项目ID
     "title": "MAH v1.0.0", // 窗口标题，Client直接显示该内容不做修饰。默认使用name和version拼接生成，支持国际化
@@ -44,7 +44,7 @@
             "label": "Official CN", // 显示名称，支持国际化。优先显示label，未设置时显示name
             "description": "简中(CHS)", // 资源详细描述。支持文件路径、URL或直接文本，内容支持Markdown格式，支持国际化
             "path": [
-                "resource" // 资源路径，相对于interface.json所在目录
+                "resource/base" // 资源路径，相对于interface.json所在目录
             ],
             "controller": [
                 "Android"
@@ -55,8 +55,8 @@
             "label": "Official EN",
             "description": "English (ENG)",
             "path": [
-                "resource",
-                "resource_en"
+                "resource/base",
+                "resource/resource_en"
             ],
             "controller": [
                 "Android"
@@ -67,8 +67,8 @@
             "label": "Official TW",
             "description": "繁体中文 (CHT)",
             "path": [
-                "resource",
-                "resource_tw"
+                "resource/base",
+                "resource/resource_tw"
             ],
             "controller": [
                 "Android"
@@ -79,8 +79,8 @@
             "label": "Official JP",
             "description": "日本語 (JPN)",
             "path": [
-                "resource",
-                "resource_jp"
+                "resource/base",
+                "resource/resource_jp"
             ],
             "controller": [
                 "Android"

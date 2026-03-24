@@ -164,10 +164,6 @@ def install_resource():
         install_path,
     )
 
-    for interface_file in (working_dir / "assets").glob("interface_*.json"):
-        if interface_file.is_file():
-            shutil.copy2(interface_file, install_path / interface_file.name)
-
     assets_icon_path = working_dir / "assets" / "icon.png"
     if assets_icon_path.exists():
         shutil.copy2(assets_icon_path, install_path / "icon.png")
