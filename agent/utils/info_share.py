@@ -2,6 +2,7 @@ class InfoShare:
     combat_set = False
     auto_combat_mode = False
     current_lang = None
+    counter = 1
     IGNORE_LIST = ["ATK", "DEF", "HP", "SP", "CD", "Energy", "Shield", "Damage", "Heal", "Buff", "Debuff", "进行度", "進行度", "COMPELETED", "x100"]
     drink_times = {
         "All": 0,

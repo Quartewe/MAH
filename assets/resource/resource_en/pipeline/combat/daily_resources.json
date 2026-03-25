@@ -8,6 +8,13 @@
             }
         }
     },
+    "DailyRes.Go0.1": {
+        "recognition": {
+            "param": {
+                "expected": "Ward"
+            }
+        }
+    },
     "DailyRes.Coin.Entry": {
         "action": {
             "param": {

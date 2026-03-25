@@ -256,7 +256,11 @@
             ],
             "pipeline_override": {
                 "Global.AutoCombat.Count": {
-                    "max_hit": "{挑战次数}"
+                    "action": {
+                        "param": {
+                            "custom_action_param": "{挑战次数}"
+                        }
+                    }
                 }
             }
         },

@@ -8,6 +8,13 @@
             }
         }
     },
+    "DailyRes.Go0.1": {
+        "recognition": {
+            "param": {
+                "expected": "區"
+            }
+        }
+    },
     "DailyRes.Coin.Entry": {
         "action": {
             "param": {

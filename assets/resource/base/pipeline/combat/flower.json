@@ -184,24 +184,23 @@
             "Flower.Go0"
         ]
     },
-    "Flower.Go0": {
+    "Flower.Go0.1": {
         "recognition": {
-            "type": "FeatureMatch",
+            "type": "OCR",
             "param": {
                 "roi": [
-                    562,
-                    547,
-                    716,
-                    170
+                    122,
+                    23,
+                    1038,
+                    515
                 ],
-                "template": [
-                    "homepage/quest_off.png",
-                    "homepage/quest_on.png"
+                "expected": [
+                    "区"
                 ]
             }
         },
         "action": {
-            "type": "Click",
+            "type": "DoNothing",
             "param": {}
         },
         "next": [
@@ -225,5 +224,29 @@
             "type": "Click",
             "param": {}
         }
+    },
+    "Flower.Go0": {
+        "recognition": {
+            "type": "FeatureMatch",
+            "param": {
+                "roi": [
+                    562,
+                    547,
+                    716,
+                    170
+                ],
+                "template": [
+                    "homepage/quest_off.png",
+                    "homepage/quest_on.png"
+                ]
+            }
+        },
+        "action": {
+            "type": "Click",
+            "param": {}
+        },
+        "next": [
+            "Flower.Go0.1"
+        ]
     }
 }

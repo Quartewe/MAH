@@ -44,6 +44,13 @@
             }
         }
     },
+    "Flower.Go0.1": {
+        "recognition": {
+            "param": {
+                "expected": "区"
+            }
+        }
+    },
     "Flower.Go1": {
         "recognition": {
             "param": {

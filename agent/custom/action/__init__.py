@@ -9,6 +9,7 @@ from .auto_combat import AutoCombat
 from .combat_drink import CombatDrink
 from .quest_select import QuestSelect
 from .go_back import GoBack
+from .counter import Counter
 
 __all__ = [
     "Debug",
@@ -22,4 +23,5 @@ __all__ = [
     "CombatDrink",
     "QuestSelect",
     "GoBack",
+    "Counter"
 ]

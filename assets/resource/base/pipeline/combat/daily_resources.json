@@ -1,4 +1,23 @@
 {
+    "DailyRes.Go0.1": {
+        "recognition": {
+            "type": "OCR",
+            "param": {
+                "roi": [
+                    122,
+                    23,
+                    1038,
+                    515
+                ],
+                "expected": [
+                    "区"
+                ]
+            }
+        },
+        "next": [
+            "DailyRes.Go0.2"
+        ]
+    },
     "DailyRes.Go1": {
         "recognition": {
             "type": "OCR",
@@ -43,7 +62,7 @@
             "DailyRes.Go0.1"
         ]
     },
-    "DailyRes.Go0.1": {
+    "DailyRes.Go0.2": {
         "action": {
             "type": "Swipe",
             "param": {

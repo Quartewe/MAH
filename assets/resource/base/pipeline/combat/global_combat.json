@@ -1,4 +1,19 @@
 {
+    "Global.AutoCombat.Count": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "Counter",
+                "custom_action_param": "999"
+            }
+        },
+        "next": [
+            "Global.AutoCombat.Replay"
+        ],
+        "on_error": [
+            "Global.AutoCombat.Back0"
+        ]
+    },
     "Global.AutoCombat": {
         "action": {
             "type": "Custom",
@@ -7,12 +22,11 @@
                 "custom_action_param": ""
             }
         },
-        "next": [
-            "Global.AutoCombat.Replay"
-        ],
         "on_error": [
-            "Global.AutoCombat.Back0",
             "Global.GoBackToHomePage"
+        ],
+        "next": [
+            "Global.AutoCombat.Count"
         ]
     },
     "Global.AutoCombat.Replay": {
@@ -41,16 +55,10 @@
         "next": [
             "Global.AutoCombat.Replay1",
             "Global.AutoCombat.Drink1",
-            "Global.AutoCombat.Count"
+            "Global.AutoCombat"
         ],
         "on_error": [
             "Global.AutoCombat.Back0"
-        ]
-    },
-    "Global.AutoCombat.Count": {
-        "max_hit": 999,
-        "next": [
-            "Global.AutoCombat"
         ]
     },
     "Global.AutoCombat.Replay1": {
@@ -109,7 +117,7 @@
         },
         "next": [
             "Global.AutoCombat.Replay1",
-            "Global.AutoCombat.Count"
+            "Global.AutoCombat"
         ],
         "on_error": [
             "Global.AutoCombat.Back0"
