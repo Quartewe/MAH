@@ -1,4 +1,38 @@
 {
+    "Flower.Select.ATK": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "QuestSelect",
+                "custom_action_param": {
+                    "name": "·有乐町"
+                }
+            }
+        },
+        "next": [
+            "Global.AutoCombat.Entry"
+        ],
+        "on_error": [
+            "Global.GoHomePage"
+        ]
+    },
+    "Flower.Select.DEF": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "QuestSelect",
+                "custom_action_param": {
+                    "name": "演艺家"
+                }
+            }
+        },
+        "next": [
+            "Global.AutoCombat.Entry"
+        ],
+        "on_error": [
+            "Global.GoHomePage"
+        ]
+    },
     "Flower.GoLU": {
         "recognition": {
             "type": "OCR",
@@ -151,7 +185,6 @@
         ]
     },
     "Flower.Go0": {
-        "post_delay": 10000,
         "recognition": {
             "type": "FeatureMatch",
             "param": {
@@ -179,57 +212,6 @@
             "Flower.GoLD"
         ]
     },
-    "Flower.Select.ATK": {
-        "recognition": {
-            "type": "OCR",
-            "param": {
-                "expected": [
-                    "“例外领域”·有乐町"
-                ]
-            }
-        },
-        "action": {
-            "type": "Click",
-            "param": {}
-        },
-        "next": [
-            "Global.AutoCombat.Entry"
-        ],
-        "on_error": [
-            "Global.GoHomePage",
-            "Flower.Swipe"
-        ]
-    },
-    "Flower.Swipe": {
-        "max_hit": 20,
-        "pre_wait_freezes": 1000,
-        "action": {
-            "type": "Swipe",
-            "param": {
-                "begin": [
-                    796,
-                    611,
-                    20,
-                    20
-                ],
-                "end": [
-                    [
-                        796,
-                        66,
-                        20,
-                        20
-                    ]
-                ],
-                "end_hold": [
-                    500
-                ]
-            }
-        },
-        "next": [
-            "Flower.Select.ATK",
-            "Flower.Select.DEF"
-        ]
-    },
     "Flower.Go1": {
         "recognition": {
             "type": "OCR",
@@ -243,25 +225,5 @@
             "type": "Click",
             "param": {}
         }
-    },
-    "Flower.Select.DEF": {
-        "recognition": {
-            "type": "OCR",
-            "param": {
-                "expected": [
-                    "演艺家"
-                ]
-            }
-        },
-        "action": {
-            "type": "Click",
-            "param": {}
-        },
-        "on_error": [
-            "Flower.Swipe"
-        ],
-        "next": [
-            "Global.AutoCombat.Entry"
-        ]
     }
 }

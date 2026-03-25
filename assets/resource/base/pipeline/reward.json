@@ -18,7 +18,15 @@
             "type": "Click",
             "param": {}
         },
-        "post_wait_freezes": 1000,
+        "post_wait_freezes": {
+            "time": 1000,
+            "target": [
+                8,
+                603,
+                284,
+                112
+            ]
+        },
         "next": [
             "Reward.Gift"
         ]
@@ -28,15 +36,19 @@
             "type": "OCR",
             "param": {
                 "roi": [
-                    11,
-                    444,
-                    312,
-                    136
+                    35,
+                    540,
+                    154,
+                    33
                 ],
                 "expected": [
                     "礼物"
                 ]
             }
+        },
+        "action": {
+            "type": "Click",
+            "param": {}
         },
         "post_wait_freezes": {
             "time": 1000,
@@ -72,7 +84,8 @@
             "param": {}
         },
         "next": [
-            "Reward.Gift.Get1"
+            "Reward.Gift.Get1",
+            "Reward.Gift.Back"
         ]
     },
     "Reward.Gift.Get1": {
@@ -165,7 +178,15 @@
             "type": "Click",
             "param": {}
         },
-        "post_wait_freezes": 1000
+        "post_wait_freezes": {
+            "time": 1000,
+            "target": [
+                8,
+                603,
+                284,
+                112
+            ]
+        }
     },
     "Reward.Entry": {
         "next": [
@@ -177,10 +198,10 @@
             "type": "OCR",
             "param": {
                 "roi": [
-                    5,
-                    433,
-                    229,
-                    150
+                    35,
+                    540,
+                    154,
+                    33
                 ],
                 "expected": [
                     "任务"
@@ -191,7 +212,15 @@
             "type": "Click",
             "param": {}
         },
-        "post_wait_freezes": 1000,
+        "post_wait_freezes": {
+            "time": 1000,
+            "target": [
+                8,
+                603,
+                485,
+                112
+            ]
+        },
         "next": [
             "Reward.Get"
         ]
@@ -211,9 +240,22 @@
                 ]
             }
         },
-        "post_wait_freezes": 1000,
+        "action": {
+            "type": "Click",
+            "param": {}
+        },
+        "post_wait_freezes": {
+            "time": 1000,
+            "target": [
+                8,
+                603,
+                485,
+                112
+            ]
+        },
         "next": [
-            "Reward.Get1"
+            "Reward.Get1",
+            "Reward.Back"
         ]
     },
     "Reward.Get1": {
@@ -229,7 +271,15 @@
             "type": "Click",
             "param": {}
         },
-        "post_wait_freezes": 1000,
+        "post_wait_freezes": {
+            "time": 1000,
+            "target": [
+                8,
+                603,
+                485,
+                112
+            ]
+        },
         "next": [
             "Reward.Back"
         ]

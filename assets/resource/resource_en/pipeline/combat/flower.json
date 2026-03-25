@@ -27,20 +27,20 @@
         }
     },
     "Flower.Select.ATK": {
-        "recognition": {
+        "action": {
             "param": {
-                "expected": [
-                    "Exception Territory/Yurakucho"
-                ]
+                "custom_action_param": {
+                    "name": "Exception Territory/Yurakucho"
+                }
             }
         }
     },
     "Flower.Select.DEF": {
-        "recognition": {
+        "action": {
             "param": {
-                "expected": [
-                    "Entertainment"
-                ]
+                "custom_action_param": {
+                    "name": "Entertainment"
+                }
             }
         }
     },

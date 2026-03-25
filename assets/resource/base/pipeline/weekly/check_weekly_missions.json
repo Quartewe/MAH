@@ -198,6 +198,7 @@
             "type": "Click",
             "param": {}
         },
+        "post_wait_freezes": 1000,
         "next": [
             "CheckWeeklyMissions.GetClose",
             "CheckWeeklyMissions.Select"
@@ -222,6 +223,7 @@
             "type": "Click",
             "param": {}
         },
+        "post_wait_freezes": 1000,
         "next": [
             "CheckWeeklyMissions.Select"
         ]

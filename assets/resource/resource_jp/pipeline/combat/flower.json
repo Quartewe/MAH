@@ -27,20 +27,20 @@
         }
     },
     "Flower.Select.ATK": {
-        "recognition": {
+        "action": {
             "param": {
-                "expected": [
-                    "例外領域·有楽町"
-                ]
+                "custom_action_param": {
+                    "name": "例外領域·有楽町"
+                }
             }
         }
     },
     "Flower.Select.DEF": {
-        "recognition": {
+        "action": {
             "param": {
-                "expected": [
-                    "ザッツエンタティメント"
-                ]
+                "custom_action_param": {
+                    "name": "ザッツエンタティメント"
+                }
             }
         }
     },

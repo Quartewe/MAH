@@ -16,6 +16,9 @@ def normalize_brackets(data):
     - "赚取金币的打工" → ["赚取金币的打工"]
     """
     # 如果输入本身就是列表，对每个元素处理后合并
+    if not data:
+        return None
+
     if isinstance(data, list):
         result = []
         for item in data:
@@ -50,15 +53,19 @@ class QuestSelect(CustomAction):
             return False
         
         param = json.loads(argv.custom_action_param)
+        tile_mode = False
         folder_name = normalize_brackets(param.get("name", ""))
         difficulty = normalize_brackets(param.get("difficulty", ""))
+        if not difficulty:
+            print(f"[DEBUG] 平铺模式")
+            tile_mode = True
         
         print(f"[DEBUG] ========== QuestSelect 开始执行 ==========")
         print(f"[DEBUG] 目标任务名: {folder_name}")
         print(f"[DEBUG] 目标难度: {difficulty}")
 
-        for _ in range(10):
-            print(f"[DEBUG] 初始向下滑动...")
+        for _ in range(10 if not tile_mode else 5):
+            print(f"[DEBUG] 初始向上滑动...")
             context.run_action(
                 "UtilsSwipe",
                 pipeline_override={
@@ -71,8 +78,8 @@ class QuestSelect(CustomAction):
                 )
 
         i = 0
-        while i < 30:
-            print(f"\n[DEBUG] ========== 主循环 迭代第 {i} 次 ==========")
+        while i < 30 and not tile_mode:
+            print(f"\n[DEBUG] ========== 主循环A 迭代第 {i} 次 ==========")
             context.tasker.controller.post_screencap().wait()
             current_image = context.tasker.controller.cached_image
             get_quest = context.run_recognition(
@@ -264,6 +271,64 @@ class QuestSelect(CustomAction):
                     )
 
             i += 1
+
+        while i < 30 and tile_mode:
+            print(f"\n[DEBUG] ========== 主循环B 迭代第 {i} 次 ==========")
+            context.tasker.controller.post_screencap().wait()
+            current_image = context.tasker.controller.cached_image
+            get_quest = context.run_recognition(
+                "UtilsOCR",
+                current_image,
+                pipeline_override={
+                    "UtilsOCR": {
+                        "pre_wait_freeze":{
+                            "time": 1000,
+                            "target": [0, 0, 1080, 720],
+                            "threshold": 0.999
+                        },
+                        "recognition": {
+                            "param": {
+                                "roi": [494,3,779,671],
+                                "duration": 200,
+                                "expected": folder_name,
+                                "order_by": "Vertical"
+                            }
+                        }
+                    }
+                }
+            )
+
+            if get_quest.best_result: 
+                context.run_action(
+                    "UtilsClick",
+                    get_quest.best_result.box,
+                    pipeline_override={
+                        "UtilsClick": {
+                            "action": {
+                                "param": {
+                                    "target": get_quest.best_result.box
+                                }
+                            }
+                        }
+                    }
+                )
+                print(f"[DEBUG] ✓ 成功选择任务: {get_quest.best_result.text[:50]}")
+                timeout_mgr.stop_monitoring(argv.node_name)
+                print(f"[DEBUG] ========== QuestSelect 执行成功 ==========")
+                return True
+            else:
+                print(f"[DEBUG] 未识别到任何任务")
+                context.run_action(
+                    "UtilsSwipe",
+                    pipeline_override={
+                        "UtilsSwipe": {
+                            "begin":[796,611,20,20],
+                            "end":[796,66,20,20]
+                        }
+                    }
+                )
+            i += 1
+
 
         print(f"[DEBUG] ========== 主循环已执行30次，任务失败 ==========")
         timeout_mgr.stop_monitoring(argv.node_name)

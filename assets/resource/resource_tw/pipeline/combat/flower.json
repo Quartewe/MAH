@@ -27,20 +27,20 @@
         }
     },
     "Flower.Select.ATK": {
-        "recognition": {
+        "action": {
             "param": {
-                "expected": [
-                    "大演藝家"
-                ]
+                "custom_action_param": {
+                    "name": "例外領域·有樂町"
+                }
             }
         }
     },
     "Flower.Select.DEF": {
-        "recognition": {
+        "action": {
             "param": {
-                "expected": [
-                    "例外領域·有樂町"
-                ]
+                "custom_action_param": {
+                    "name": "大演藝家"
+                }
             }
         }
     },
