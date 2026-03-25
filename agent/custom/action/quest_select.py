@@ -120,20 +120,18 @@ class QuestSelect(CustomAction):
                     }
                 }
             )
-            print(f"[DEBUG] OCR识别完成，识别结果数: {len(get_quest.filtered_results)}")
+            print(f"[DEBUG] OCR识别完成")
             if get_quest.filtered_results:
-                print(f"[DEBUG] 识别到的任务:")
-                for idx, res in enumerate(get_quest.filtered_results):
-                    print(f"[DEBUG]   [{idx}] text={res.text[:50]}, box={res.box}")
+                print(f"[DEBUG] 识别到的任务")
             else:
                 print(f"[DEBUG] 未识别到任何任务")
             
             if get_quest.filtered_results: 
                 found = False
                 for res in get_quest.filtered_results:
-                    print(f"[DEBUG] 检查难度匹配: '{difficulty}' in '{res.text[:60]}'? ", end="")
+                    print(f"[DEBUG] 检查难度匹配")
                     if any(d in res.text for d in difficulty_candidates):
-                        print(f"✓ 匹配!")
+                        print(f"匹配!")
                         context.run_action(
                             "UtilsClick",
                             res.box,
@@ -147,12 +145,12 @@ class QuestSelect(CustomAction):
                                 }
                             }
                         )
-                        print(f"[DEBUG] ✓ 成功选择任务: {res.text[:50]}")
+                        print(f"[DEBUG] 成功选择任务")
                         timeout_mgr.stop_monitoring(argv.node_name)
                         print(f"[DEBUG] ========== QuestSelect 执行成功 ==========")
                         return True
                     else:
-                        print(f"✗ 不匹配")
+                        print(f"[DEBUG] 不匹配")
                 
                 # for 循环结束，所有结果都不匹配
                 print(f"[DEBUG] 当前屏幕的所有结果都不匹配")
@@ -192,7 +190,7 @@ class QuestSelect(CustomAction):
                             }
                         }
                     )
-                    print(f"[DEBUG] 向下滑动后识别，结果数: {len(get_quest.filtered_results)}")
+                    print(f"[DEBUG] 向下滑动后识别中")
                     if len(get_quest.filtered_results) == 1:
                         print(f"[DEBUG] 滑动后仍是1个结果，任务确实是关闭的，点击展开...")
                         for res in get_quest.filtered_results:
@@ -213,7 +211,7 @@ class QuestSelect(CustomAction):
                     else:
                         print(f"[DEBUG] 滑动后结果数增加，说明任务已展开或找到了新任务")
                 else:
-                    print(f"[DEBUG] 识别到 {len(get_quest.filtered_results)} 个结果但都不匹配，先向上滑动查找目标...")
+                    print(f"[DEBUG] 识别到多个结果但都不匹配，先向上滑动查找目标...")
                     self.last_len = len(get_quest.filtered_results)
                     
                     # 向上滑动
@@ -248,7 +246,7 @@ class QuestSelect(CustomAction):
                             }
                         }
                     )
-                    print(f"[DEBUG] 向上滑动后识别，结果数: {len(get_quest.filtered_results)} (之前: {self.last_len})")
+                    print(f"[DEBUG] 向上滑动后识别中")
                     
                     # 判断目标是否已过
                     if self.last_len > len(get_quest.filtered_results):
@@ -329,7 +327,7 @@ class QuestSelect(CustomAction):
                         }
                     }
                 )
-                print(f"[DEBUG] ✓ 成功选择任务: {get_quest.best_result.text[:50]}")
+                print(f"[DEBUG] 成功选择任务")
                 timeout_mgr.stop_monitoring(argv.node_name)
                 print(f"[DEBUG] ========== QuestSelect 执行成功 ==========")
                 return True

@@ -159,6 +159,7 @@ class CombatDrink(CustomAction):
             return False
         
         drink_limit = json.loads(argv.custom_action_param)
+        print(f"[DEBUG] Drink limits: {drink_limit}")
 
         match act_mgr.detect_lang(context, [286,298,779,295], ignore=self.IGNORE_LIST):
             case "jp":

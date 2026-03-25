@@ -160,6 +160,14 @@ def install_resource():
         dirs_exist_ok=True,
     )
 
+    assets_index_dir = working_dir / "assets" / "index"
+    if assets_index_dir.exists() and assets_index_dir.is_dir():
+        shutil.copytree(
+            assets_index_dir,
+            install_path / "resource" / "index",
+            dirs_exist_ok=True,
+        )
+
     install_resource_path = install_path / "resource"
     base_path = install_resource_path / "base"
 
@@ -175,6 +183,51 @@ def install_resource():
     merge_into_base("image", "image")
     merge_into_base("model", "model")
     merge_into_base("pipeline", "pipeline")
+
+    local_mah_res_candidates = [
+        working_dir / "mah_res",
+        working_dir.parent / "mah_res",
+    ]
+    local_mah_res = next(
+        (
+            path
+            for path in local_mah_res_candidates
+            if path.exists() and path.is_dir()
+        ),
+        None,
+    )
+    if local_mah_res:
+        local_index = local_mah_res / "index"
+        if local_index.exists() and local_index.is_dir():
+            shutil.copytree(
+                local_index,
+                install_resource_path / "index",
+                dirs_exist_ok=True,
+            )
+
+        local_image = local_mah_res / "image"
+        if local_image.exists() and local_image.is_dir():
+            shutil.copytree(
+                local_image,
+                base_path / "image",
+                dirs_exist_ok=True,
+            )
+
+        local_model = local_mah_res / "model"
+        if local_model.exists() and local_model.is_dir():
+            shutil.copytree(
+                local_model,
+                base_path / "model",
+                dirs_exist_ok=True,
+            )
+
+        local_pipeline = local_mah_res / "pipeline"
+        if local_pipeline.exists() and local_pipeline.is_dir():
+            shutil.copytree(
+                local_pipeline,
+                base_path / "pipeline",
+                dirs_exist_ok=True,
+            )
 
     shutil.copy2(
         working_dir / "assets" / "interface.json",
