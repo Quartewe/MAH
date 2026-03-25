@@ -453,6 +453,11 @@ tools/ImageCropper/**/*.png
 assets/config
 debug
 
+ar.json
+characters.json
+character_lowstar.json
+ui.json
+
 .nicegui/
 
 storage-general.json

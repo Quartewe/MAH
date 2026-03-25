@@ -226,6 +226,9 @@
         "next": [
             "Global.AutoCombat.Filter",
             "Global.AutoCombat.SelectSupport"
+        ],
+        "on_error": [
+            "Global.GoBackToHomePage"
         ]
     },
     "Global.AutoCombat.Back1": {

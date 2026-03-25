@@ -1,63 +1,16 @@
 {
-  "Global.GoBackToHomePage.Wait1": {
-    "recognition": {
-      "type": "OCR",
-      "param": {
-        "roi": [
-          9,
-          572,
-          522,
-          149
-        ],
-        "expected": [
-          "LOADING"
-        ]
-      }
-    },
-    "post_delay": 1000,
-    "next": [
-      "Global.GoBackToHomePage.Wait"
-    ],
-    "on_error": [
-      "Global.GoBackToHomePage"
-    ]
-  },
   "Global.GoBackToHomePage": {
-    "recognition": {
-      "type": "OCR",
+    "action": {
+      "type": "Custom",
       "param": {
-        "roi": [
-          4,
-          12,
-          301,
-          102
-        ],
-        "expected": [
-          "返回"
-        ]
+        "custom_action": "GoBack",
+        "custom_action_param": "返回"
       }
     },
-    "pre_wait_freezes": {
-      "time": 1000,
-      "target": [
-        1105,
-        551,
-        175,
-        170
-      ],
-      "threshold": 0.999
-    },
-    "action": {
-      "type": "Click",
-      "param": {}
-    },
-    "rate_limit": 2000,
-    "on_error": [
-      "Global.LoginReward",
-      "Global.HomePage"
-    ],
     "next": [
-      "Global.GoBackToHomePage.Wait"
+      "Global.LoginReward",
+      "Global.GoHomePage",
+      "Global.HomePage"
     ]
   },
   "Global.LoginReward": {
@@ -117,29 +70,6 @@
       "param": {}
     }
   },
-  "Global.GoBackToHomePage.Wait": {
-    "recognition": {
-      "type": "OCR",
-      "param": {
-        "roi": [
-          9,
-          572,
-          522,
-          149
-        ],
-        "expected": [
-          "LOADING"
-        ]
-      }
-    },
-    "post_delay": 1000,
-    "next": [
-      "Global.GoBackToHomePage.Wait1"
-    ],
-    "on_error": [
-      "Global.GoBackToHomePage"
-    ]
-  },
   "Global.GoHomePage": {
     "recognition": {
       "type": "ColorMatch",
@@ -170,7 +100,7 @@
       "type": "Click",
       "param": {}
     },
-    "post_wait_freezes": 2000,
+    "post_wait_freezes": 500,
     "next": [
       "Global.HomePage"
     ]

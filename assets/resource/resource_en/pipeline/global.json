@@ -1,10 +1,8 @@
 {
     "Global.GoBackToHomePage": {
-        "recognition": {
+        "action": {
             "param": {
-                "expected": [
-                    "Back"
-                ]
+                "custom_action_param": "Back"
             }
         }
     }

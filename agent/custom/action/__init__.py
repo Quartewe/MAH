@@ -8,6 +8,7 @@ from .formation import Formation
 from .auto_combat import AutoCombat
 from .combat_drink import CombatDrink
 from .quest_select import QuestSelect
+from .go_back import GoBack
 
 __all__ = [
     "Debug",
@@ -19,5 +20,6 @@ __all__ = [
     "Formation",
     "AutoCombat",
     "CombatDrink",
-    "QuestSelect"
+    "QuestSelect",
+    "GoBack",
 ]
