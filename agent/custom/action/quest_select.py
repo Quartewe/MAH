@@ -22,16 +22,29 @@ def normalize_brackets(data):
     if isinstance(data, list):
         result = []
         for item in data:
-            result.extend(normalize_brackets(item))
+            normalized = normalize_brackets(item)
+            if normalized is None:
+                continue
+            if isinstance(normalized, list):
+                result.extend(normalized)
+            else:
+                result.append(normalized)
         return list(set(result))  # 去重
     
+    
+
     # 输入是字符串的情况
     text = str(data)
+    # 无括号时不做处理，直接返回原文本
+    if all(ch not in text for ch in ("（", "）", "(", ")")):
+        return text
+
     # 中文括号 → 英文括号
     english_version = text.replace("（", "(").replace("）", ")")
     # 英文括号 → 中文括号
     chinese_version = text.replace("(", "（").replace(")", "）")
-    
+
+
     # 返回列表（去重）
     versions = {text, english_version, chinese_version}
     return list(versions)
@@ -53,6 +66,7 @@ class QuestSelect(CustomAction):
             return False
         
         param = json.loads(argv.custom_action_param)
+        print(f"[DEBUG] 原始参数: {param}")
         tile_mode = False
         folder_name = normalize_brackets(param.get("name", ""))
         difficulty = normalize_brackets(param.get("difficulty", ""))
@@ -63,6 +77,9 @@ class QuestSelect(CustomAction):
         print(f"[DEBUG] ========== QuestSelect 开始执行 ==========")
         print(f"[DEBUG] 目标任务名: {folder_name}")
         print(f"[DEBUG] 目标难度: {difficulty}")
+        difficulty_candidates = difficulty if isinstance(difficulty, list) else [difficulty]
+        difficulty_candidates = [d for d in difficulty_candidates if isinstance(d, str) and d]
+        print(f"[DEBUG] 难度候选: {difficulty_candidates}")
 
         for _ in range(10 if not tile_mode else 5):
             print(f"[DEBUG] 初始向上滑动...")
@@ -115,7 +132,7 @@ class QuestSelect(CustomAction):
                 found = False
                 for res in get_quest.filtered_results:
                     print(f"[DEBUG] 检查难度匹配: '{difficulty}' in '{res.text[:60]}'? ", end="")
-                    if difficulty in res.text:
+                    if any(d in res.text for d in difficulty_candidates):
                         print(f"✓ 匹配!")
                         context.run_action(
                             "UtilsClick",

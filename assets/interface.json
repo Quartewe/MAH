@@ -482,8 +482,7 @@
                     "label": "$difficulty",
                     "description": "$difficulty_description",
                     "default": "",
-                    "pipeline_type": "string",
-                    "verify": "^(?!\\d+$).+$"
+                    "pipeline_type": "string"
                 }
             ],
             "pipeline_override": {
@@ -491,7 +490,7 @@
                     "next": "Activity.Entry"
                 },
                 "Activity.Select": {
-                    "recognition": {
+                    "action": {
                         "param": {
                             "custom_action_param": {
                                 "name": "{兑换物种类}",
@@ -508,14 +507,6 @@
             "description": "$json_load_description", // 配置项详细描述。支持文件路径
             "cases": [
                 {
-                    "name": "统一从选择的json文件中自动获取",
-                    "label": "$select_json", // 显示名称，支持国际化。优先显示label，未设置时显示name
-                    "description": "$select_json_description", // 选项详细描述。支持文件路径、URL或直接文本，内容支持Markdown格式，支持国际化
-                    "option": [
-                        "select_json"
-                    ]
-                },
-                {
                     "name": "自定义选择组合",
                     "label": "$custom_select_json", // 显示名称，支持国际化。优先显示label，未设置时显示name
                     "description": "$custom_select_json_description", // 选项详细描述。支持文件路径
@@ -523,6 +514,14 @@
                         "select_support",
                         "select_formation",
                         "select_combat_list"
+                    ]
+                },
+                {
+                    "name": "统一从选择的json文件中自动获取",
+                    "label": "$select_json", // 显示名称，支持国际化。优先显示label，未设置时显示name
+                    "description": "$select_json_description", // 选项详细描述。支持文件路径、URL或直接文本，内容支持Markdown格式，支持国际化
+                    "option": [
+                        "select_json"
                     ]
                 }
             ]
