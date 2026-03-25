@@ -450,7 +450,7 @@ install
 # Tools
 tools/ImageCropper/**/*.png
 
-config
+assets/config
 debug
 
 .nicegui/
