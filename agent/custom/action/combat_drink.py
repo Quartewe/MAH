@@ -49,7 +49,7 @@ class CombatDrink(CustomAction):
                         "UtilsOCR": {
                             "recognition": {
                                 "param": {
-                                    "roi": [302,139,678,444],
+                                    "roi": [328,172,622,84],
                                     "text": "DP",
                                     "order_by": "Expected"
                                 }

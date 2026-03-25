@@ -227,6 +227,14 @@ jobs:
           python ./install.py ${{ needs.meta.outputs.tag }} ${{ matrix.os }} ${{ matrix.arch }}
           cd ..
 
+          if [[ -f "config/maa_option.json" ]]; then
+            mkdir -p install/config
+            cp -f "config/maa_option.json" "install/config/maa_option.json"
+            echo "Copied config/maa_option.json to install/config"
+          else
+            echo "[WARNING] config/maa_option.json not found in source repo"
+          fi
+
       - name: Include docs in package root
         shell: bash
         run: |
@@ -268,6 +276,7 @@ jobs:
           required_files=(
             "install/interface.json"
             "install/icon.png"
+            "install/config/maa_option.json"
             "$toolkit_file"
           )
 

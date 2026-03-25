@@ -1,4 +1,27 @@
 {
+  "Global.GoBackToHomePage.Wait1": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "roi": [
+          9,
+          572,
+          522,
+          149
+        ],
+        "expected": [
+          "LOADING"
+        ]
+      }
+    },
+    "post_delay": 1000,
+    "next": [
+      "Global.GoBackToHomePage.Wait"
+    ],
+    "on_error": [
+      "Global.GoBackToHomePage"
+    ]
+  },
   "Global.GoBackToHomePage": {
     "recognition": {
       "type": "OCR",
@@ -21,18 +44,20 @@
         551,
         175,
         170
-      ]
+      ],
+      "threshold": 0.999
     },
     "action": {
       "type": "Click",
       "param": {}
     },
     "rate_limit": 2000,
+    "on_error": [
+      "Global.LoginReward",
+      "Global.HomePage"
+    ],
     "next": [
       "Global.GoBackToHomePage.Wait"
-    ],
-    "on_error": [
-      "Global.HomePage"
     ]
   },
   "Global.LoginReward": {
@@ -107,12 +132,12 @@
         ]
       }
     },
+    "post_delay": 1000,
     "next": [
-      "Global.GoBackToHomePage"
+      "Global.GoBackToHomePage.Wait1"
     ],
     "on_error": [
-      "Global.LoginReward",
-      "Global.HomePage"
+      "Global.GoBackToHomePage"
     ]
   },
   "Global.GoHomePage": {
@@ -145,7 +170,7 @@
       "type": "Click",
       "param": {}
     },
-    "post_wait_freezes": 500,
+    "post_wait_freezes": 2000,
     "next": [
       "Global.HomePage"
     ]

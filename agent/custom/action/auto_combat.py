@@ -46,7 +46,8 @@ class AutoCombat(CustomAction):
         return end_points
 
     def _get_posL(self, context):
-        while True:
+        i = 0
+        while i < 30:
             context.tasker.controller.post_screencap().wait()
             current_image = context.tasker.controller.cached_image
             leader = context.run_recognition(
@@ -75,6 +76,7 @@ class AutoCombat(CustomAction):
                 return [leader.best_result.box[0] + 38, leader.best_result.box[1] - 5]
             print("[DEBUG] Leader not detected, retrying...")
             time.sleep(1)
+            i += 1
 
     def _get_all_pos(self, pos_data: dict, last_move):
         current_pos = {}

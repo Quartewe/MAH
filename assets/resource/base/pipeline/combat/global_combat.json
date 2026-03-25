@@ -86,10 +86,18 @@
     },
     "Global.AutoCombat.Drink1": {
         "recognition": {
-            "type": "TemplateMatch",
+            "type": "Or",
             "param": {
-                "template": "fight/recovery/apRecoveryAll.png",
-                "order_by": "Score"
+                "any_of": [
+                    {
+                        "recognition": "TemplateMatch",
+                        "template": "fight/recovery/apRecoveryAll.png"
+                    },
+                    {
+                        "recognition": "OCR",
+                        "expected": "DP"
+                    }
+                ]
             }
         },
         "action": {
@@ -194,10 +202,18 @@
     },
     "Global.AutoCombat.PreDrink": {
         "recognition": {
-            "type": "TemplateMatch",
+            "type": "Or",
             "param": {
-                "template": "fight/recovery/apRecoveryAll.png",
-                "order_by": "Score"
+                "any_of": [
+                    {
+                        "recognition": "TemplateMatch",
+                        "template": "fight/recovery/apRecoveryAll.png"
+                    },
+                    {
+                        "recognition": "OCR",
+                        "expected": "DP"
+                    }
+                ]
             }
         },
         "action": {
