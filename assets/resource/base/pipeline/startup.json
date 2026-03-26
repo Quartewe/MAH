@@ -10,8 +10,10 @@
       "Global.LoginReward",
       "Global.HomePage",
       "Startup.OpenGame.Title",
-      "Global.GoBackToHomePage",
       "Startup.OpenGame"
+    ],
+    "on_error": [
+      "Global.GoBackToHomePage"
     ]
   },
   "Startup.OpenGame": {
@@ -32,6 +34,7 @@
       "threshold": 0.999,
       "timeout": -1
     },
+    "timeout": 300000,
     "next": [
       "[JumpBack]Global.NetworkError",
       "[JumpBack]Startup.Update_1",
@@ -46,6 +49,7 @@
         "expected": "OK"
       }
     },
+    "timeout": 300000,
     "action": {
       "type": "Click",
       "param": {}
@@ -95,6 +99,7 @@
       "type": "Click",
       "param": {}
     },
+    "timeout": 300000,
     "post_wait_freezes": {
       "time": 2000,
       "target": [
