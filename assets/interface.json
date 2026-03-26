@@ -93,16 +93,6 @@
             "description": "$start_game_description"
         },
         {
-            "name": "检查任务进度",
-            "label": "$check_task_progress",
-            "entry": "CheckWeeklyMissions.Entry",
-            "default_check": true,
-            "description": "$check_task_progress_description",
-            "option": [
-                "show_progress"
-            ]
-        },
-        {
             "name": "地城作战",
             "label": "$dungeon_combat",
             "default_check": true,
@@ -128,6 +118,16 @@
                 "use_AP_potion",
                 "select_team",
                 "json_load"
+            ]
+        },
+        {
+            "name": "检查任务进度",
+            "label": "$check_task_progress",
+            "entry": "CheckWeeklyMissions.Entry",
+            "default_check": true,
+            "description": "$check_task_progress_description",
+            "option": [
+                "show_progress"
             ]
         },
         {

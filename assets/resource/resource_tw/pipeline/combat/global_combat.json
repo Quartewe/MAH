@@ -25,5 +25,14 @@
                 ]
             }
         }
+    },
+    "Global.AutoCombat.Back0.1": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "返回"
+                ]
+            }
+        }
     }
 }

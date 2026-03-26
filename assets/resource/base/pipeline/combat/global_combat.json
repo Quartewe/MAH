@@ -1,4 +1,47 @@
 {
+    "Global.AutoCombat.Back0.1": {
+        "recognition": {
+            "type": "OCR",
+            "param": {
+                "roi": [
+                    0,
+                    0,
+                    400,
+                    150
+                ],
+                "expected": [
+                    "返回"
+                ]
+            }
+        },
+        "action": {
+            "type": "Click",
+            "param": {}
+        },
+        "pre_wait_freezes": {
+            "time": 1000,
+            "target": [
+                1162,
+                610,
+                115,
+                107
+            ],
+            "threshold": 0.99
+        },
+        "post_wait_freezes": {
+            "time": 1000,
+            "target": [
+                1162,
+                610,
+                115,
+                107
+            ],
+            "threshold": 0.999
+        },
+        "next": [
+            "Global.AutoCombat.Back1"
+        ]
+    },
     "Global.AutoCombat.Count": {
         "action": {
             "type": "Custom",
@@ -22,11 +65,11 @@
                 "custom_action_param": ""
             }
         },
-        "on_error": [
-            "Global.GoBackToHomePage"
-        ],
         "next": [
             "Global.AutoCombat.Count"
+        ],
+        "on_error": [
+            "Global.GoBackToHomePage"
         ]
     },
     "Global.AutoCombat.Replay": {
@@ -98,9 +141,6 @@
         ]
     },
     "Global.AutoCombat.Back0": {
-        "next": [
-            "Global.AutoCombat.Back1"
-        ],
         "post_wait_freezes": {
             "time": 1000,
             "target": [
@@ -110,7 +150,11 @@
                 107
             ],
             "threshold": 0.999
-        }
+        },
+        "next": [
+            "Global.AutoCombat.Back0.1",
+            "Global.AutoCombat.Back1"
+        ]
     },
     "Global.AutoCombat.Drink1": {
         "recognition": {
@@ -128,6 +172,13 @@
                 ]
             }
         },
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "CombatDrink",
+                "custom_action_param": {}
+            }
+        },
         "post_wait_freezes": {
             "time": 1000,
             "target": [
@@ -137,13 +188,6 @@
                 107
             ],
             "threshold": 0.999
-        },
-        "action": {
-            "type": "Custom",
-            "param": {
-                "custom_action": "CombatDrink",
-                "custom_action_param": {}
-            }
         },
         "next": [
             "Global.AutoCombat.Replay1",
@@ -164,6 +208,13 @@
             ],
             "threshold": 0.999
         },
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "SelectSupport",
+                "custom_action_param": ""
+            }
+        },
         "post_wait_freezes": {
             "time": 1000,
             "target": [
@@ -173,13 +224,6 @@
                 107
             ],
             "threshold": 0.999
-        },
-        "action": {
-            "type": "Custom",
-            "param": {
-                "custom_action": "SelectSupport",
-                "custom_action_param": ""
-            }
         },
         "next": [
             "Global.AutoCombat.TeamSelect"
@@ -196,9 +240,6 @@
                 "custom_action_param": ""
             }
         },
-        "next": [
-            "Global.AutoCombat.Formation"
-        ],
         "post_wait_freezes": {
             "time": 1000,
             "target": [
@@ -209,6 +250,9 @@
             ],
             "threshold": 0.999
         },
+        "next": [
+            "Global.AutoCombat.Formation"
+        ],
         "on_error": [
             "Global.GoBackToHomePage"
         ]
@@ -253,6 +297,10 @@
                 ]
             }
         },
+        "action": {
+            "type": "Click",
+            "param": {}
+        },
         "post_wait_freezes": {
             "time": 1000,
             "target": [
@@ -262,10 +310,6 @@
                 107
             ],
             "threshold": 0.999
-        },
-        "action": {
-            "type": "Click",
-            "param": {}
         },
         "next": [
             "Global.AutoCombat"
@@ -304,6 +348,13 @@
                 ]
             }
         },
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "CombatDrink",
+                "custom_action_param": {}
+            }
+        },
         "post_wait_freezes": {
             "time": 1000,
             "target": [
@@ -313,13 +364,6 @@
                 107
             ],
             "threshold": 0.999
-        },
-        "action": {
-            "type": "Custom",
-            "param": {
-                "custom_action": "CombatDrink",
-                "custom_action_param": {}
-            }
         },
         "next": [
             "Global.AutoCombat.Filter",
@@ -338,6 +382,20 @@
                 ]
             }
         },
+        "action": {
+            "type": "Click",
+            "param": {}
+        },
+        "pre_wait_freezes": {
+            "time": 1000,
+            "target": [
+                1162,
+                610,
+                115,
+                107
+            ],
+            "threshold": 0.99
+        },
         "post_wait_freezes": {
             "time": 1000,
             "target": [
@@ -347,10 +405,6 @@
                 107
             ],
             "threshold": 0.999
-        },
-        "action": {
-            "type": "Click",
-            "param": {}
         },
         "next": [
             "Global.GoBackToHomePage"
@@ -381,6 +435,10 @@
             ],
             "threshold": 0.99
         },
+        "action": {
+            "type": "Click",
+            "param": {}
+        },
         "post_wait_freezes": {
             "time": 1000,
             "target": [
@@ -390,10 +448,6 @@
                 107
             ],
             "threshold": 0.999
-        },
-        "action": {
-            "type": "Click",
-            "param": {}
         },
         "next": [
             "Global.AutoCombat.SelectSupport"
