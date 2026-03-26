@@ -13,7 +13,7 @@
             "Global.AutoCombat.Entry"
         ],
         "on_error": [
-            "Global.GoHomePage"
+            "Global.GoBackToHomePage"
         ]
     },
     "Flower.Select.DEF": {
@@ -30,7 +30,7 @@
             "Global.AutoCombat.Entry"
         ],
         "on_error": [
-            "Global.GoHomePage"
+            "Global.GoBackToHomePage"
         ]
     },
     "Flower.GoLU": {
@@ -199,10 +199,6 @@
                 ]
             }
         },
-        "action": {
-            "type": "DoNothing",
-            "param": {}
-        },
         "next": [
             "Flower.Go1",
             "Flower.GoLU",
@@ -247,6 +243,9 @@
         },
         "next": [
             "Flower.Go0.1"
+        ],
+        "on_error": [
+            "[JumpBack]Global.GoBackToHomePage"
         ]
     }
 }

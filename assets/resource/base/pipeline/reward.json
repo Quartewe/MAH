@@ -223,6 +223,9 @@
         },
         "next": [
             "Reward.Get"
+        ],
+        "on_error": [
+            "[JumpBack]Global.GoBackToHomePage"
         ]
     },
     "Reward.Get": {

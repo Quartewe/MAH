@@ -51,6 +51,9 @@
         "next": [
             "Dungeon.Change1.1",
             "Dungeon.Change2"
+        ],
+        "on_error": [
+            "[JumpBack]Global.GoBackToHomePage"
         ]
     },
     "Dungeon.Change2": {
@@ -207,6 +210,7 @@
         ]
     },
     "Dungeon.Swipe": {
+        "max_hit": 5,
         "action": {
             "type": "Swipe",
             "param": {
@@ -229,7 +233,6 @@
                 ]
             }
         },
-        "max_hit": 5,
         "next": [
             "Dungeon.Aoyama.Choice",
             "Dungeon.Shinjuku.Choice",

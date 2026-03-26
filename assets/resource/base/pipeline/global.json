@@ -10,7 +10,8 @@
     "next": [
       "Global.LoginReward",
       "Global.GoHomePage",
-      "Global.HomePage"
+      "Global.HomePage",
+      "Startup.Entry"
     ]
   },
   "Global.LoginReward": {
@@ -132,6 +133,7 @@
       }
     },
     "post_wait_freezes": 2000,
+    "timeout": -1,
     "on_error": [
       "Global.GoHomePage"
     ]

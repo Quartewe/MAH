@@ -83,7 +83,7 @@ jobs:
           out-file-path: "deps"
           extract: true
 
-      - name: Sync external resource repository (incremental)
+      - name: Sync external resource repository (full package)
         shell: bash
         env:
           INPUT_RESOURCE_REPO: ${{ github.event.inputs.resource_repo }}
@@ -97,27 +97,30 @@ jobs:
             RESOURCE_REPO="$DEFAULT_RESOURCE_REPO"
           fi
 
-          echo "Downloading incremental resources from $RESOURCE_REPO"
+          echo "Downloading full resources from $RESOURCE_REPO"
           mkdir -p assets/resource
 
-          # 获取最新 release 信息
-          RELEASES_API="https://api.github.com/repos/$RESOURCE_REPO/releases?per_page=10"
-          RELEASE_JSON=$(curl -s -H "Authorization: token $GITHUB_TOKEN" "$RELEASES_API")
-
-          # 优先查找 hotfix 包，如果没有则用 full 包
-          HOTFIX_URL=$(echo "$RELEASE_JSON" | jq -r '.[] | .assets[] | select(.name | contains("hotfix") or contains("incremental") or contains("patch")) | .browser_download_url' | head -1)
-          
-          if [[ -n "$HOTFIX_URL" ]]; then
-            echo "Found incremental package: $HOTFIX_URL"
-            PACKAGE_URL="$HOTFIX_URL"
+          RESOURCE_REF="$INPUT_RESOURCE_REF"
+          if [[ -z "$RESOURCE_REF" || "$RESOURCE_REF" == "main" ]]; then
+            RELEASE_API="https://api.github.com/repos/$RESOURCE_REPO/releases/latest"
+            echo "Using latest release from $RESOURCE_REPO"
           else
-            echo "No incremental package found, falling back to full package"
-            PACKAGE_URL=$(echo "$RELEASE_JSON" | jq -r '.[] | .assets[] | select(.name | contains("full")) | .browser_download_url' | head -1)
+            RELEASE_API="https://api.github.com/repos/$RESOURCE_REPO/releases/tags/$RESOURCE_REF"
+            echo "Using specified release tag '$RESOURCE_REF' from $RESOURCE_REPO"
           fi
 
+          RELEASE_JSON=$(curl -fsSL -H "Authorization: token $GITHUB_TOKEN" "$RELEASE_API" || true)
+          if [[ -z "$RELEASE_JSON" ]]; then
+            echo "[WARNING] Failed to fetch release metadata from $RELEASE_API, keep local assets unchanged"
+            exit 0
+          fi
+
+          # 仅查找 full 包，不使用 hotfix/incremental/patch
+          PACKAGE_URL=$(echo "$RELEASE_JSON" | jq -r '.assets[] | select(.name | contains("full")) | .browser_download_url' | head -1)
+
           if [[ -z "$PACKAGE_URL" ]]; then
-            # 最后兜底：任何 zip/tar.gz 都算 full 包
-            PACKAGE_URL=$(echo "$RELEASE_JSON" | jq -r '.[] | .assets[] | select(.name | endswith(".zip") or endswith(".tar.gz")) | select(.name | contains("hotfix") | not) | .browser_download_url' | head -1)
+            # 最后兜底：任意 zip/tar.gz，且排除 hotfix/incremental/patch
+            PACKAGE_URL=$(echo "$RELEASE_JSON" | jq -r '.assets[] | select(.name | endswith(".zip") or endswith(".tar.gz")) | select((.name | contains("hotfix") or contains("incremental") or contains("patch")) | not) | .browser_download_url' | head -1)
           fi
 
           if [[ -z "$PACKAGE_URL" ]]; then
@@ -163,7 +166,7 @@ jobs:
           fi
 
           rm -f "$TEMP_PACKAGE"
-          echo "Resources synced successfully (incremental mode)"
+          echo "Resources synced successfully (full package mode)"
 
       - name: Download MAH-UI (new naming)
         if: matrix.os != 'android'

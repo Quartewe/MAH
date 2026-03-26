@@ -53,6 +53,9 @@
         },
         "next": [
             "ShowSupporterScreen.Completed"
+        ],
+        "on_error": [
+            "[JumpBack]Global.GoBackToHomePage"
         ]
     },
     "ShowSupporterScreen.Completed": {

@@ -10,13 +10,11 @@
       "Global.LoginReward",
       "Global.HomePage",
       "Startup.OpenGame.Title",
+      "Global.GoBackToHomePage",
       "Startup.OpenGame"
     ]
   },
   "Startup.OpenGame": {
-    "recognition": {
-      "type": "DirectHit"
-    },
     "action": {
       "type": "Shell",
       "param": {

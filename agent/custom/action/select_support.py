@@ -69,12 +69,13 @@ class SelectSupport(CustomAction):
 
         if support_data and not default_mode:    
             keywords = list(support_data.keys())
-            for key_to_remove in ["name", "id", "AR"]:
+            for key_to_remove in ["name", "id", "AR", "label"]:
                 if key_to_remove in keywords:
                     keywords.remove(key_to_remove)
         select_mode = support_data.get("select_mode", "best")
 
         support_data["name"] = support_data.get("name", "").lower()
+        support_data["id"] = int(support_data.get("id", 0))
 
         # 扫描并选择最佳支援
         page = 0

@@ -1,54 +1,51 @@
 {
-    // 本文件为 PI V2 协议示例，更多详情请参考文档
-    // https://github.com/MaaXYZ/MaaFramework/blob/main/docs/zh_cn/3.3-ProjectInterfaceV2%E5%8D%8F%E8%AE%AE.md
-    "interface_version": 2, // ProjectInterface 协议版本号，当前为 2，固定且必须设置
-    "languages": { // 多语言支持配置，键为语言代码，值为对应的翻译文件路径
+    "interface_version": 2,
+    "languages": {
         "zh_cn": "resource/base/interface_zh.json",
         "en_us": "resource/resource_en/interface_en.json",
         "ja_jp": "resource/resource_jp/interface_jp.json",
         "zh_tw": "resource/resource_tw/interface_tw.json"
     },
-    "name": "MAH", // 项目唯一标识符，用作项目ID
-    "title": "MAH v1.0.0", // 窗口标题，Client直接显示该内容不做修饰。默认使用name和version拼接生成，支持国际化
-    "icon": "icon.png", // 应用图标文件路径，相对于项目根目录。未设置时使用默认图标
-    "mirrorchyan_rid": "mah", // MirrorChyan资源包标识符，用于资源管理和分发
-    "mirrorchyan_multiplatform": true, // 是否支持多平台，影响资源包的打包和分发策略
-    "github": "https://github.com/Quartewe/MAH", // 软件更新检查仓库地址
-    "software_github": "https://github.com/Quartewe/MAH", // 软件更新仓库地址（新增）
-    "resource_github": "https://github.com/quartawa/mah_res", // 资源更新仓库地址（新增）
-    "version": "1.0.0", // 项目版本号，用于版本更新检查和Client显示
-    "contact": "$contact_info", // 联系方式信息，显示在"关于"页面。支持文件路径、URL或直接文本，内容支持Markdown格式，支持国际化
-    "license": "MIT", // 项目许可证信息，显示在"关于"页面。支持文件路径、URL或直接文本，内容支持Markdown格式，支持国际化
-    "welcome": "$welcome", // 欢迎消息，在用户首次使用时弹窗显示，亦可作为公告使用。支持文件路径、URL或直接文本，内容支持Markdown格式。当内容更新时会再次弹窗，支持国际化
-    "description": "$welcome_description", // 项目描述信息，显示在"关于"页面。支持文件路径、URL或直接文本，内容支持Markdown格式，支持国际化
+    "name": "MAH",
+    "title": "MAH v1.0.0",
+    "icon": "icon.png",
+    "mirrorchyan_rid": "mah",
+    "mirrorchyan_multiplatform": true,
+    "github": "https://github.com/Quartewe/MAH",
+    "software_github": "https://github.com/Quartewe/MAH",
+    "resource_github": "https://github.com/quartawa/mah_res",
+    "version": "v1.0.1",
+    "contact": "$contact_info",
+    "license": "MIT",
+    "welcome": "$welcome",
+    "description": "$welcome_description",
     "agent": {
-        "child_exec": "py",
+        "child_exec": "python",
         "child_args": [
-            "./agent/main.py" // 子进程参数。支持相对路径（相对于interface.json所在目录）
+            "./agent/main.py"
         ],
-        "identifier": "MAH" // 连接标识符，需与 AgentServer.start_up() 中的一致
+        "identifier": "MAH"
     },
     "controller": [
         {
             "name": "Android",
-            "description": "Connect to Android devices via ADB", // 控制器详细描述。支持文件路径、URL或直接文本，内容支持Markdown格式，支持国际化
+            "description": "Connect to Android devices via ADB",
             "type": "Adb",
-            "display_short_side": 720, // 默认缩放分辨率的短边长度，用于屏幕适配。与long_side二选一
-            // "display_long_side": 1080, // 默认缩放分辨率的长边长度，与short_side二选一
-            "display_raw": false // 是否使用原始分辨率进行截图，与缩放分辨率设置互斥
+            "display_short_side": 720,
+            "display_raw": false
         }
     ],
     "resource": [
         {
             "name": "Official_CN",
-            "label": "Official CN", // 显示名称，支持国际化。优先显示label，未设置时显示name
-            "description": "简中(CHS)", // 资源详细描述。支持文件路径、URL或直接文本，内容支持Markdown格式，支持国际化
+            "label": "Official CN",
+            "description": "简中(CHS)",
             "path": [
-                "resource/base" // 资源路径，相对于interface.json所在目录
+                "resource/base"
             ],
             "controller": [
                 "Android"
-            ] // 指定该资源包支持的控制器类型列表。若不指定，则支持所有控制器。当用户选择某控制器时，只有支持该控制器的资源包才会显示
+            ]
         },
         {
             "name": "Official_EN",
@@ -90,30 +87,30 @@
     "task": [
         {
             "name": "启动游戏",
-            "label": "$start_game", // 显示名称，支持国际化。优先显示label，未设置时显示name
+            "label": "$start_game",
             "entry": "Startup.Entry",
-            "default_check": true, // 是否默认选中该任务。Client初始化时根据该值决定是否勾选
-            "description": "$start_game_description" // 任务详细描述，帮助用户理解任务功能。支持文件路径、URL或直接文本，内容支持Markdown格式，支持国际化
+            "default_check": true,
+            "description": "$start_game_description"
         },
         {
             "name": "检查任务进度",
-            "label": "$check_task_progress", // 显示名称，支持国际化。优先显示label，未设置时显示name
+            "label": "$check_task_progress",
             "entry": "CheckWeeklyMissions.Entry",
-            "default_check": true, // 是否默认选中该任务。Client初始化时根据该值决定是否勾选
-            "description": "$check_task_progress_description", // 任务详细描述，帮助用户理解任务功能。支持文件路径、URL或直接文本，内容支持Markdown格式，支持国际化
+            "default_check": true,
+            "description": "$check_task_progress_description",
             "option": [
                 "show_progress"
             ]
         },
         {
             "name": "地城作战",
-            "label": "$dungeon_combat", // 显示名称，支持国际化。优先显示label，未设置时显示name
+            "label": "$dungeon_combat",
             "default_check": true,
             "description": "$dungeon_combat_description",
             "entry": "Dungeon.Entry",
             "option": [
-                "choose_stage_dungeon", // 选项列表，元素为字符串，对应外层option中定义的配置项
-                "play_times", // 选项列表，元素为字符串，对应外层option中定义的配置项
+                "choose_stage_dungeon",
+                "play_times",
                 "use_DP_potion",
                 "select_team",
                 "json_load"
@@ -121,7 +118,7 @@
         },
         {
             "name": "体力作战",
-            "label": "$AP_combat", // 显示名称，支持国际化。优先显示label，未设置时显示name
+            "label": "$AP_combat",
             "default_check": true,
             "description": "$AP_combat_description",
             "entry": "Combat.Entry",
@@ -135,7 +132,7 @@
         },
         {
             "name": "领取奖励",
-            "label": "$claim_rewards", // 显示名称，支持国际化。优先显示label，未设置时显示name
+            "label": "$claim_rewards",
             "default_check": true,
             "description": "$claim_rewards_description",
             "entry": "Reward.Entry"
@@ -144,28 +141,27 @@
     "option": {
         "show_progress": {
             "type": "show",
-            "label": "$current_progress", // 显示名称，支持国际化。优先显示label，未设置时显示name
-            "description": "$current_progress_description", // 选项详细描述。支持文件路径、URL或直接文本，内容支持Markdown格式，支持国际化
+            "label": "$current_progress",
+            "description": "$current_progress_description",
             "shows": [
                 {
                     "name": "当前进度",
-                    "label": "$current_progress_show", // 显示名称，支持国际化。优先显示label，未设置时显示name
-                    "description": "$current_progress_show_description", // 描述，应支持 文件名、URL、字符串，同时内容支持 markdown，支持国际化
-                    "path": "$current_progress_show_path", // 显示内容的数据来源路径，支持从Agent返回的数据中提取显示。路径格式为"{key1.key2...}"，对应数据中的嵌套结构
+                    "label": "$current_progress_show",
+                    "description": "$current_progress_show_description",
+                    "path": "$current_progress_show_path",
                     "mode": "auto"
                 }
             ]
         },
         "choose_stage_dungeon": {
-            "type": "select", // 配置项类型。select为下拉选项框，用户从预定义选项中选择
-            "label": "$select_stage", // 显示名称，支持国际化。优先显示label，未设置时显示name
-            "description": "$select_stage_description", // 配置项详细描述。支持文件路径、URL或直接文本，内容支持Markdown格式，支持国际化
-            // "group": "basic", // 分组标识：basic（基础设置）/ advanced（进阶设置）
+            "type": "select",
+            "label": "$select_stage",
+            "description": "$select_stage_description",
             "cases": [
                 {
                     "name": "神宿学园旧校舍",
-                    "label": "$shinjuku_school", // 显示名称，支持国际化。优先显示label，未设置时显示name
-                    "description": "$shinjuku_school_description", // 选项详细描述。支持文件路径、URL或直接文本，内容支持Markdown格式，支持国际化
+                    "label": "$shinjuku_school",
+                    "description": "$shinjuku_school_description",
                     "pipeline_override": {
                         "Dungeon.Change2": {
                             "next": "Dungeon.Shinjuku.Entry"
@@ -174,8 +170,8 @@
                 },
                 {
                     "name": "池袋地下大迷宫",
-                    "label": "$ikebukuro_dungeon", // 显示名称，支持国际化。优先显示label，未设置时显示name
-                    "description": "$ikebukuro_dungeon_description", // 选项详细描述。支持文件路径、URL或直接文本，内容支持Markdown格式，支持国际化
+                    "label": "$ikebukuro_dungeon",
+                    "description": "$ikebukuro_dungeon_description",
                     "pipeline_override": {
                         "Dungeon.Change2": {
                             "next": "Dungeon.Ikebukuro.Entry"
@@ -184,8 +180,8 @@
                 },
                 {
                     "name": "青山陵园地下墓地",
-                    "label": "$aoyama_cemetery", // 显示名称，支持国际化。优先显示label，未设置时显示name
-                    "description": "$aoyama_cemetery_description", // 选项详细描述。支持文件路径、URL或直接文本，内容支持Markdown格式，支持国际化
+                    "label": "$aoyama_cemetery",
+                    "description": "$aoyama_cemetery_description",
                     "pipeline_override": {
                         "Dungeon.Change2": {
                             "next": "Dungeon.Aoyama.Entry"
@@ -194,8 +190,8 @@
                 },
                 {
                     "name": "五色结界地下灵场",
-                    "label": "$barrier_temple", // 显示名称，支持国际化。优先显示label，未设置时显示name
-                    "description": "$barrier_temple_description", // 选项详细描述。支持文件路径、URL或直接文本，内容支持Markdown格式，支持国际化
+                    "label": "$barrier_temple",
+                    "description": "$barrier_temple_description",
                     "pipeline_override": {
                         "Dungeon.Change2": {
                             "next": "Dungeon.Barrier.Entry"
@@ -204,9 +200,8 @@
                 },
                 {
                     "name": "自定义地城",
-                    "label": "$custom_stage", // 显示名称，支持国际化。优先显示label，未设置时显示name
-                    "description": "$custom_stage_description", // 选项详细描述。支持文件路径、URL或直接文本，内容支持Markdown格式，支持国际化
-                    // 该选项包含子配置项，用户选择该选项后需要进一步输入配置参数才能执行任务
+                    "label": "$custom_stage",
+                    "description": "$custom_stage_description",
                     "option": [
                         "custom_stage_dungeon"
                     ]
@@ -214,17 +209,16 @@
             ]
         },
         "custom_stage_dungeon": {
-            "type": "input", // 用户输入类型
-            "label": "$custom_stage", // 显示名称，支持国际化。优先显示label，未设置时显示name
-            "description": "$custom_stage_description", // 描述，应支持 文件名、URL、字符串，同时内容支持 markdown，支持国际化
-            // "group": "basic", // 分组标识
+            "type": "input",
+            "label": "$custom_stage",
+            "description": "$custom_stage_description",
             "inputs": [
                 {
                     "name": "自定义关卡",
-                    "label": "$custom_stage_input", // 显示名称，支持国际化。优先显示label，未设置时显示name
-                    "description": "$custom_stage_input_description", // 描述，应支持 文件名、URL、字符串，同时内容支持 markdown，支持国际化
+                    "label": "$custom_stage_input",
+                    "description": "$custom_stage_input_description",
                     "default": "",
-                    "pipeline_type": "string" // 拼接到 pipeline_override 中的类型
+                    "pipeline_type": "string"
                 }
             ],
             "pipeline_override": {
@@ -242,15 +236,14 @@
         },
         "play_times": {
             "type": "input",
-            // "group": "basic", // 分组标识
-            "description": "$play_times_description", // 描述，应支持 文件名、URL、字符串，同时内容支持 markdown，支持国际化
+            "description": "$play_times_description",
             "inputs": [
                 {
                     "name": "挑战次数",
-                    "label": "$play_times_input", // 显示名称，支持国际化。优先显示label，未设置时显示name
-                    "description": "$play_times_input_description", // 描述，应支持 文件名、URL、字符串，同时内容支持 markdown，支持国际化
+                    "label": "$play_times_input",
+                    "description": "$play_times_input_description",
                     "default": "999",
-                    "pipeline_type": "int", // 拼接到 pipeline_override 中的类型
+                    "pipeline_type": "int",
                     "verify": "^(0|[1-9]\\d*)$"
                 }
             ],
@@ -265,37 +258,47 @@
             }
         },
         "use_AP_potion": {
-            "type": "input", // switch类型示例
-            "label": "$use_AP_potion", // 显示名称，支持国际化。优先显示label，未设置时显示name
-            // "group": "basic", // 分组标识
-            "description": "$use_AP_potion_description", // 描述，应支持 文件名、URL、字符串，同时内容支持 markdown，支持国际化
+            "type": "input",
+            "label": "$use_AP_potion",
+            "description": "$use_AP_potion_description",
             "inputs": [
                 {
                     "name": "全体力",
-                    "label": "$all_stamina", // 显示名称，支持国际化。优先显示label，未设置时显示name
-                    "description": "$all_stamina_description", // 描述，应支持 文件名、URL、字符串，同时内容支持 markdown，支持国际化
+                    "label": "$all_stamina",
+                    "description": "$all_stamina_description",
                     "default": "0",
-                    "pipeline_type": "int", // 拼接到 pipeline_override 中的类型
+                    "pipeline_type": "int",
                     "verify": "^(0|[1-9]\\d*)$"
                 },
                 {
                     "name": "半体力",
-                    "label": "$half_stamina", // 显示名称，支持国际化。优先显示label，未设置时显示name
-                    "description": "$half_stamina_description", // 描述，应支持 文件名、URL、字符串，同时内容支持 markdown，支持国际化
+                    "label": "$half_stamina",
+                    "description": "$half_stamina_description",
                     "default": "0",
-                    "pipeline_type": "int", // 拼接到 pipeline_override 中的类型
+                    "pipeline_type": "int",
                     "verify": "^(0|[1-9]\\d*)$"
                 },
                 {
                     "name": "小体力",
-                    "label": "$mini_stamina", // 显示名称，支持国际化。优先显示label，未设置时显示name
-                    "description": "$mini_stamina_description", // 描述，应支持 文件名、URL、字符串，同时内容支持 markdown，支持国际化
+                    "label": "$mini_stamina",
+                    "description": "$mini_stamina_description",
                     "default": "0",
-                    "pipeline_type": "int", // 拼接到 pipeline_override 中的类型
+                    "pipeline_type": "int",
                     "verify": "^(0|[1-9]\\d*)$"
                 }
             ],
             "pipeline_override": {
+                "Global.AutoCombat.PreDrink": {
+                    "action": {
+                        "param": {
+                            "custom_action_param": {
+                                "All": "{全体力}",
+                                "Half": "{半体力}",
+                                "Mini": "{小体力}"
+                            }
+                        }
+                    }
+                },
                 "Global.AutoCombat.Drink1": {
                     "action": {
                         "param": {
@@ -310,21 +313,29 @@
             }
         },
         "use_DP_potion": {
-            "type": "input", // switch类型示例
-            "label": "$use_DP_potion", // 显示名称，支持国际化。优先显示label，未设置时显示name
-            // "group": "basic", // 分组标识
-            "description": "$use_DP_potion_description", // 描述，应支持 文件名、URL、字符串，同时内容支持 markdown，支持国际化
+            "type": "input",
+            "label": "$use_DP_potion",
+            "description": "$use_DP_potion_description",
             "inputs": [
                 {
                     "name": "DP",
-                    "label": "$dp_potion", // 显示名称，支持国际化。优先显示label，未设置时显示name
-                    "description": "$dp_potion_description", // 描述，应支持 文件名、URL、字符串，同时内容支持 markdown，支持国际化
+                    "label": "$dp_potion",
+                    "description": "$dp_potion_description",
                     "default": "0",
-                    "pipeline_type": "int", // 拼接到 pipeline_override 中的类型
+                    "pipeline_type": "int",
                     "verify": "^(0|[1-9]\\d*)$"
                 }
             ],
             "pipeline_override": {
+                "Global.AutoCombat.PreDrink": {
+                    "action": {
+                        "param": {
+                            "custom_action_param": {
+                                "Ranpoil": "{DP}"
+                            }
+                        }
+                    }
+                },
                 "Global.AutoCombat.Drink1": {
                     "action": {
                         "param": {
@@ -337,15 +348,14 @@
             }
         },
         "choose_stage_AP": {
-            "type": "select", // 配置项类型。select为下拉选项框，用户从预定义选项中选择
-            "label": "$select_stage", // 显示名称，支持国际化。优先显示label，未设置时显示name
-            // "group": "basic", // 分组标识
-            "description": "$select_stage_description", // 配置项详细描述。支持文件路径、URL或直接文本，内容支持Markdown格式，支持国际化
+            "type": "select",
+            "label": "$select_stage",
+            "description": "$select_stage_description",
             "cases": [
                 {
                     "name": "14章ATK花本",
-                    "label": "$14_atk", // 显示名称，支持国际化。优先显示label，未设置时显示name
-                    "description": "$14_atk_description", // 选项详细描述。支持文件路径、URL或直接文本，内容支持Markdown格式，支持国际化
+                    "label": "$14_atk",
+                    "description": "$14_atk_description",
                     "pipeline_override": {
                         "Combat.Entry": {
                             "next": "Flower.Entry"
@@ -357,8 +367,8 @@
                 },
                 {
                     "name": "14章DEF花本",
-                    "label": "$14_def", // 显示名称，支持国际化。优先显示label，未设置时显示name
-                    "description": "$14_def_description", // 选项详细描述。支持文件路径、URL或直接文本，内容支持Markdown格式，支持国际化
+                    "label": "$14_def",
+                    "description": "$14_def_description",
                     "pipeline_override": {
                         "Combat.Entry": {
                             "next": "Flower.Entry"
@@ -370,8 +380,8 @@
                 },
                 {
                     "name": "金币n3",
-                    "label": "$coin_n3", // 显示名称，支持国际化。优先显示label，未设置时显示name
-                    "description": "$coin_n3_description", // 选项详细描述。支持文件路径、URL或直接文本，内容支持Markdown格式，支持国际化
+                    "label": "$coin_n3",
+                    "description": "$coin_n3_description",
                     "pipeline_override": {
                         "Combat.Entry": {
                             "next": "DailyRes.Entry"
@@ -383,8 +393,8 @@
                 },
                 {
                     "name": "经验n3",
-                    "label": "$exp_n3", // 显示名称，支持国际化。优先显示label，未设置时显示name
-                    "description": "$exp_n3_description", // 选项详细描述。支持文件路径、URL或直接文本，内容支持Markdown格式，支持国际化
+                    "label": "$exp_n3",
+                    "description": "$exp_n3_description",
                     "pipeline_override": {
                         "Combat.Entry": {
                             "next": "DailyRes.Entry"
@@ -396,8 +406,8 @@
                 },
                 {
                     "name": "技能n3",
-                    "label": "$skill_n3", // 显示名称，支持国际化。优先显示label，未设置时显示name
-                    "description": "$skill_n3_description", // 选项详细描述。支持文件路径、URL或直接文本，内容支持Markdown格式，支持国际化
+                    "label": "$skill_n3",
+                    "description": "$skill_n3_description",
                     "pipeline_override": {
                         "Combat.Entry": {
                             "next": "DailyRes.Entry"
@@ -409,18 +419,16 @@
                 },
                 {
                     "name": "自定义每日任务",
-                    "label": "$custom_stage_AP", // 显示名称，支持国际化。优先显示label，未设置时显示name
-                    "description": "$custom_stage_AP_description", // 选项详细描述。支持文件路径、URL或直接文本，内容支持Markdown格式，支持国际化
-                    // 该选项包含子配置项，用户选择该选项后需要进一步输入配置参数才能执行任务
+                    "label": "$custom_stage_AP",
+                    "description": "$custom_stage_AP_description",
                     "option": [
                         "custom_stage_AP"
                     ]
                 },
                 {
                     "name": "活动关卡",
-                    "label": "$activity_stage", // 显示名称，支持国际化。优先显示label，未设置时显示name
-                    "description": "$activity_stage_description", // 选项详细描述。支持文件路径、URL或直接文本，内容支持Markdown格式，支持国际化
-                    // 该选项包含子配置项，用户选择该选项后需要进一步输入配置参数才能执行任务
+                    "label": "$activity_stage",
+                    "description": "$activity_stage_description",
                     "option": [
                         "custom_stage_Activity"
                     ]
@@ -429,16 +437,15 @@
         },
         "custom_stage_AP": {
             "type": "input",
-            "label": "$custom_stage_AP", // 显示名称，支持国际化。优先显示label，未设置时显示name
-            "description": "$custom_stage_AP_description", // 描述，应支持 文件名、URL、字符串，同时内容支持 markdown，支持国际化
-            // "group": "basic", // 分组标识
+            "label": "$custom_stage_AP",
+            "description": "$custom_stage_AP_description",
             "inputs": [
                 {
                     "name": "关卡名称关键词",
-                    "label": "$custom_stage_input", // 显示名称，支持国际化。优先显示label，未设置时显示name
-                    "description": "$custom_stage_input_description", // 描述，应支持 文件名、URL、字符串，同时内容支持 markdown，支持国际化
+                    "label": "$custom_stage_input",
+                    "description": "$custom_stage_input_description",
                     "default": "",
-                    "pipeline_type": "string", // 拼接到 pipeline_override 中的类型
+                    "pipeline_type": "string",
                     "verify": "^(?!\\d+$).+$"
                 },
                 {
@@ -465,7 +472,6 @@
         },
         "custom_stage_Activity": {
             "type": "input",
-            // "group": "basic", // 分组标识
             "label": "$custom_stage_activity",
             "description": "$custom_stage_activity_description",
             "inputs": [
@@ -503,13 +509,13 @@
         },
         "json_load": {
             "type": "select",
-            "label": "$json_load", // 显示名称，支持国际化。优先显示label，未设置时显示name
-            "description": "$json_load_description", // 配置项详细描述。支持文件路径
+            "label": "$json_load",
+            "description": "$json_load_description",
             "cases": [
                 {
                     "name": "自定义选择组合",
-                    "label": "$custom_select_json", // 显示名称，支持国际化。优先显示label，未设置时显示name
-                    "description": "$custom_select_json_description", // 选项详细描述。支持文件路径
+                    "label": "$custom_select_json",
+                    "description": "$custom_select_json_description",
                     "option": [
                         "select_support",
                         "select_formation",
@@ -518,8 +524,8 @@
                 },
                 {
                     "name": "统一从选择的json文件中自动获取",
-                    "label": "$select_json", // 显示名称，支持国际化。优先显示label，未设置时显示name
-                    "description": "$select_json_description", // 选项详细描述。支持文件路径、URL或直接文本，内容支持Markdown格式，支持国际化
+                    "label": "$select_json",
+                    "description": "$select_json_description",
                     "option": [
                         "select_json"
                     ]
@@ -528,15 +534,15 @@
         },
         "select_json": {
             "type": "input",
-            "label": "$select_json", // 显示名称，支持国际化。优先显示label，未设置时显示name
-            "description": "$select_json_description", // 描述，应支持 文件名、URL、
+            "label": "$select_json",
+            "description": "$select_json_description",
             "inputs": [
                 {
                     "name": "全部文件名",
-                    "label": "$json_path", // 显示名称，支持国际化。优先显示label，未设置时显示name
-                    "description": "$json_path_description", // 描述，应支持 文件名、URL、字符串，同时内容支持 markdown，支持国际化
+                    "label": "$json_path",
+                    "description": "$json_path_description",
                     "default": "default.json",
-                    "pipeline_type": "string", // 拼接到 pipeline_override 中的类型
+                    "pipeline_type": "string",
                     "verify": ".+\\.json$"
                 }
             ],
@@ -566,23 +572,21 @@
         },
         "select_support": {
             "type": "select",
-            // "group": "advanced", // 分组标识
-            "label": "$select_support", // 显示名称，支持国际化。优先显示label，未设置时显示name
-            "description": "$select_support_description", // 配置项详细描述。支持文件路径、URL或直接文本，内容支持Markdown格式，支持国际化
+            "label": "$select_support",
+            "description": "$select_support_description",
             "cases": [
                 {
                     "name": "从选择的json文件中自动获取",
-                    "label": "$select_from_list", // 显示名称，支持国际化。优先显示label，未设置时显示name
-                    "description": "$select_from_list_description", // 选项详细描述。支持文件路径、URL或直接文本，内容支持Markdown格式，支持国际化
+                    "label": "$select_from_list",
+                    "description": "$select_from_list_description",
                     "option": [
                         "select_json_support"
                     ]
                 },
                 {
                     "name": "自定义选择组合",
-                    "label": "$custom_select", // 显示名称，支持国际化。优先显示label，未设置时显示name
-                    "description": "$custom_select_description", // 选项详细描述。支持文件路径、URL或直接文本，内容支持Markdown格式，支持国际化
-                    // 该选项包含子配置项，用户选择该选项后需要进一步输入配置参数才能执行任务
+                    "label": "$custom_select",
+                    "description": "$custom_select_description",
                     "option": [
                         "select_support_notlist_basic_info",
                         "select_support_notlist"
@@ -592,15 +596,15 @@
         },
         "select_json_support": {
             "type": "input",
-            "label": "$select_json", // 显示名称，支持国际化。优先显示label，未设置时显示name
-            "description": "$select_json_description", // 描述，应支持 文件名、URL、
+            "label": "$select_json",
+            "description": "$select_json_description",
             "inputs": [
                 {
                     "name": "助战文件名",
-                    "label": "$json_path", // 显示名称，支持国际化。优先显示label，未设置时显示name
-                    "description": "$json_path_description", // 描述，应支持 文件名、URL、字符串，同时内容支持 markdown，支持国际化
+                    "label": "$json_path",
+                    "description": "$json_path_description",
                     "default": "default.json",
-                    "pipeline_type": "string", // 拼接到 pipeline_override 中的类型
+                    "pipeline_type": "string",
                     "verify": ".+\\.json$"
                 }
             ],
@@ -656,20 +660,21 @@
                 "Global.AutoCombat.SelectSupport": {
                     "action": {
                         "param": {
-                            "name": "{name}",
-                            "id": "{id}",
-                            "S.A.Lv": "{S.A.Lv}",
-                            "AR": "{AR}"
+                            "custom_action_param": {
+                                "name": "{name}",
+                                "id": "{id}",
+                                "S.A.Lv": "{S.A.Lv}",
+                                "AR": "{AR}"
+                            }
                         }
                     }
                 }
             }
         },
         "select_support_notlist": {
-            "type": "select", // 复选框类型示例，用户可以勾选多个选项
-            // "group": "advanced", // 分组标识
-            "label": "$select_support_distinct", // 显示名称，支持国际化。优先显示label，未设置时显示name
-            "description": "$select_support_distinct_description", // 配置项详细描述。支持文件路径
+            "type": "select",
+            "label": "$select_support_distinct",
+            "description": "$select_support_distinct_description",
             "cases": [
                 {
                     "name": "数值筛选",
@@ -677,19 +682,7 @@
                     "description": "$template_A_description",
                     "option": [
                         "A"
-                    ],
-                    "pipeline_override": {
-                        "Global.AutoCombat.SelectSupport": {
-                            "action": {
-                                "param": {
-                                    "Level": "{Level}",
-                                    "Skill": "{Skill}",
-                                    "ATK": "{ATK}",
-                                    "HP": "{HP}"
-                                }
-                            }
-                        }
-                    }
+                    ]
                 },
                 {
                     "name": "种子筛选",
@@ -697,19 +690,7 @@
                     "description": "$template_B_description",
                     "option": [
                         "B"
-                    ],
-                    "pipeline_override": {
-                        "Global.AutoCombat.SelectSupport": {
-                            "action": {
-                                "param": {
-                                    "SLevel": "{SLevel}",
-                                    "SSkill": "{SSkill}",
-                                    "SATK": "{SATK}",
-                                    "SHP": "{SHP}"
-                                }
-                            }
-                        }
-                    }
+                    ]
                 }
             ]
         },
@@ -719,7 +700,7 @@
             "description": "$template_A_description",
             "inputs": [
                 {
-                    "name": "输入等级",
+                    "name": "Level",
                     "label": "$level",
                     "description": "$level_description",
                     "default": "",
@@ -727,7 +708,7 @@
                     "verify": "^(0|[1-9]\\d*)$"
                 },
                 {
-                    "name": "输入技能等级",
+                    "name": "Skill",
                     "label": "$Skill",
                     "description": "$Skill_description",
                     "default": "",
@@ -735,7 +716,7 @@
                     "verify": "^(0|[1-9]\\d*)$"
                 },
                 {
-                    "name": "输入攻击力",
+                    "name": "ATK",
                     "label": "$atk",
                     "description": "$atk_description",
                     "default": "",
@@ -743,14 +724,28 @@
                     "verify": "^(0|[1-9]\\d*)$"
                 },
                 {
-                    "name": "输入生命值",
+                    "name": "HP",
                     "label": "$hp",
                     "description": "$hp_description",
                     "default": "",
                     "pipeline_type": "int",
                     "verify": "^(0|[1-9]\\d*)$"
                 }
-            ]
+            ],
+            "pipeline_override": {
+                "Global.AutoCombat.SelectSupport": {
+                    "action": {
+                        "param": {
+                            "custom_action_param": {
+                                "Level": "{Level}",
+                                "Skill": "{Skill}",
+                                "ATK": "{ATK}",
+                                "HP": "{HP}"
+                            }
+                        }
+                    }
+                }
+            }
         },
         "B": {
             "type": "input",
@@ -758,7 +753,7 @@
             "description": "$template_B_description",
             "inputs": [
                 {
-                    "name": "输入种子等级",
+                    "name": "SLevel",
                     "label": "$SLevel",
                     "description": "$SLevel_description",
                     "default": "",
@@ -766,7 +761,7 @@
                     "verify": "^(0|[1-9]\\d*)$"
                 },
                 {
-                    "name": "输入种子技能等级",
+                    "name": "SSkill",
                     "label": "$SSkill",
                     "description": "$SSkill_description",
                     "default": "",
@@ -774,7 +769,7 @@
                     "verify": "^(0|[1-9]\\d*)$"
                 },
                 {
-                    "name": "输入种子攻击力",
+                    "name": "SATK",
                     "label": "$SATK",
                     "description": "$SATK_description",
                     "default": "",
@@ -782,14 +777,28 @@
                     "verify": "^(0|[1-9]\\d*)$"
                 },
                 {
-                    "name": "输入种子生命值",
+                    "name": "SHP",
                     "label": "$SHP",
                     "description": "$SHP_description",
                     "default": "",
                     "pipeline_type": "int",
                     "verify": "^(0|[1-9]\\d*)$"
                 }
-            ]
+            ],
+            "pipeline_override": {
+                "Global.AutoCombat.SelectSupport": {
+                    "action": {
+                        "param": {
+                            "custom_action_param": {
+                                "SLevel": "{SLevel}",
+                                "SSkill": "{SSkill}",
+                                "SATK": "{SATK}",
+                                "SHP": "{SHP}"
+                            }
+                        }
+                    }
+                }
+            }
         },
         "select_team": {
             "type": "input",
@@ -817,15 +826,15 @@
         },
         "select_formation": {
             "type": "input",
-            "label": "$select_formation", // 显示名称，支持国际化。优先显示label，未设置时显示name
-            "description": "$select_formation_description", // 描述，应支持 文件名、URL、
+            "label": "$select_formation",
+            "description": "$select_formation_description",
             "inputs": [
                 {
                     "name": "编队文件名",
-                    "label": "$json_path", // 显示名称，支持国际化。优先显示label，未设置时显示name
-                    "description": "$json_path_description", // 描述，应支持 文件名、URL、字符串，同时内容支持 markdown，支持国际化
+                    "label": "$json_path",
+                    "description": "$json_path_description",
                     "default": "",
-                    "pipeline_type": "string", // 拼接到 pipeline_override 中的类型
+                    "pipeline_type": "string",
                     "verify": ".+\\.json$"
                 }
             ],
@@ -841,15 +850,15 @@
         },
         "select_combat_list": {
             "type": "input",
-            "label": "$select_combat_list", // 显示名称，支持国际化。优先显示label，未设置时显示name
-            "description": "$select_combat_list_description", // 描述，应支持 文件名、URL、
+            "label": "$select_combat_list",
+            "description": "$select_combat_list_description",
             "inputs": [
                 {
                     "name": "战斗列表文件名",
-                    "label": "$json_path", // 显示名称，支持国际化。优先显示label，未设置时显示name
-                    "description": "$json_path_description", // 描述，应支持 文件名、URL、字符串，同时内容支持 markdown，支持国际化
+                    "label": "$json_path",
+                    "description": "$json_path_description",
                     "default": "",
-                    "pipeline_type": "string", // 拼接到 pipeline_override 中的类型
+                    "pipeline_type": "string",
                     "verify": ".+\\.json$"
                 }
             ],

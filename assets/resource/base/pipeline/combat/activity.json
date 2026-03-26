@@ -25,6 +25,9 @@
         },
         "next": [
             "Activity.Select"
+        ],
+        "on_error": [
+            "[JumpBack]Global.GoBackToHomePage"
         ]
     },
     "Activity.Select": {

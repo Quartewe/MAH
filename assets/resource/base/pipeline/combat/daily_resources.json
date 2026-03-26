@@ -60,6 +60,9 @@
         "post_delay": 10000,
         "next": [
             "DailyRes.Go0.1"
+        ],
+        "on_error": [
+            "[JumpBack]Global.GoBackToHomePage"
         ]
     },
     "DailyRes.Go0.2": {
