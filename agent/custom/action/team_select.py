@@ -4,6 +4,7 @@ from maa.context import Context
 import time
 import re
 import json
+from utils import timeout_mgr
 
 
 @AgentServer.custom_action("TeamSelect")
@@ -16,12 +17,14 @@ class TeamSelect(CustomAction):
         context: Context,
         argv: CustomAction.RunArg,
     ) -> bool:
+        if timeout_mgr.check_timeout(argv.node_name):
+            return False
         param = json.loads(argv.custom_action_param)
+        print(f"[DEBUG] TeamSelect 收到参数: {param}")
         if not param or param <= 0 or param > 15:
             print(f"[DEBUG] TeamSelect 缺少参数, 直接使用当前配队")
             return True
-        param = int(param.strip("'").strip('"'))
-        print( f"[DEBUG] TeamSelect 收到参数: {param}")
+        param = int(param)
         click_box = [0, 0, 100, 45]
         found = False
         max_attempts = 10  # 最多尝试 10 次，防止死循环
@@ -130,6 +133,7 @@ class TeamSelect(CustomAction):
                             }
                         }
                     )
+                timeout_mgr.stop_monitoring(argv.node_name)
                 return True
             
             print(f"[DEBUG] 第 {attempt} 次滑动寻找下一支队伍...")
@@ -138,4 +142,5 @@ class TeamSelect(CustomAction):
             )
         
         print(f"[DEBUG] 达到最大尝试次数 ({max_attempts})，未找到目标团队")
+        timeout_mgr.stop_monitoring(argv.node_name)
         return False

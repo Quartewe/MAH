@@ -83,6 +83,16 @@
             "type": "Click",
             "param": {}
         },
+        "post_wait_freezes": {
+            "time": 1000,
+            "target": [
+                1162,
+                610,
+                115,
+                107
+            ],
+            "threshold": 0.999
+        },
         "next": [
             "Global.AutoCombat.Replay"
         ]
@@ -90,7 +100,17 @@
     "Global.AutoCombat.Back0": {
         "next": [
             "Global.AutoCombat.Back1"
-        ]
+        ],
+        "post_wait_freezes": {
+            "time": 1000,
+            "target": [
+                1162,
+                610,
+                115,
+                107
+            ],
+            "threshold": 0.999
+        }
     },
     "Global.AutoCombat.Drink1": {
         "recognition": {
@@ -107,6 +127,16 @@
                     }
                 ]
             }
+        },
+        "post_wait_freezes": {
+            "time": 1000,
+            "target": [
+                1162,
+                610,
+                115,
+                107
+            ],
+            "threshold": 0.999
         },
         "action": {
             "type": "Custom",
@@ -125,6 +155,16 @@
     },
     "Global.AutoCombat.SelectSupport": {
         "pre_wait_freezes": {
+            "time": 1000,
+            "target": [
+                1162,
+                610,
+                115,
+                107
+            ],
+            "threshold": 0.999
+        },
+        "post_wait_freezes": {
             "time": 1000,
             "target": [
                 1162,
@@ -159,6 +199,16 @@
         "next": [
             "Global.AutoCombat.Formation"
         ],
+        "post_wait_freezes": {
+            "time": 1000,
+            "target": [
+                1162,
+                610,
+                115,
+                107
+            ],
+            "threshold": 0.999
+        },
         "on_error": [
             "Global.GoBackToHomePage"
         ]
@@ -170,6 +220,16 @@
                 "custom_action": "Formation",
                 "custom_action_param": ""
             }
+        },
+        "post_wait_freezes": {
+            "time": 1000,
+            "target": [
+                1162,
+                610,
+                115,
+                107
+            ],
+            "threshold": 0.999
         },
         "next": [
             "Global.AutoCombat.Start"
@@ -193,6 +253,16 @@
                 ]
             }
         },
+        "post_wait_freezes": {
+            "time": 1000,
+            "target": [
+                1162,
+                610,
+                115,
+                107
+            ],
+            "threshold": 0.999
+        },
         "action": {
             "type": "Click",
             "param": {}
@@ -202,6 +272,16 @@
         ]
     },
     "Global.AutoCombat.Entry": {
+        "post_wait_freezes": {
+            "time": 1000,
+            "target": [
+                1162,
+                610,
+                115,
+                107
+            ],
+            "threshold": 0.999
+        },
         "next": [
             "Global.AutoCombat.PreDrink",
             "Global.AutoCombat.Filter",
@@ -223,6 +303,16 @@
                     }
                 ]
             }
+        },
+        "post_wait_freezes": {
+            "time": 1000,
+            "target": [
+                1162,
+                610,
+                115,
+                107
+            ],
+            "threshold": 0.999
         },
         "action": {
             "type": "Custom",
@@ -247,6 +337,16 @@
                     "回任务画面"
                 ]
             }
+        },
+        "post_wait_freezes": {
+            "time": 1000,
+            "target": [
+                1162,
+                610,
+                115,
+                107
+            ],
+            "threshold": 0.999
         },
         "action": {
             "type": "Click",
@@ -280,6 +380,16 @@
                 107
             ],
             "threshold": 0.99
+        },
+        "post_wait_freezes": {
+            "time": 1000,
+            "target": [
+                1162,
+                610,
+                115,
+                107
+            ],
+            "threshold": 0.999
         },
         "action": {
             "type": "Click",

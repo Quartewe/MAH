@@ -77,6 +77,7 @@ class AutoCombat(CustomAction):
             print("[DEBUG] Leader not detected, retrying...")
             time.sleep(1)
             i += 1
+        return None
 
     def _get_all_pos(self, pos_data: dict, last_move):
         current_pos = {}
@@ -657,6 +658,9 @@ class AutoCombat(CustomAction):
 
             if not info_share.auto_combat_mode:
                 posL = self._get_posL(context)
+                if not posL:
+                    print("[ERROR] Failed to get leader position, cannot proceed with combat")
+                    return False
                 base_action_data, loop_action_data = analyze_data(action_data)
                 list_completed, current_pos_data = list_combat(pos_data, base_action_data, posL)
                 if loop_action_data and list_completed:
