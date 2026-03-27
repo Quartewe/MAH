@@ -47,12 +47,18 @@
             }
         },
         "next": [
-            "CheckWeeklyMissions.Stop"
+            "CheckWeeklyMissions.toHomePage"
         ]
     },
     "CheckWeeklyMissions.Stop": {
-        "next": [
-            "Global.GoBackToHomePage"
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "MissionLogic"
+            }
+        },
+        "on_error": [
+            "ShowSupporterScreen.Entry"
         ]
     },
     "CheckWeeklyMissions.AllCompleted": {
@@ -63,7 +69,7 @@
             }
         },
         "next": [
-            "Global.GoBackToHomePage"
+            "CheckWeeklyMissions.toHomePage"
         ]
     },
     "CheckWeeklyMissions.Back": {
@@ -226,6 +232,18 @@
         "post_wait_freezes": 1000,
         "next": [
             "CheckWeeklyMissions.Select"
+        ]
+    },
+    "CheckWeeklyMissions.toHomePage": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "GoBack",
+                "custom_action_param": "返回"
+            }
+        },
+        "next": [
+            "CheckWeeklyMissions.Stop"
         ]
     }
 }

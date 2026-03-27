@@ -1,10 +1,7 @@
 {
     "ShowSupporterScreen.Entry": {
         "action": {
-            "type": "Custom",
-            "param": {
-                "custom_action": "MissionLogic"
-            }
+            "type": "DoNothing"
         },
         "post_wait_freezes": {
             "time": 1000,

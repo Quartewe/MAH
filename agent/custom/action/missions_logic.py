@@ -9,7 +9,7 @@ from utils import data_io, timeout_mgr, proj_path
 class MissionLogic(CustomAction):
     def __init__(self):
         super().__init__()
-        self.state = None
+        self.state = data_io.read_data(proj_path.STATE_FILE)
 
     def run(
         self,
@@ -19,6 +19,18 @@ class MissionLogic(CustomAction):
         # 检查超时
         if timeout_mgr.check_timeout(argv.node_name):    
             return False
+        
+        match argv.node_name:
+            case "CheckWeeklyMissions.Stop":
+                first_key, first_value = next(iter(self.state.items()))
+                if first_value["completed"] == True:
+                    print("[DEBUG]Weekly missions already completed, skip")
+                    timeout_mgr.stop_monitoring(argv.node_name)
+                    return True
+                else:
+                    print("[DEBUG]Weekly missions not completed, continue monitoring")
+                    return False
+
 
         timeout_mgr.stop_monitoring(argv.node_name)
         return True

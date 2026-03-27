@@ -57,5 +57,12 @@
                 ]
             }
         }
+    },
+    "CheckWeeklyMissions.toHomePage": {
+        "action": {
+            "param": {
+                "custom_action_param": "返回"
+            }
+        }
     }
 }
