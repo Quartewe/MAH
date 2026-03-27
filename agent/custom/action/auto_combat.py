@@ -14,7 +14,6 @@ class AutoCombat(CustomAction):
         self.DATA_PATH = proj_path.AUTO_COMBAT_DIR
         self.UNIT_LENGTH = 110
         
-
     def _move_data(self, action_list, start_pos=None):
         if start_pos is None:
             start_pos = [0, 0]
@@ -56,7 +55,7 @@ class AutoCombat(CustomAction):
                 pipeline_override={
                     "UtilsTemplateMatch": {
                         "pre_wait_freezes":{
-                            "time": 500,
+                            "time": 1500,
                             "target": [647,373,583,342],
                             "threshold": 0.99,
                             "timeout": -1,
@@ -658,6 +657,19 @@ class AutoCombat(CustomAction):
 
             if not info_share.auto_combat_mode:
                 posL = self._get_posL(context)
+                if not info_share.leader_pos:
+                    info_share.leader_pos = posL
+                elif abs(info_share.leader_pos[0] - posL[0]) > 20 or abs(info_share.leader_pos[1] - posL[1]) > 20:
+                    time.sleep(1)
+                    print(f"[WARNING] Different leader position, try to insure it's correct...")
+                    last_posL = posL
+                    current_posL = self._get_posL(context)
+                    if abs(last_posL[0] - current_posL[0]) > 20 or abs(last_posL[1] - current_posL[1]) > 20:
+                        print(f"[DEBUG] Correcting the error location...")
+                        posL = current_posL
+                    else:
+                        print(f"[WARNING] Leader position have changed!")
+                    
                 if not posL:
                     print("[ERROR] Failed to get leader position, cannot proceed with combat")
                     return False

@@ -102,7 +102,11 @@ class GoBack(CustomAction):
                         print("[DEBUG] Last try mode")
                         last_try = True
                         break
-                    
+
+            if not back_res.best_result and not loading_res.best_result:
+                print("[DEBUG] Successfully go back")
+                return True
+
             i += 1
         print("[DEBUG]GoBack failed to go back after 15 attempts")
         return False

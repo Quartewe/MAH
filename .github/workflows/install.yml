@@ -84,12 +84,14 @@ jobs:
           extract: true
 
       - name: Sync external resource repository (full package)
+        id: sync_resource
         shell: bash
         env:
           INPUT_RESOURCE_REPO: ${{ github.event.inputs.resource_repo }}
           INPUT_RESOURCE_REF: ${{ github.event.inputs.resource_ref }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          echo "resource_version=" >> "$GITHUB_OUTPUT"
           DEFAULT_RESOURCE_REPO="quartawa/mah_res"
 
           RESOURCE_REPO="$INPUT_RESOURCE_REPO"
@@ -113,6 +115,11 @@ jobs:
           if [[ -z "$RELEASE_JSON" ]]; then
             echo "[WARNING] Failed to fetch release metadata from $RELEASE_API, keep local assets unchanged"
             exit 0
+          fi
+
+          RESOURCE_VERSION_TAG=$(echo "$RELEASE_JSON" | jq -r '.tag_name // empty')
+          if [[ -n "$RESOURCE_VERSION_TAG" ]]; then
+            echo "resource_version=$RESOURCE_VERSION_TAG" >> "$GITHUB_OUTPUT"
           fi
 
           # 仅查找 full 包，不使用 hotfix/incremental/patch
@@ -227,7 +234,7 @@ jobs:
 
           cd tools/
           python -m pip install -r ./requirements.txt
-          python ./install.py ${{ needs.meta.outputs.tag }} ${{ matrix.os }} ${{ matrix.arch }}
+          python ./install.py ${{ needs.meta.outputs.tag }} ${{ matrix.os }} ${{ matrix.arch }} "${{ steps.sync_resource.outputs.resource_version }}"
           cd ..
 
           if [[ -f "config/maa_option.json" ]]; then

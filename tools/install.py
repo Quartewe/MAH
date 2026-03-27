@@ -18,11 +18,12 @@ from configure import configure_ocr_model
 working_dir = Path(__file__).parent.parent.resolve()
 install_path = working_dir / Path("install")
 version = len(sys.argv) > 1 and sys.argv[1] or "v0.0.1"
+resource_version_override = len(sys.argv) > 4 and sys.argv[4] or ""
 
 # the first parameter is self name
 if sys.argv.__len__() < 4:
-    print("[DEBUG] Usage: python install.py <version> <os> <arch>")
-    print("[DEBUG] Example: python install.py v1.0.0 win x86_64")
+    print("[DEBUG] Usage: python install.py <version> <os> <arch> [resource_version]")
+    print("[DEBUG] Example: python install.py v1.0.0 win x86_64 v1.0.1")
     sys.exit(1)
 
 os_name = sys.argv[2]
@@ -241,6 +242,13 @@ def install_resource():
     with open(install_path / "interface.json", "r", encoding="utf-8") as f:
         interface = jsonc.load(f)
 
+    original_resource_version = (
+        resource_version_override
+        or interface.get("resource_version")
+        or interface.get("version")
+        or version
+    )
+    interface["resource_version"] = original_resource_version
     interface["version"] = version
 
     with open(install_path / "interface.json", "w", encoding="utf-8") as f:
