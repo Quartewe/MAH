@@ -1037,6 +1037,20 @@
       "path": "character/cthugha/03"
     }
   },
+  "cuchulainn":{
+        "01": {
+      "rarity": 3,
+      "element": "dark",
+      "weapon": "thrust",
+      "path": "character/cuchulainn/01"
+    },
+    "02": {
+      "rarity": 5,
+      "element": "fire",
+      "weapon": "thrust",
+      "path": "character/cuchulainn/02"
+    }
+  },
   "curren": {
     "01": {
       "rarity": 3,
@@ -3037,6 +3051,20 @@
       "path": "character/musashi/02"
     }
   },
+  "mynoghra":{
+        "01": {
+      "rarity": 3,
+      "element": "dark",
+      "weapon": "slash",
+      "path": "character/mynoghra/01"
+    },
+    "02": {
+      "rarity": 4,
+      "element": "dark",
+      "weapon": "longslash",
+      "path": "character/mynoghra/02"
+    }
+  },
   "nekros": {
     "01": {
       "rarity": 3,
@@ -3487,6 +3515,20 @@
       "path": "character/ravenarthur/02"
     }
   },
+  "redhood":{
+        "01": {
+      "rarity": 3,
+      "element": "evil",
+      "weapon": "knock",
+      "path": "character/redhood/01"
+    },
+    "02": {
+      "rarity": 5,
+      "element": "evil",
+      "weapon": "thrust",
+      "path": "character/redhood/02"
+    }
+  },
   "reprobus": {
     "01": {
       "rarity": 3,
@@ -3793,6 +3835,20 @@
       "element": "light",
       "weapon": "magic",
       "path": "character/shirou/04"
+    }
+  },
+  "shisa":{
+        "01": {
+      "rarity": 3,
+      "element": "wood",
+      "weapon": "none",
+      "path": "character/shisa/01"
+    },
+    "02": {
+      "rarity": 5,
+      "element": "wood",
+      "weapon": "none",
+      "path": "character/shisa/02"
     }
   },
   "shiva": {
@@ -4597,6 +4653,20 @@
       "element": "light",
       "weapon": "shoot",
       "path": "character/ulaanbaatar/03"
+    }
+  },
+  "vainamoinen":{
+    "01":{
+      "rarity": 3,
+      "element": "water",
+      "weapon":"knock",
+      "path": "character/vainamoinen/01"
+    },
+    "02":{
+      "rarity": 4,
+      "element": "water",
+      "weapon":"knock",
+      "path": "character/vainamoinen/02"
     }
   },
   "vapula": {

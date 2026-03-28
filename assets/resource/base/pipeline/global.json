@@ -10,7 +10,9 @@
     "next": [
       "Global.LoginReward",
       "Global.GoHomePage",
-      "Global.HomePage",
+      "Global.HomePage"
+    ],
+    "on_error": [
       "Startup.Entry"
     ]
   },

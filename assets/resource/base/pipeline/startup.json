@@ -11,9 +11,6 @@
       "Global.HomePage",
       "Startup.OpenGame.Title",
       "Startup.OpenGame"
-    ],
-    "on_error": [
-      "Global.GoBackToHomePage"
     ]
   },
   "Startup.OpenGame": {
@@ -23,23 +20,15 @@
         "cmd": "am start -n jp.co.lifewonders.housamo/com.google.firebase.MessagingUnityPlayerActivity"
       }
     },
-    "post_wait_freezes": {
-      "time": 2000,
-      "target": [
-        1134,
-        589,
-        143,
-        129
-      ],
-      "threshold": 0.999,
-      "timeout": -1
-    },
-    "timeout": 300000,
+    "post_delay": 10000,
     "next": [
-      "[JumpBack]Global.NetworkError",
       "[JumpBack]Startup.Update_1",
       "Startup.OpenGame.Wait",
-      "Global.HomePage"
+      "Global.HomePage",
+      "Global.GoBackToHomePage"
+    ],
+    "on_error": [
+      "[JumpBack]Global.NetworkError"
     ]
   },
   "Startup.Update_1": {
@@ -49,12 +38,12 @@
         "expected": "OK"
       }
     },
-    "timeout": 300000,
     "action": {
       "type": "Click",
       "param": {}
     },
-    "next": [
+    "timeout": 300000,
+    "on_error": [
       "[JumpBack]Global.NetworkError"
     ]
   },
@@ -67,21 +56,13 @@
         ]
       }
     },
-    "post_wait_freezes": {
-      "time": 2000,
-      "target": [
-        1134,
-        589,
-        143,
-        129
-      ],
-      "threshold": 0.999,
-      "timeout": -1
-    },
     "timeout": 200000,
     "rate_limit": 5000,
     "next": [
       "Startup.OpenGame.Title",
+      "[JumpBack]Startup.Update_1"
+    ],
+    "on_error": [
       "[JumpBack]Global.NetworkError"
     ]
   },
@@ -99,7 +80,6 @@
       "type": "Click",
       "param": {}
     },
-    "timeout": 300000,
     "post_wait_freezes": {
       "time": 2000,
       "target": [
@@ -111,10 +91,13 @@
       "threshold": 0.999,
       "timeout": -1
     },
+    "timeout": 300000,
     "next": [
       "Global.HomePage",
-      "[JumpBack]Global.NetworkError",
       "Global.LoginReward"
+    ],
+    "on_error": [
+      "[JumpBack]Global.NetworkError"
     ]
   }
 }
