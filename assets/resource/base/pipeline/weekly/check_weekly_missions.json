@@ -37,6 +37,9 @@
         },
         "next": [
             "CheckWeeklyMissions.Get"
+        ],
+        "on_error": [
+            "[JumpBack]Global.GoBackToHomePage"
         ]
     },
     "CheckWeeklyMissions.Record": {
