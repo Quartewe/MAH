@@ -19,6 +19,7 @@
 <p align="center">
   <img alt="Python" src="https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white">
   <img alt="platform" src="https://img.shields.io/badge/platform-Windows-blueviolet">
+  
 ## 功能列表
 
 - **启动游戏**：自动启动游戏并等待进入主界面。

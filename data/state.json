@@ -1,52 +1,52 @@
 {
     "显示支援者组队画面": {
-        "current": 0,
+        "current": 1,
         "target": 1,
         "completed": false
     },
     "完成攻略3次地城": {
-        "current": 0,
+        "current": 3,
         "target": 3,
-        "completed": false
+        "completed": true
     },
     "累计消耗100点体力": {
-        "current": 0,
+        "current": 100,
         "target": 100,
-        "completed": false
+        "completed": true
     },
     "累计消耗300点体力": {
-        "current": 0,
+        "current": 300,
         "target": 300,
-        "completed": false
+        "completed": true
     },
     "累计消耗450点体力": {
-        "current": 0,
+        "current": 450,
         "target": 450,
-        "completed": false
+        "completed": true
     },
     "累计打倒60个敌人": {
-        "current": 0,
+        "current": 60,
         "target": 60,
-        "completed": false
+        "completed": true
     },
     "累计打倒100个敌人": {
-        "current": 0,
+        "current": 100,
         "target": 100,
-        "completed": false
+        "completed": true
     },
     "完成5次任务": {
-        "current": 0,
+        "current": 5,
         "target": 5,
-        "completed": false
+        "completed": true
     },
     "完成10次任务": {
-        "current": 0,
+        "current": 10,
         "target": 10,
-        "completed": false
+        "completed": true
     },
     "完成每周任务9个": {
-        "current": 0,
+        "current": 9,
         "target": 9,
-        "completed": false
+        "completed": true
     }
 }

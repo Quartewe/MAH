@@ -1,7 +1,10 @@
 {
     "ShowSupporterScreen.Entry": {
         "action": {
-            "type": "DoNothing"
+            "type": "Custom",
+            "param": {
+                "custom_action": "MissionLogic"
+            }
         },
         "post_wait_freezes": {
             "time": 1000,
@@ -23,15 +26,16 @@
     },
     "ShowSupporterScreen.Open": {
         "recognition": {
-            "type": "FeatureMatch",
+            "type": "TemplateMatch",
             "param": {
                 "roi": [
-                    680,
-                    520,
-                    600,
-                    200
+                    780,
+                    570,
+                    500,
+                    150
                 ],
-                "template": "homepage/team_off.png"
+                "template": "homepage/team_off.png",
+                "threshold": 0.3
             }
         },
         "action": {
@@ -87,10 +91,10 @@
             "type": "OCR",
             "param": {
                 "roi": [
-                    250,
-                    100,
                     0,
-                    0
+                    0,
+                    250,
+                    100
                 ],
                 "expected": [
                     "返回"
