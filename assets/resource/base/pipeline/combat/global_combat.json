@@ -96,8 +96,8 @@
             "threshold": 0.999
         },
         "next": [
-            "Global.AutoCombat.Replay1",
             "Global.AutoCombat.Drink1",
+            "Global.AutoCombat.Replay1",
             "Global.AutoCombat"
         ],
         "on_error": [
