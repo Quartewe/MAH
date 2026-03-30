@@ -125,8 +125,24 @@ class WeeklyMission(CustomAction):
 
     def _catch_mission_data(self, context):
         mission_data = data_io.read_data(proj_path.STATE_FILE)
+
         if mission_data == {}:
+            print("[DEBUG] No existing mission data found, detecting language and initializing mission data")
             match act_mgr.detect_lang(context, [481,19,777,613], info_share.IGNORE_LIST):
+                case "jp":
+                    mission_data = deepcopy(self.JP_MISSION)
+                case "cn":
+                    mission_data = deepcopy(self.CN_MISSION)
+                case "tw":
+                    mission_data = deepcopy(self.TW_MISSION)
+                case "en":
+                    mission_data = deepcopy(self.EN_MISSION)
+
+        state_keys = mission_data.keys() if mission_data else None
+        state_lang = act_mgr.detect_lang(context, [0,0,0,0], info_share.IGNORE_LIST, compare_list=state_keys)
+        if state_lang != info_share.current_lang:
+            print(f"[WARNING] Detected language {state_lang} does not match current language {info_share.current_lang}, resetting mission data")
+            match state_lang:
                 case "jp":
                     mission_data = deepcopy(self.JP_MISSION)
                 case "cn":

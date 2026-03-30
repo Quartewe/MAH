@@ -155,12 +155,12 @@ class ActUtils:
         return 1 + max(map(ActUtils.get_list_depth, lst), default=0) if isinstance(lst, list) else 0
 
     @staticmethod
-    def _run_ocr_and_count_lang(context, roi, max_retries=30, ignore: list = None):
+    def _run_ocr_and_count_lang(context, roi, max_retries=30, ignore: list = None, compare_list: list = None):
         """执行 OCR 识别并统计语言，返回语言计数字典"""
         jp = cn = tw = en = 0
         retry_count = 0
         
-        while retry_count < max_retries:
+        while retry_count < max_retries and not compare_list:
             retry_count += 1
             context.tasker.controller.post_screencap().wait()
             current_image = context.tasker.controller.cached_image
@@ -178,7 +178,6 @@ class ActUtils:
                     }
                 }
             )
-            
 
             print(f"OCR best_results: {ocrresults.best_result}, total filtered results: {len(ocrresults.filtered_results)}")
             # 如果成功获取结果，则跳出循环
@@ -195,11 +194,15 @@ class ActUtils:
             print(f"[WARNING] Max retries reached for OCR, proceeding with empty results")
         
         # 统计各语言数量
-        for res in ocrresults.filtered_results:
+        for res in (ocrresults.filtered_results if not compare_list else compare_list):
             ignore_match = False
-            if ignore:
+            if isinstance(res, str):
+                text = res
+            else:
+                text = res.text
+            if ignore and not compare_list:
                 for ign in ignore:
-                    if match_mgr.fuzzy_match(ign, res.text):
+                    if match_mgr.fuzzy_match(ign, text):
                         print(f"[DEBUG] Ignoring result due to ignore keyword: {ign}")
                         ignore_match = True
                         break
@@ -208,12 +211,12 @@ class ActUtils:
                 continue
 
             # 检查日文假名（平假名和片假名）
-            if re.search(r'[\u3040-\u309f\u30a0-\u30ff]', res.text):
+            if re.search(r'[\u3040-\u309f\u30a0-\u30ff]', text):
                 jp += 1
                 continue
             
             # 使用 hanzidentifier 判断中文
-            lang_id = hanzidentifier.identify(res.text)
+            lang_id = hanzidentifier.identify(text)
             if lang_id == hanzidentifier.SIMPLIFIED:
                 cn += 1
             elif lang_id == hanzidentifier.TRADITIONAL:
@@ -222,13 +225,13 @@ class ActUtils:
                 cn += 1
             
             # 检查英文
-            if re.search(r'[a-zA-Z]', res.text):
+            if re.search(r'[a-zA-Z]', text):
                 en += 1
         
         return {"jp": jp, "cn": cn, "tw": tw, "en": en}
 
     @staticmethod
-    def detect_lang(context, roi, ignore: list = None):
+    def detect_lang(context, roi, ignore: list = None, compare_list: list = None):
         """
         returns:
             str: "jp"（日文）、"cn"（简体中文）、"tw"（繁体中文）或 "en"（英文），表示检测到的主要语言类型
@@ -243,7 +246,7 @@ class ActUtils:
         
         # 对每个 ROI 进行 OCR 识别和语言统计
         for current_roi in roi_list:
-            lang_counts = ActUtils._run_ocr_and_count_lang(context, current_roi, max_retries, ignore)
+            lang_counts = ActUtils._run_ocr_and_count_lang(context, current_roi, max_retries, ignore, compare_list)
             jp += lang_counts["jp"]
             cn += lang_counts["cn"]
             tw += lang_counts["tw"]
