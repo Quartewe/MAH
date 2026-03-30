@@ -461,3 +461,5 @@ ui.json
 .nicegui/
 
 storage-general.json
+
+state.json

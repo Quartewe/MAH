@@ -257,11 +257,5 @@ class WeeklyMission(CustomAction):
             timeout_mgr.stop_monitoring(argv.node_name)
             return success
 
-        # 如果是周一且是入口节点，重置任务数据
-        if "Entry" in argv.node_name:
-            data_io.clear_folder(proj_path.ON_ERROR_DIR)
-            if datetime.now().weekday() == 0:
-                success = data_io.write_data(self._reset_mission_data(context), proj_path.STATE_FILE)
-            timeout_mgr.stop_monitoring(argv.node_name)
-            return True
+        return True
         

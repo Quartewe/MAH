@@ -1,10 +1,7 @@
 {
   "Startup.Entry": {
     "action": {
-      "type": "Custom",
-      "param": {
-        "custom_action": "WeeklyMission"
-      }
+      "type": "DoNothing"
     },
     "next": [
       "Global.LoginReward",
