@@ -58,6 +58,20 @@
         ]
     },
     "Global.AutoCombat": {
+        "recognition": {
+            "type": "OCR",
+            "param": {
+                "roi": [
+                    0,
+                    0,
+                    640,
+                    66
+                ],
+                "expected": [
+                    "MENU"
+                ]
+            }
+        },
         "action": {
             "type": "Custom",
             "param": {
