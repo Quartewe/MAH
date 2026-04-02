@@ -65,6 +65,9 @@ class ActUtils:
         if isinstance(keywords, str):
             keywords = [keywords]
         
+        if not keywords:
+            keywords = ["Level", "ATK"]
+            
         for keyword in keywords:
             print(f"[DEBUG] Evaluating keyword: {keyword}")
             best = -1
@@ -78,7 +81,11 @@ class ActUtils:
                             continue
 
                         value = int(res_data.get(keyword))
-                        limit_val = int(limit.get(keyword, 0))
+                        try:
+                            limit_val = int(limit.get(keyword, 0))
+                        except ValueError:
+                            print(f"[WARNING] Invalid limit value for keyword '{keyword}': {limit.get(keyword)}. Defaulting to 0.")
+                            limit_val = 0
                         if value > best:
                             best = value
                             if best < limit_val:
@@ -99,6 +106,7 @@ class ActUtils:
                 # 如果满足条件，也保存到output_satisfied
                 if check_satisfied[-1]:
                     output_satisfied[keyword] = best_data
+
 
         # 优先使用满足条件的，如果都不满足就用全部
         output = output_satisfied if output_satisfied else output_all

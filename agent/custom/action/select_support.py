@@ -34,7 +34,6 @@ class SelectSupport(CustomAction):
         self.last_fingerprint = []
 
         # 初始化
-        page = 0
         idroi = [45,190,400,530]
         param = json.loads(argv.custom_action_param)
         default_mode = False
@@ -76,14 +75,34 @@ class SelectSupport(CustomAction):
 
         support_data["name"] = support_data.get("name", "").lower()
         support_data["id"] = int(support_data.get("id", 0))
+        
 
         # 扫描并选择最佳支援
-        page = 0
-        if not self._scan_and_select_support(context, support_data if not default_mode else None, keywords, select_mode, idroi, page):
+        if not self._scan_and_select_support(context, support_data if not default_mode else None, keywords, select_mode, idroi):
+            # 滑动到顶部
+            page = self.page
+            temp = 0
+            while temp < (page // 3):
+                print(f"[DEBUG] Swiping to the top, step {temp}/{(page // 3)}")
+                context.run_action(
+                    "UtilsSwipe",
+                    pipeline_override={
+                        "UtilsSwipe": {
+                            "begin":[400, 180, 5, 5],
+                            "end":[400, 680, 5, 5]
+                        }
+                    }
+                )
+                temp += 1
             id_format = f"{support_data.get('id', ''):02d}"
-            element = self.CHAR_DATA.get(support_data.get("name", ""), {}).get(support_data.get(id_format, ""), {}).get("element", "")
+            support_name = support_data.get("name", "")
+            print(f"[DEBUG] Support name: {support_name}, ID: {id_format}")
+            support_details = self.CHAR_DATA.get(support_name, {}).get(id_format, {})
+            print(f"[DEBUG] Support details: {support_details}")
+            element = support_details.get("element", "")
+            print(f"[DEBUG] Element: {element}")
             element_filter = self.UI_DATA.get("support", {}).get(element if element != "god" else "default", "")
-            temolate_element_filter = commonprefix([element_filter, str(proj_path.IMAGE_DIR)])
+            template_element_filter = commonprefix([element_filter, str(proj_path.IMAGE_DIR)])
             print(f"[DEBUG] No exact match found, trying element filter: {element_filter}")
             if element_filter:
                 context.run_task(
@@ -92,7 +111,7 @@ class SelectSupport(CustomAction):
                         "UtilsTemplateMatch": {
                             "recognition":{
                                 "param": {
-                                    "template_path": element_filter,
+                                    "template": element_filter,
                                     "threshold": 0.8,
                                     "roi": [110,93,799,72]
                                 }
@@ -103,7 +122,7 @@ class SelectSupport(CustomAction):
                         }
                     }
                 )
-                if not self._scan_and_select_support(context, support_data if not default_mode else None, keywords, select_mode, idroi, page):
+                if not self._scan_and_select_support(context, support_data if not default_mode else None, keywords, select_mode, idroi):
                     print("[DEBUG] Element filter failed, no support selected")
                     timeout_mgr.stop_monitoring(argv.node_name)
                     return False
@@ -115,7 +134,7 @@ class SelectSupport(CustomAction):
         # 滑动到顶部
         temp = 0
         while temp < (page // 3):
-            print(temp)
+            print(f"[DEBUG] Swiping to the top, step {temp}/{(page // 3)}")
             context.run_action(
                 "UtilsSwipe",
                 pipeline_override={
@@ -126,16 +145,18 @@ class SelectSupport(CustomAction):
                 }
             )
             temp += 1
+
         # 滑动到对应位置
         temp = 0
+        print(f"[DEBUG] Need to swipe {swipe_time} times to reach target")
         while temp < swipe_time:
             print(f"[DEBUG] Swiping to position, step {temp}/{swipe_time}")
             context.run_action(
                 "UtilsSwipe",
                 pipeline_override={
                     "UtilsSwipe": {
-                        "begin":[330, 15, 5, 5],
-                        "end":[330, 530, 5, 5]
+                        "begin":[330, 630, 5, 5],
+                        "end":[330, 115, 5, 5]
                     }
                 }
             )
@@ -154,13 +175,17 @@ class SelectSupport(CustomAction):
         timeout_mgr.stop_monitoring(argv.node_name)
         return True
 
-    def _scan_and_select_support(self, context, support_data, keywords, select_mode, idroi, page):
+    def _scan_and_select_support(self, context, support_data, keywords, select_mode, idroi):
         """扫描支援角色并选择最佳结果
         
         返回值：bool，是否成功找到最佳结果
         成功时设置：self.raw_box, self.swipe_time, self.page
         """
         current_fingerprint = [0]
+        self.raw_box = []
+        self.swipe_time = 0
+        self.page = 0
+        page = 0
         while True:
             # 截取新画面
             context.tasker.controller.post_screencap().wait()
@@ -222,10 +247,15 @@ class SelectSupport(CustomAction):
                                 continue
                             # 根据 fpbox 确定该角色在当前页的位置
                             res_box = res_data.get("box", [0, 0, 1, 1])
+                            print(f"[DEBUG] Processing result {res_key} with box {res_box}")
                             for i, fp in enumerate(fpbox):
-                                if act_mgr.in_roi(fp, res_box):
+                                print(f"[DEBUG] Checking fingerprint box {fp} against result box {res_box}")
+                                if act_mgr.in_roi(res_box, fp):
                                     res_data["pos"] = i + page
+                                    print(f"[DEBUG] Result box {res_box} is in fingerprint box {fp}")
                                     break
+                                else:
+                                    print(f"[DEBUG] Result box {res_box} is not in fingerprint box {fp}")
                 self.all_res = match_mgr.merge_res_dicts(self.all_res, add_res)
             
             print(f"[DEBUG] Page {page // 3}, fingerprint: {current_fingerprint}, swiping...")
@@ -248,6 +278,7 @@ class SelectSupport(CustomAction):
 
         if not best_res:
             print("[DEBUG] No suitable result found")
+            self.page = page
             return False
 
         # 从 all_res 中找到最佳结果的数据
@@ -262,7 +293,7 @@ class SelectSupport(CustomAction):
                     break
                 for res_key, res_data in char_id_dict.items():
                     if res_key == best_res:
-                        swipe_time = (res_data.get("pos", 0) + 1) // 3
+                        swipe_time = res_data.get("pos", 0) // 3
                         print(f"[DEBUG] Swipe time: {swipe_time}")
                         raw_box = res_data.get("box")
                         found = True

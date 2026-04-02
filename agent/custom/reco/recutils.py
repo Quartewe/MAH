@@ -213,6 +213,9 @@ class TraverseMatch(CustomRecognition):
                     for fr in reco_result.filtered_results:
                         box = [fr.box[0], fr.box[1], fr.box[2], fr.box[3]]
                         count = fr.count if hasattr(fr, 'count') else 0
+                        if count <= 10 or fr.box[0] == 0:
+                            print(f"[DEBUG] Invalid result for {tpl_rel}, skipping")
+                            continue
                         print(f"[DEBUG] Hit: {tpl_rel}，Box: {box}, Count: {count}")
                         all_hits.append({
                             "template": str(tpl_rel),

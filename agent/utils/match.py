@@ -115,13 +115,15 @@ class MatchUtils:
                 
                 # 将box转为可哈希的元组用于去重
                 box_tuple = tuple(text.box)
+
+                range_box = [text.box[0], text.box[1], text.box[2] + 749, text.box[3] + 97]
                 
                 if (min(0, x_range) <= diff_x <= max(0, x_range) and 
                     min(0, y_range) <= diff_y <= max(0, y_range) and 
                     not match_mgr.fuzzy_match(text.text.strip(), fr.text.strip()) and
                     box_tuple not in added_boxes):  # 检查是否已添加
                     output.append(text.text.strip())
-                    box.append(text.box)
+                    box.append(range_box)
                     added_boxes.add(box_tuple)  # 记录已添加的box
                     
         return output, box
