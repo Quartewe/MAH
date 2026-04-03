@@ -259,15 +259,21 @@ jobs:
             exit 0
           fi
 
-          py_dll=$(ls "$internal_dir"/python*.dll 2>/dev/null | head -n1 || true)
-          if [[ -z "$py_dll" ]]; then
-            echo "[ERROR] cannot detect python runtime version from $internal_dir/python*.dll"
+          py_dll_name=$(find "$internal_dir" -maxdepth 1 -type f -name "python*.dll" -printf "%f\n" \
+            | grep -E '^python[0-9]{3}\.dll$' \
+            | sort -V \
+            | tail -n1 || true)
+
+          if [[ -z "$py_dll_name" ]]; then
+            echo "[ERROR] cannot detect versioned python runtime dll from $internal_dir"
+            echo "[ERROR] existing python*.dll:"
+            find "$internal_dir" -maxdepth 1 -type f -name "python*.dll" -printf "  - %f\n" || true
             exit 1
           fi
 
-          py_tag=$(basename "$py_dll" | sed -E 's/^python([0-9]+)\.dll$/\1/')
+          py_tag=$(echo "$py_dll_name" | sed -E 's/^python([0-9]{3})\.dll$/\1/')
           if [[ ! "$py_tag" =~ ^[0-9]{3}$ ]]; then
-            echo "[ERROR] unsupported python dll name: $(basename "$py_dll")"
+            echo "[ERROR] unsupported python dll name: $py_dll_name"
             exit 1
           fi
 
