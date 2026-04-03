@@ -1,4 +1,5 @@
 from pathlib import Path
+import re
 
 import shutil
 import sys
@@ -149,6 +150,53 @@ def install_deps():
                 if toolkit_file.exists():
                     shutil.copy2(toolkit_file, install_path / toolkit_name)
                     break
+
+
+def ensure_embedded_python_pth() -> None:
+    """为内置 Python 运行时生成版本化 ._pth，避免解释器初始化失败。"""
+    if os_name != "win":
+        return
+
+    internal_dir = install_path / "_internal"
+    if not internal_dir.exists():
+        return
+
+    version_tags: list[int] = []
+    for dll in internal_dir.glob("python*.dll"):
+        match = re.fullmatch(r"python(\d{3})\.dll", dll.name.lower())
+        if match:
+            version_tags.append(int(match.group(1)))
+
+    if not version_tags:
+        print("[DEBUG] Skip ._pth generation: no pythonXYZ.dll found in _internal")
+        return
+
+    py_tag = str(max(version_tags))
+    pth_file = internal_dir / f"python{py_tag}._pth"
+
+    stdlib_entries: list[str] = []
+    std_zip = f"python{py_tag}.zip"
+    if (internal_dir / std_zip).exists():
+        stdlib_entries.append(std_zip)
+    if (internal_dir / "base_library.zip").exists():
+        stdlib_entries.append("base_library.zip")
+
+    if not stdlib_entries:
+        print(
+            "[WARNING] Skip ._pth generation: no stdlib zip found "
+            f"(base_library.zip/python{py_tag}.zip)"
+        )
+        return
+
+    if std_zip not in stdlib_entries:
+        print(
+            "[WARNING] python stdlib zip missing: "
+            f"{std_zip}. Some stdlib modules may be unavailable."
+        )
+
+    pth_content = "\n".join([*stdlib_entries, ".", "import site", ""])
+    pth_file.write_text(pth_content, encoding="utf-8", newline="\n")
+    print(f"[DEBUG] Generated embedded python pth: {pth_file}")
 
 
 
@@ -329,6 +377,7 @@ def install_data():
 
 if __name__ == "__main__":
     install_deps()
+    ensure_embedded_python_pth()
     install_resource()
     install_chores()
     install_agent()

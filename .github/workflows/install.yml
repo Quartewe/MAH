@@ -254,11 +254,6 @@ jobs:
           internal_dir="install/_internal"
           mkdir -p "$internal_dir"
 
-          if [[ -f "$internal_dir/python.exe" ]]; then
-            echo "Embedded python launcher already exists, skip download"
-            exit 0
-          fi
-
           py_dll_name=$(find "$internal_dir" -maxdepth 1 -type f -name "python*.dll" -printf "%f\n" \
             | grep -E '^python[0-9]{3}\.dll$' \
             | sort -V \
@@ -297,34 +292,57 @@ jobs:
 
           embed_zip="python-${py_ver}-embed-${embed_arch}.zip"
           embed_url="https://www.python.org/ftp/python/${py_ver}/${embed_zip}"
+          std_zip="python${py_tag}.zip"
 
-          echo "Downloading embedded launcher from: $embed_url"
-          curl -fL "$embed_url" -o "/tmp/${embed_zip}"
+          need_launcher=0
+          need_std_zip=0
 
-          unzip -j -o "/tmp/${embed_zip}" "python.exe" "pythonw.exe" -d "$internal_dir"
+          [[ -f "$internal_dir/python.exe" ]] || need_launcher=1
+          [[ -f "$internal_dir/$std_zip" ]] || need_std_zip=1
 
-          pth_file="$internal_dir/python${py_tag}._pth"
-          if [[ -f "$internal_dir/base_library.zip" ]]; then
-            {
-              echo "base_library.zip"
-              echo "."
-              echo "import site"
-            } > "$pth_file"
-            echo "Generated $pth_file with base_library.zip"
-          else
-            std_zip="python${py_tag}.zip"
-            unzip -j -o "/tmp/${embed_zip}" "$std_zip" -d "$internal_dir"
-            {
-              echo "$std_zip"
-              echo "."
-              echo "import site"
-            } > "$pth_file"
-            echo "Generated $pth_file with $std_zip"
+          need_download=0
+          if [[ $need_launcher -eq 1 || $need_std_zip -eq 1 ]]; then
+            need_download=1
           fi
 
-          rm -f "/tmp/${embed_zip}"
+          if [[ $need_download -eq 1 ]]; then
+            echo "Downloading embedded runtime from: $embed_url"
+            curl -fL "$embed_url" -o "/tmp/${embed_zip}"
+          fi
+
+          if [[ $need_launcher -eq 1 ]]; then
+            unzip -j -o "/tmp/${embed_zip}" "python.exe" "pythonw.exe" -d "$internal_dir"
+            echo "Injected python launcher binaries"
+          else
+            echo "python launcher already exists, skip launcher extraction"
+          fi
+
+          if [[ $need_std_zip -eq 1 ]]; then
+            unzip -j -o "/tmp/${embed_zip}" "$std_zip" -d "$internal_dir"
+            echo "Injected stdlib zip: $std_zip"
+          else
+            echo "stdlib zip already exists: $std_zip"
+          fi
+
+          pth_file="$internal_dir/python${py_tag}._pth"
+          {
+            if [[ -f "$internal_dir/$std_zip" ]]; then
+              echo "$std_zip"
+            fi
+            if [[ -f "$internal_dir/base_library.zip" ]]; then
+              echo "base_library.zip"
+            fi
+            echo "."
+            echo "import site"
+          } > "$pth_file"
+          echo "Generated $pth_file"
+
+          if [[ $need_download -eq 1 ]]; then
+            rm -f "/tmp/${embed_zip}"
+          fi
 
           test -f "$internal_dir/python.exe"
+          test -f "$internal_dir/$std_zip"
           echo "Embedded python launcher injected: $internal_dir/python.exe"
 
       - name: Include docs in package root
@@ -383,6 +401,13 @@ jobs:
               missing=1
             fi
           done
+
+          if [[ "${{ matrix.os }}" == "win" ]]; then
+            if ! find "install/_internal" -maxdepth 1 -type f -name "python[0-9][0-9][0-9]._pth" | grep -q .; then
+              echo "[ERROR] missing required file: install/_internal/pythonXYZ._pth"
+              missing=1
+            fi
+          fi
 
           if [[ $missing -ne 0 ]]; then
             echo "[ERROR] package validation failed"
