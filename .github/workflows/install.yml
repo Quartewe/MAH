@@ -499,8 +499,14 @@ jobs:
                 missing=1
               fi
 
-              if ! find "$runtime_dir" -maxdepth 2 -type f \( -name "hanzidentifier.py" -o -name "hanzidentifier*.py" \) | grep -q .; then
+              if ! find "$runtime_dir" -maxdepth 2 \( \
+                -type d -name "hanzidentifier" -o \
+                -type f -name "hanzidentifier.py" -o \
+                -type d -name "hanzidentifier-*.dist-info" \
+              \) | grep -q .; then
                 echo "[ERROR] missing bundled dependency: hanzidentifier"
+                echo "[ERROR] runtime_dir top entries (for debug):"
+                find "$runtime_dir" -maxdepth 2 -mindepth 1 -printf "  - %p\n" | head -n 80 || true
                 missing=1
               fi
             fi
