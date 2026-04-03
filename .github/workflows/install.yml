@@ -406,6 +406,34 @@ jobs:
             echo "[WARNING] docs directory not found, skipping"
           fi
 
+      - name: Inject strenum fallback for Windows package
+        if: matrix.os == 'win'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          runtime_dir=""
+          if [[ -d "install/_internal" ]]; then
+            runtime_dir="install/_internal"
+          elif [[ -d "install/python" ]]; then
+            runtime_dir="install/python"
+          else
+            echo "[ERROR] no bundled runtime dir found for strenum fallback"
+            exit 1
+          fi
+
+          if ! find "$runtime_dir" -maxdepth 2 \( \
+            -type d -name "strenum" -o \
+            -type f -name "strenum.py" -o \
+            -type d -name "strenum-*.dist-info" -o \
+            -type d -name "StrEnum-*.dist-info" \
+          \) | grep -q .; then
+            printf 'from enum import Enum\n\nclass StrEnum(str, Enum):\n    pass\n' > "$runtime_dir/strenum.py"
+            echo "Injected fallback strenum.py into $runtime_dir"
+          else
+            echo "strenum already bundled, skip fallback injection"
+          fi
+
       - name: Validate packaged files
         shell: bash
         run: |
@@ -492,6 +520,30 @@ jobs:
                 missing=1
               fi
 
+              vc_dups_found=0
+              declare -A seen_vc=()
+              while IFS= read -r file; do
+                rel="${file#install/}"
+                dir_part="$(dirname "$rel")"
+                base_part="$(basename "$rel")"
+                key="${dir_part,,}/${base_part,,}"
+
+                if [[ -n "${seen_vc[$key]:-}" ]]; then
+                  echo "[ERROR] found case-insensitive duplicate vcruntime140 DLLs:"
+                  echo "  - install/${seen_vc[$key]}"
+                  echo "  - $file"
+                  vc_dups_found=1
+                else
+                  seen_vc[$key]="$rel"
+                fi
+              done < <(find install -type f -iname "vcruntime140*.dll" | sort)
+
+              if [[ $vc_dups_found -ne 0 ]]; then
+                missing=1
+              else
+                echo "Validated: no case-insensitive duplicate vcruntime140 DLLs"
+              fi
+
               # CI 在 ubuntu 上构建 windows 包，不能直接执行 windows python.exe。
               # 这里改为静态校验：确认关键模块文件已打进包体。
               if [[ ! -d "$runtime_dir/maa" ]]; then
@@ -507,6 +559,30 @@ jobs:
                 echo "[ERROR] missing bundled dependency: hanzidentifier"
                 echo "[ERROR] runtime_dir top entries (for debug):"
                 find "$runtime_dir" -maxdepth 2 -mindepth 1 -printf "  - %p\n" | head -n 80 || true
+                missing=1
+              fi
+
+              if ! find "$runtime_dir" -maxdepth 2 \( \
+                -type d -name "strenum" -o \
+                -type f -name "strenum.py" -o \
+                -type d -name "strenum-*.dist-info" -o \
+                -type d -name "StrEnum-*.dist-info" \
+              \) | grep -q .; then
+                echo "[ERROR] missing bundled dependency: strenum"
+                echo "[ERROR] runtime_dir top entries (for debug):"
+                find "$runtime_dir" -maxdepth 2 -mindepth 1 -printf "  - %p\n" | head -n 80 || true
+                missing=1
+              fi
+
+              if [[ ! -f "$runtime_dir/numpy/__init__.py" ]]; then
+                echo "[ERROR] missing bundled dependency: numpy"
+                echo "[ERROR] runtime_dir top entries (for debug):"
+                find "$runtime_dir" -maxdepth 2 -mindepth 1 -printf "  - %p\n" | head -n 80 || true
+                missing=1
+              elif ! find "$runtime_dir/numpy" -maxdepth 4 -type f -name "*.pyd" | grep -q .; then
+                echo "[ERROR] bundled numpy seems invalid for Windows (no .pyd extension module found)"
+                echo "[ERROR] numpy entries (for debug):"
+                find "$runtime_dir/numpy" -maxdepth 4 -type f -printf "  - %p\n" | head -n 120 || true
                 missing=1
               fi
             fi

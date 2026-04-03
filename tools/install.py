@@ -286,6 +286,40 @@ def ensure_windows_embedded_python_runtime() -> None:
             )
 
 
+def detect_windows_python_runtime_tag(runtime_dir: Path) -> str:
+    """从 runtime 目录中解析 pythonXYZ.dll 对应的 XYZ 版本号。"""
+    version_tags: list[int] = []
+    for dll in runtime_dir.glob("python*.dll"):
+        match = re.fullmatch(r"python(\d{3})\.dll", dll.name.lower())
+        if match:
+            version_tags.append(int(match.group(1)))
+
+    if not version_tags:
+        raise RuntimeError(
+            f"Cannot detect pythonXYZ.dll in {runtime_dir}."
+        )
+
+    return str(max(version_tags))
+
+
+def get_windows_pip_target(runtime_dir: Path) -> tuple[str, str, str]:
+    """返回 pip 跨平台安装所需的 platform/python-version/abi。"""
+    py_tag = detect_windows_python_runtime_tag(runtime_dir)
+    py_major = py_tag[0]
+    py_minor = py_tag[1:]
+
+    if arch == "x86_64":
+        pip_platform = "win_amd64"
+    elif arch == "aarch64":
+        pip_platform = "win_arm64"
+    else:
+        raise RuntimeError(f"Unsupported windows arch for pip target: {arch}")
+
+    pip_python_version = f"{py_major}.{py_minor}"
+    pip_abi = f"cp{py_tag}"
+    return pip_platform, pip_python_version, pip_abi
+
+
 def install_agent_python_dependencies() -> None:
     """将 agent 依赖安装到包内 Python 运行时，避免依赖宿主环境。"""
     requirements_file = working_dir / "agent" / "requirements.txt"
@@ -316,9 +350,31 @@ def install_agent_python_dependencies() -> None:
         "--upgrade",
         "--target",
         str(runtime_dir),
-        "-r",
-        str(requirements_file),
     ]
+
+    # CI 在 ubuntu 上构建 Windows 包时，需要按目标平台下载 wheel，避免混入 Linux 产物。
+    if os.name != "nt":
+        pip_platform, pip_python_version, pip_abi = get_windows_pip_target(runtime_dir)
+        cmd.extend(
+            [
+                "--only-binary",
+                ":all:",
+                "--platform",
+                pip_platform,
+                "--implementation",
+                "cp",
+                "--python-version",
+                pip_python_version,
+                "--abi",
+                pip_abi,
+            ]
+        )
+        print(
+            "[DEBUG] Cross-platform dependency install target: "
+            f"platform={pip_platform}, py={pip_python_version}, abi={pip_abi}"
+        )
+
+    cmd.extend(["-r", str(requirements_file)])
 
     print(f"[DEBUG] Installing agent dependencies into {runtime_dir}")
     proc = subprocess.run(cmd, capture_output=True, text=True, check=False)
@@ -329,6 +385,21 @@ def install_agent_python_dependencies() -> None:
             f"stdout:\n{proc.stdout}\n"
             f"stderr:\n{proc.stderr}"
         )
+
+    strenum_module = runtime_dir / "strenum.py"
+    strenum_pkg_init = runtime_dir / "strenum" / "__init__.py"
+    if not strenum_module.exists() and not strenum_pkg_init.exists():
+        strenum_module.write_text(
+            (
+                "from enum import Enum\n"
+                "\n"
+                "class StrEnum(str, Enum):\n"
+                "    pass\n"
+            ),
+            encoding="utf-8",
+            newline="\n",
+        )
+        print("[DEBUG] Injected fallback strenum.py into bundled runtime")
 
     print("[DEBUG] Agent dependencies installed successfully")
 
@@ -514,6 +585,43 @@ def install_data():
         (target_data_dir / "auto_combat").mkdir(parents=True, exist_ok=True)
 
 
+def deduplicate_case_insensitive_files_for_windows() -> None:
+    """去除 Windows 包中仅大小写不同的重复文件，避免出现双份 DLL。"""
+    if os_name != "win":
+        return
+
+    removed: list[str] = []
+
+    for current_dir, _, file_names in os.walk(install_path):
+        if not file_names:
+            continue
+
+        grouped: dict[str, list[Path]] = {}
+        for file_name in file_names:
+            path_obj = Path(current_dir) / file_name
+            grouped.setdefault(file_name.lower(), []).append(path_obj)
+
+        for _, paths in grouped.items():
+            if len(paths) <= 1:
+                continue
+
+            # 优先保留更接近小写命名的文件，避免 Python 运行时 DLL 重复。
+            keep = min(
+                paths,
+                key=lambda p: (sum(ch.isupper() for ch in p.name), p.name.lower(), p.name),
+            )
+            for dup in paths:
+                if dup == keep:
+                    continue
+                dup.unlink(missing_ok=True)
+                removed.append(str(dup.relative_to(install_path)).replace("\\", "/"))
+
+    if removed:
+        print("[DEBUG] Removed case-insensitive duplicate files:")
+        for item in removed:
+            print(f"[DEBUG]   - {item}")
+
+
 if __name__ == "__main__":
     install_deps()
     ensure_windows_embedded_python_runtime()
@@ -523,5 +631,6 @@ if __name__ == "__main__":
     install_chores()
     install_agent()
     install_data()
+    deduplicate_case_insensitive_files_for_windows()
 
     print(f"[DEBUG] Install to {install_path} successfully.")
