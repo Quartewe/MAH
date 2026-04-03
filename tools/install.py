@@ -242,6 +242,26 @@ def install_resource():
     with open(install_path / "interface.json", "r", encoding="utf-8") as f:
         interface = jsonc.load(f)
 
+    if os_name == "win":
+        internal_python = "./_internal/python.exe"
+
+        def _apply_agent_exec(agent_obj):
+            if isinstance(agent_obj, dict):
+                agent_obj["child_exec"] = internal_python
+
+        agents = interface.get("agent")
+        if isinstance(agents, dict):
+            _apply_agent_exec(agents)
+        elif isinstance(agents, list):
+            for agent_obj in agents:
+                _apply_agent_exec(agent_obj)
+
+        if not (install_path / "_internal" / "python.exe").exists():
+            print(
+                "[WARNING] Windows package expects ./_internal/python.exe, "
+                "but it is missing. Please include embedded python launcher."
+            )
+
     original_resource_version = (
         resource_version_override
         or interface.get("resource_version")

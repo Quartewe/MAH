@@ -245,6 +245,48 @@ jobs:
             echo "[WARNING] config/maa_option.json not found in source repo"
           fi
 
+      - name: Inject embedded python launcher for Windows agent
+        if: matrix.os == 'win' && matrix.arch == 'x86_64'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          internal_dir="install/_internal"
+          mkdir -p "$internal_dir"
+
+          if [[ -f "$internal_dir/python.exe" ]]; then
+            echo "Embedded python launcher already exists, skip download"
+            exit 0
+          fi
+
+          py_dll=$(ls "$internal_dir"/python*.dll 2>/dev/null | head -n1 || true)
+          if [[ -z "$py_dll" ]]; then
+            echo "[ERROR] cannot detect python runtime version from $internal_dir/python*.dll"
+            exit 1
+          fi
+
+          py_tag=$(basename "$py_dll" | sed -E 's/^python([0-9]+)\.dll$/\1/')
+          if [[ ! "$py_tag" =~ ^[0-9]{3}$ ]]; then
+            echo "[ERROR] unsupported python dll name: $(basename "$py_dll")"
+            exit 1
+          fi
+
+          py_major=${py_tag:0:1}
+          py_minor=${py_tag:1:2}
+          py_ver="${py_major}.${py_minor}.0"
+
+          embed_zip="python-${py_ver}-embed-amd64.zip"
+          embed_url="https://www.python.org/ftp/python/${py_ver}/${embed_zip}"
+
+          echo "Downloading embedded launcher from: $embed_url"
+          curl -fL "$embed_url" -o "/tmp/${embed_zip}"
+
+          unzip -j -o "/tmp/${embed_zip}" "python.exe" "pythonw.exe" -d "$internal_dir"
+          rm -f "/tmp/${embed_zip}"
+
+          test -f "$internal_dir/python.exe"
+          echo "Embedded python launcher injected: $internal_dir/python.exe"
+
       - name: Include docs in package root
         shell: bash
         run: |
@@ -289,6 +331,10 @@ jobs:
             "install/config/maa_option.json"
             "$toolkit_file"
           )
+
+          if [[ "${{ matrix.os }}" == "win" ]]; then
+            required_files+=("install/_internal/python.exe")
+          fi
 
           missing=0
           for file in "${required_files[@]}"; do
