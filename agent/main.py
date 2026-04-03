@@ -4,6 +4,7 @@ import builtins
 import re
 import shutil
 import subprocess
+import traceback
 from datetime import datetime
 from pathlib import Path
 from threading import Lock
@@ -38,6 +39,24 @@ def _setup_backend_log_print() -> None:
 
 
 _setup_backend_log_print()
+
+
+def _append_bootstrap_error(title: str, detail: str) -> None:
+    """在最早期导入失败时，兜底写入 backend.log，避免 UI 侧吞掉 stderr。"""
+    try:
+        project_root = Path(__file__).resolve().parent.parent
+        log_dir = project_root / "debug"
+        log_dir.mkdir(parents=True, exist_ok=True)
+        log_file = log_dir / "backend.log"
+        timestamp = datetime.now().strftime("[%Y-%m-%d %H:%M:%S]")
+        with log_file.open("a", encoding="utf-8") as f:
+            f.write(f"{timestamp} [BOOTSTRAP_ERROR] {title}\n{detail}\n")
+    except Exception:
+        # 兜底日志失败不应再次中断启动流程
+        pass
+
+
+print("[DEBUG] Agent bootstrap start")
 
 
 def _detect_internal_python_version(internal_path: Path) -> Optional[Tuple[int, int]]:
@@ -235,11 +254,16 @@ except ImportError as exc:
     expected_text = (
         f"{_expected_python[0]}.{_expected_python[1]}" if _expected_python else "未知"
     )
-    raise ImportError(
+    import_error_text = (
         "无法导入 maa。"
         f" 当前 Python: {current_py[0]}.{current_py[1]}，"
         f"_internal 期望 Python: {expected_text}。"
         "请安装匹配版本 Python，或在当前 Python 环境安装与之匹配的 maa 依赖。"
+    )
+    _append_bootstrap_error(import_error_text, traceback.format_exc())
+    print(f"[ERROR] {import_error_text}")
+    raise ImportError(
+        import_error_text
     ) from exc
 
 print("[DEBUG] MAA 框架导入成功")

@@ -251,18 +251,28 @@ jobs:
         run: |
           set -euo pipefail
 
-          internal_dir="install/_internal"
-          mkdir -p "$internal_dir"
+          runtime_dir=""
+          if [[ -d "install/_internal" ]]; then
+            runtime_dir="install/_internal"
+          fi
+          if [[ -z "$runtime_dir" && -d "install/python" ]]; then
+            runtime_dir="install/python"
+          fi
+          if [[ -z "$runtime_dir" ]]; then
+            runtime_dir="install/_internal"
+            mkdir -p "$runtime_dir"
+          fi
+          echo "Using windows runtime dir: $runtime_dir"
 
-          py_dll_name=$(find "$internal_dir" -maxdepth 1 -type f -name "python*.dll" -printf "%f\n" \
+          py_dll_name=$(find "$runtime_dir" -maxdepth 1 -type f -name "python*.dll" -printf "%f\n" \
             | grep -E '^python[0-9]{3}\.dll$' \
             | sort -V \
             | tail -n1 || true)
 
           if [[ -z "$py_dll_name" ]]; then
-            echo "[ERROR] cannot detect versioned python runtime dll from $internal_dir"
+            echo "[ERROR] cannot detect versioned python runtime dll from $runtime_dir"
             echo "[ERROR] existing python*.dll:"
-            find "$internal_dir" -maxdepth 1 -type f -name "python*.dll" -printf "  - %f\n" || true
+            find "$runtime_dir" -maxdepth 1 -type f -name "python*.dll" -printf "  - %f\n" || true
             exit 1
           fi
 
@@ -296,40 +306,34 @@ jobs:
 
           need_launcher=0
           need_std_zip=0
+          need_ext=0
 
-          [[ -f "$internal_dir/python.exe" ]] || need_launcher=1
-          [[ -f "$internal_dir/$std_zip" ]] || need_std_zip=1
+          [[ -f "$runtime_dir/python.exe" ]] || need_launcher=1
+          [[ -f "$runtime_dir/$std_zip" ]] || need_std_zip=1
+          [[ -f "$runtime_dir/_ctypes.pyd" ]] || need_ext=1
 
           need_download=0
-          if [[ $need_launcher -eq 1 || $need_std_zip -eq 1 ]]; then
+          if [[ $need_launcher -eq 1 || $need_std_zip -eq 1 || $need_ext -eq 1 ]]; then
             need_download=1
           fi
 
           if [[ $need_download -eq 1 ]]; then
             echo "Downloading embedded runtime from: $embed_url"
             curl -fL "$embed_url" -o "/tmp/${embed_zip}"
+            unzip -o "/tmp/${embed_zip}" -d "$runtime_dir"
+            echo "Injected full embeddable runtime into $runtime_dir"
           fi
 
-          if [[ $need_launcher -eq 1 ]]; then
-            unzip -j -o "/tmp/${embed_zip}" "python.exe" "pythonw.exe" -d "$internal_dir"
-            echo "Injected python launcher binaries"
-          else
-            echo "python launcher already exists, skip launcher extraction"
+          if [[ $need_download -eq 0 ]]; then
+            echo "Embedded runtime already complete, skip download"
           fi
 
-          if [[ $need_std_zip -eq 1 ]]; then
-            unzip -j -o "/tmp/${embed_zip}" "$std_zip" -d "$internal_dir"
-            echo "Injected stdlib zip: $std_zip"
-          else
-            echo "stdlib zip already exists: $std_zip"
-          fi
-
-          pth_file="$internal_dir/python${py_tag}._pth"
+          pth_file="$runtime_dir/python${py_tag}._pth"
           {
-            if [[ -f "$internal_dir/$std_zip" ]]; then
+            if [[ -f "$runtime_dir/$std_zip" ]]; then
               echo "$std_zip"
             fi
-            if [[ -f "$internal_dir/base_library.zip" ]]; then
+            if [[ -f "$runtime_dir/base_library.zip" ]]; then
               echo "base_library.zip"
             fi
             echo "."
@@ -341,9 +345,55 @@ jobs:
             rm -f "/tmp/${embed_zip}"
           fi
 
-          test -f "$internal_dir/python.exe"
-          test -f "$internal_dir/$std_zip"
-          echo "Embedded python launcher injected: $internal_dir/python.exe"
+          test -f "$runtime_dir/python.exe"
+          test -f "$runtime_dir/$std_zip"
+          test -f "$runtime_dir/_ctypes.pyd"
+          echo "Embedded python launcher injected: $runtime_dir/python.exe"
+
+      - name: Normalize agent child_exec by packaged runtime
+        if: matrix.os == 'win'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          runtime_exec=""
+          if [[ -f "install/_internal/python.exe" ]]; then
+            runtime_exec="./_internal/python.exe"
+          elif [[ -f "install/python/python.exe" ]]; then
+            runtime_exec="./python/python.exe"
+          else
+            echo "[ERROR] no bundled python executable found in install/_internal or install/python"
+            exit 1
+          fi
+
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          interface_path = Path("install/interface.json")
+          data = json.loads(interface_path.read_text(encoding="utf-8"))
+
+          runtime_exec = "./_internal/python.exe"
+          if (Path("install/python/python.exe").exists() and not Path("install/_internal/python.exe").exists()):
+              runtime_exec = "./python/python.exe"
+
+          def apply_agent_exec(agent_obj):
+              if isinstance(agent_obj, dict):
+                  agent_obj["child_exec"] = runtime_exec
+
+          agents = data.get("agent")
+          if isinstance(agents, dict):
+              apply_agent_exec(agents)
+          elif isinstance(agents, list):
+              for agent_obj in agents:
+                  apply_agent_exec(agent_obj)
+
+          interface_path.write_text(
+              json.dumps(data, indent=4, ensure_ascii=False) + "\n",
+              encoding="utf-8",
+          )
+          print(f"Normalized agent child_exec to: {runtime_exec}")
+          PY
 
       - name: Include docs in package root
         shell: bash
@@ -390,10 +440,6 @@ jobs:
             "$toolkit_file"
           )
 
-          if [[ "${{ matrix.os }}" == "win" ]]; then
-            required_files+=("install/_internal/python.exe")
-          fi
-
           missing=0
           for file in "${required_files[@]}"; do
             if [[ ! -f "$file" ]]; then
@@ -403,9 +449,53 @@ jobs:
           done
 
           if [[ "${{ matrix.os }}" == "win" ]]; then
-            if ! find "install/_internal" -maxdepth 1 -type f -name "python[0-9][0-9][0-9]._pth" | grep -q .; then
-              echo "[ERROR] missing required file: install/_internal/pythonXYZ._pth"
+            runtime_dir=""
+            runtime_exec=""
+            if [[ -f "install/_internal/python.exe" ]]; then
+              runtime_dir="install/_internal"
+              runtime_exec="./_internal/python.exe"
+            elif [[ -f "install/python/python.exe" ]]; then
+              runtime_dir="install/python"
+              runtime_exec="./python/python.exe"
+            else
+              echo "[ERROR] missing required file: install/_internal/python.exe or install/python/python.exe"
               missing=1
+            fi
+
+            if [[ -n "$runtime_dir" ]]; then
+              if ! find "$runtime_dir" -maxdepth 1 -type f -name "python[0-9][0-9][0-9]._pth" | grep -q .; then
+                echo "[ERROR] missing required file: $runtime_dir/pythonXYZ._pth"
+                missing=1
+              fi
+
+              py_dll=$(find "$runtime_dir" -maxdepth 1 -type f -name "python*.dll" -printf "%f\n" \
+                | grep -E '^python[0-9]{3}\.dll$' \
+                | sort -V \
+                | tail -n1 || true)
+              if [[ -z "$py_dll" ]]; then
+                echo "[ERROR] missing required file: $runtime_dir/pythonXYZ.dll"
+                missing=1
+              else
+                py_tag=$(echo "$py_dll" | sed -E 's/^python([0-9]{3})\.dll$/\1/')
+                if [[ ! -f "$runtime_dir/python${py_tag}.zip" ]]; then
+                  echo "[ERROR] missing required file: $runtime_dir/python${py_tag}.zip"
+                  missing=1
+                fi
+              fi
+
+              if [[ ! -f "$runtime_dir/_ctypes.pyd" ]]; then
+                echo "[ERROR] missing required file: $runtime_dir/_ctypes.pyd"
+                missing=1
+              fi
+
+                if ! EXPECTED_CHILD_EXEC="$runtime_exec" python -c "import json, os; from pathlib import Path; data=json.loads(Path('install/interface.json').read_text(encoding='utf-8')); expected=os.environ['EXPECTED_CHILD_EXEC']; agents=data.get('agent'); vals=[]; vals.extend([agents.get('child_exec')]) if isinstance(agents, dict) else None; vals.extend([i.get('child_exec') for i in agents if isinstance(i, dict)]) if isinstance(agents, list) else None; bad=[v for v in vals if v != expected]; (not bad) or (_ for _ in ()).throw(SystemExit(f'[ERROR] interface agent.child_exec mismatch: expected {expected}, got {bad}')); print(f'Validated interface agent.child_exec: {expected}')"; then
+                missing=1
+                fi
+
+              if ! "$runtime_dir/python.exe" -c "import hanzidentifier; from maa.agent.agent_server import AgentServer; print('runtime import smoke test passed')"; then
+                echo "[ERROR] bundled runtime import smoke test failed"
+                missing=1
+              fi
             fi
           fi
 

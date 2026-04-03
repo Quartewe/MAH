@@ -1,8 +1,12 @@
 from pathlib import Path
 import re
+import tempfile
+import subprocess
 
 import shutil
 import sys
+import urllib.request
+import zipfile
 
 try:
     import jsonc
@@ -29,6 +33,25 @@ if sys.argv.__len__() < 4:
 
 os_name = sys.argv[2]
 arch = sys.argv[3]
+
+
+def resolve_windows_python_runtime_dir() -> Path:
+    """根据包体结构解析 Windows 内置 Python 目录，优先选择包含 pythonXYZ.dll 的目录。"""
+    candidates = [install_path / "_internal", install_path / "python"]
+
+    for candidate in candidates:
+        if not candidate.exists() or not candidate.is_dir():
+            continue
+        for dll in candidate.glob("python*.dll"):
+            if re.fullmatch(r"python(\d{3})\.dll", dll.name.lower()):
+                return candidate
+
+    for candidate in candidates:
+        if (candidate / "python.exe").exists():
+            return candidate
+
+    # 兜底保持当前项目结构
+    return install_path / "_internal"
 
 
 def get_dotnet_platform_tag():
@@ -157,46 +180,157 @@ def ensure_embedded_python_pth() -> None:
     if os_name != "win":
         return
 
-    internal_dir = install_path / "_internal"
-    if not internal_dir.exists():
+    runtime_dir = resolve_windows_python_runtime_dir()
+    if not runtime_dir.exists():
         return
 
     version_tags: list[int] = []
-    for dll in internal_dir.glob("python*.dll"):
+    for dll in runtime_dir.glob("python*.dll"):
         match = re.fullmatch(r"python(\d{3})\.dll", dll.name.lower())
         if match:
             version_tags.append(int(match.group(1)))
 
     if not version_tags:
-        print("[DEBUG] Skip ._pth generation: no pythonXYZ.dll found in _internal")
-        return
-
-    py_tag = str(max(version_tags))
-    pth_file = internal_dir / f"python{py_tag}._pth"
-
-    stdlib_entries: list[str] = []
-    std_zip = f"python{py_tag}.zip"
-    if (internal_dir / std_zip).exists():
-        stdlib_entries.append(std_zip)
-    if (internal_dir / "base_library.zip").exists():
-        stdlib_entries.append("base_library.zip")
-
-    if not stdlib_entries:
         print(
-            "[WARNING] Skip ._pth generation: no stdlib zip found "
-            f"(base_library.zip/python{py_tag}.zip)"
+            "[DEBUG] Skip ._pth generation: "
+            f"no pythonXYZ.dll found in {runtime_dir}"
         )
         return
 
+    py_tag = str(max(version_tags))
+    pth_file = runtime_dir / f"python{py_tag}._pth"
+
+    stdlib_entries: list[str] = []
+    std_zip = f"python{py_tag}.zip"
+    if (runtime_dir / std_zip).exists():
+        stdlib_entries.append(std_zip)
+    if (runtime_dir / "base_library.zip").exists():
+        stdlib_entries.append("base_library.zip")
+
     if std_zip not in stdlib_entries:
-        print(
-            "[WARNING] python stdlib zip missing: "
-            f"{std_zip}. Some stdlib modules may be unavailable."
+        raise RuntimeError(
+            "Windows embedded runtime is incomplete: "
+            f"missing required stdlib zip {std_zip} in {runtime_dir}."
         )
 
     pth_content = "\n".join([*stdlib_entries, ".", "import site", ""])
     pth_file.write_text(pth_content, encoding="utf-8", newline="\n")
     print(f"[DEBUG] Generated embedded python pth: {pth_file}")
+
+
+def ensure_windows_embedded_python_runtime() -> None:
+    """确保 Windows 包内置 Python 运行时完整（launcher+stdlib+关键扩展模块）。"""
+    if os_name != "win":
+        return
+
+    runtime_dir = resolve_windows_python_runtime_dir()
+    runtime_dir.mkdir(parents=True, exist_ok=True)
+
+    version_tags: list[int] = []
+    for dll in runtime_dir.glob("python*.dll"):
+        match = re.fullmatch(r"python(\d{3})\.dll", dll.name.lower())
+        if match:
+            version_tags.append(int(match.group(1)))
+
+    if not version_tags:
+        raise RuntimeError(
+            f"Cannot detect pythonXYZ.dll in {runtime_dir}. Embedded runtime cannot be prepared."
+        )
+
+    py_tag = str(max(version_tags))
+    py_major = py_tag[0]
+    py_minor = py_tag[1:]
+    py_ver = f"{py_major}.{py_minor}.0"
+
+    if arch == "x86_64":
+        embed_arch = "amd64"
+    elif arch == "aarch64":
+        embed_arch = "arm64"
+    else:
+        raise RuntimeError(f"Unsupported windows arch for embedded python: {arch}")
+
+    std_zip = f"python{py_tag}.zip"
+    required_files = ["python.exe", std_zip, "_ctypes.pyd"]
+    missing_files = [name for name in required_files if not (runtime_dir / name).exists()]
+
+    if missing_files:
+        embed_zip = f"python-{py_ver}-embed-{embed_arch}.zip"
+        embed_url = f"https://www.python.org/ftp/python/{py_ver}/{embed_zip}"
+        print(
+            "[DEBUG] Incomplete embedded runtime, missing "
+            f"{missing_files}. Downloading full embeddable package: {embed_url}"
+        )
+
+        tmp_zip = None
+        try:
+            with tempfile.NamedTemporaryFile(delete=False, suffix=".zip") as tmp:
+                tmp_zip = Path(tmp.name)
+            urllib.request.urlretrieve(embed_url, tmp_zip)
+
+            with zipfile.ZipFile(tmp_zip, "r") as zf:
+                zf.extractall(runtime_dir)
+        except Exception as exc:  # noqa: BLE001
+            raise RuntimeError(
+                "Failed to prepare embedded Python runtime. "
+                f"URL: {embed_url}, error: {exc}"
+            ) from exc
+        finally:
+            if tmp_zip and tmp_zip.exists():
+                tmp_zip.unlink(missing_ok=True)
+
+        missing_after = [name for name in required_files if not (runtime_dir / name).exists()]
+        if missing_after:
+            raise RuntimeError(
+                "Embedded Python runtime is still incomplete after download, "
+                f"missing: {missing_after}"
+            )
+
+
+def install_agent_python_dependencies() -> None:
+    """将 agent 依赖安装到包内 Python 运行时，避免依赖宿主环境。"""
+    requirements_file = working_dir / "agent" / "requirements.txt"
+    if not requirements_file.exists():
+        print(f"[DEBUG] Skip agent dependency install: {requirements_file} not found")
+        return
+
+    if os_name != "win":
+        print("[DEBUG] Skip agent dependency install: only enabled for win packaging")
+        return
+
+    runtime_dir = resolve_windows_python_runtime_dir()
+    runtime_python = runtime_dir / "python.exe"
+    if not runtime_python.exists():
+        raise RuntimeError(
+            "Cannot install agent dependencies: "
+            f"missing bundled python executable at {runtime_python}"
+        )
+
+    cmd = [
+        sys.executable,
+        "-m",
+        "pip",
+        "install",
+        "--disable-pip-version-check",
+        "--no-input",
+        "--no-compile",
+        "--upgrade",
+        "--target",
+        str(runtime_dir),
+        "-r",
+        str(requirements_file),
+    ]
+
+    print(f"[DEBUG] Installing agent dependencies into {runtime_dir}")
+    proc = subprocess.run(cmd, capture_output=True, text=True, check=False)
+    if proc.returncode != 0:
+        raise RuntimeError(
+            "Failed to install agent dependencies into bundled runtime.\n"
+            f"Command: {' '.join(cmd)}\n"
+            f"stdout:\n{proc.stdout}\n"
+            f"stderr:\n{proc.stderr}"
+        )
+
+    print("[DEBUG] Agent dependencies installed successfully")
 
 
 
@@ -291,7 +425,16 @@ def install_resource():
         interface = jsonc.load(f)
 
     if os_name == "win":
-        internal_python = "./_internal/python.exe"
+        runtime_dir = resolve_windows_python_runtime_dir()
+        runtime_python = runtime_dir / "python.exe"
+        if not runtime_python.exists():
+            raise RuntimeError(
+                "Windows package expects bundled python.exe, "
+                f"but it is missing in {runtime_dir}."
+            )
+
+        runtime_python_rel = runtime_python.relative_to(install_path).as_posix()
+        internal_python = f"./{runtime_python_rel}"
 
         def _apply_agent_exec(agent_obj):
             if isinstance(agent_obj, dict):
@@ -304,11 +447,7 @@ def install_resource():
             for agent_obj in agents:
                 _apply_agent_exec(agent_obj)
 
-        if not (install_path / "_internal" / "python.exe").exists():
-            print(
-                "[WARNING] Windows package expects ./_internal/python.exe, "
-                "but it is missing. Please include embedded python launcher."
-            )
+        print(f"[DEBUG] Windows agent child_exec resolved to: {internal_python}")
 
     original_resource_version = (
         resource_version_override
@@ -377,7 +516,9 @@ def install_data():
 
 if __name__ == "__main__":
     install_deps()
+    ensure_windows_embedded_python_runtime()
     ensure_embedded_python_pth()
+    install_agent_python_dependencies()
     install_resource()
     install_chores()
     install_agent()
