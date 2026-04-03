@@ -302,6 +302,26 @@ jobs:
           curl -fL "$embed_url" -o "/tmp/${embed_zip}"
 
           unzip -j -o "/tmp/${embed_zip}" "python.exe" "pythonw.exe" -d "$internal_dir"
+
+          pth_file="$internal_dir/python${py_tag}._pth"
+          if [[ -f "$internal_dir/base_library.zip" ]]; then
+            {
+              echo "base_library.zip"
+              echo "."
+              echo "import site"
+            } > "$pth_file"
+            echo "Generated $pth_file with base_library.zip"
+          else
+            std_zip="python${py_tag}.zip"
+            unzip -j -o "/tmp/${embed_zip}" "$std_zip" -d "$internal_dir"
+            {
+              echo "$std_zip"
+              echo "."
+              echo "import site"
+            } > "$pth_file"
+            echo "Generated $pth_file with $std_zip"
+          fi
+
           rm -f "/tmp/${embed_zip}"
 
           test -f "$internal_dir/python.exe"
