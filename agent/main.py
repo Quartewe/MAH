@@ -1,9 +1,13 @@
 import sys
 import os
 import builtins
+import re
+import shutil
+import subprocess
 from datetime import datetime
 from pathlib import Path
 from threading import Lock
+from typing import Optional, Tuple
 
 
 _ORIGINAL_PRINT = builtins.print
@@ -35,13 +39,131 @@ def _setup_backend_log_print() -> None:
 
 _setup_backend_log_print()
 
+
+def _detect_internal_python_version(internal_path: Path) -> Optional[Tuple[int, int]]:
+    """检测 _internal 目录期望的 Python 主次版本。"""
+    if not internal_path.exists():
+        return None
+
+    # Windows: python312.dll / python311.dll
+    for dll in internal_path.glob("python*.dll"):
+        match = re.fullmatch(r"python(\d)(\d{2})\.dll", dll.name.lower())
+        if match:
+            return int(match.group(1)), int(match.group(2))
+
+    # Linux/macOS: libpython3.12.so / libpython3.12.dylib
+    for lib in internal_path.glob("libpython*.*"):
+        match = re.search(r"libpython(\d)\.(\d+)", lib.name.lower())
+        if match:
+            return int(match.group(1)), int(match.group(2))
+
+    return None
+
+
+def _probe_python_version(python_exec: str) -> Optional[Tuple[int, int, str]]:
+    """探测解释器版本，返回 (major, minor, executable)。"""
+    try:
+        proc = subprocess.run(
+            [python_exec, "-c", "import sys;print(sys.version_info[0],sys.version_info[1],sys.executable)"],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+    except OSError:
+        return None
+
+    if proc.returncode != 0:
+        return None
+
+    parts = proc.stdout.strip().split(maxsplit=2)
+    if len(parts) != 3:
+        return None
+
+    try:
+        return int(parts[0]), int(parts[1]), parts[2]
+    except ValueError:
+        return None
+
+
+def _find_matching_python(expected: Tuple[int, int]) -> Optional[str]:
+    """查找与期望版本一致的 Python 可执行文件。"""
+    exp_major, exp_minor = expected
+
+    # 1) Windows py launcher
+    if os.name == "nt":
+        py_launcher = shutil.which("py")
+        if py_launcher:
+            try:
+                proc = subprocess.run(
+                    [
+                        py_launcher,
+                        f"-{exp_major}.{exp_minor}",
+                        "-c",
+                        "import sys;print(sys.executable)",
+                    ],
+                    capture_output=True,
+                    text=True,
+                    check=False,
+                )
+                if proc.returncode == 0:
+                    exe = proc.stdout.strip()
+                    if exe and Path(exe).exists():
+                        return exe
+            except OSError:
+                pass
+
+    # 2) PATH 常见命令
+    command_candidates = [
+        f"python{exp_major}.{exp_minor}",
+        f"python{exp_major}{exp_minor}",
+        "python3",
+        "python",
+    ]
+    for cmd in command_candidates:
+        path = shutil.which(cmd)
+        if not path:
+            continue
+        probed = _probe_python_version(path)
+        if not probed:
+            continue
+        major, minor, executable = probed
+        if (major, minor) == expected:
+            return executable
+
+    # 3) Windows 常见安装路径
+    if os.name == "nt":
+        localappdata = os.environ.get("LOCALAPPDATA", "")
+        if localappdata:
+            guessed = (
+                Path(localappdata)
+                / "Programs"
+                / "Python"
+                / f"Python{exp_major}{exp_minor}"
+                / "python.exe"
+            )
+            if guessed.exists():
+                return str(guessed)
+
+    return None
+
+
+def _relaunch_with_python(python_exec: str) -> None:
+    """使用匹配版本解释器原地重启当前进程，保持 Agent 启动链路一致。"""
+    env = os.environ.copy()
+    env["MAH_AGENT_RELAUNCHED"] = "1"
+    args = [python_exec, str(Path(__file__).resolve()), *sys.argv[1:]]
+    os.execve(python_exec, args, env)
+
 # 为打包目录与源码目录同时注入运行时路径，避免找不到 maa 模块
-def _setup_runtime_paths() -> None:
+def _setup_runtime_paths() -> Tuple[Optional[Tuple[int, int]], bool]:
     project_root = Path(__file__).resolve().parent.parent
     agent_path = project_root / "agent"
     internal_path = project_root / "_internal"
+    current_py = (sys.version_info.major, sys.version_info.minor)
+    expected_py = _detect_internal_python_version(internal_path)
+    internal_injected = False
 
-    for path in (agent_path, internal_path, project_root):
+    for path in (agent_path, project_root):
         path_str = str(path)
         if path.exists() and path_str not in sys.path:
             sys.path.insert(0, path_str)
@@ -49,29 +171,77 @@ def _setup_runtime_paths() -> None:
     if internal_path.exists():
         internal_str = str(internal_path)
 
-        current_pythonpath = os.environ.get("PYTHONPATH", "")
-        pythonpath_entries = current_pythonpath.split(os.pathsep) if current_pythonpath else []
-        if internal_str not in pythonpath_entries:
-            os.environ["PYTHONPATH"] = (
-                internal_str
-                if not current_pythonpath
-                else f"{internal_str}{os.pathsep}{current_pythonpath}"
+        # 只有版本匹配时才注入 _internal，避免不同 Python 版本加载到错误二进制模块。
+        should_inject_internal = expected_py is None or expected_py == current_py
+        if should_inject_internal:
+            if internal_str not in sys.path:
+                sys.path.insert(0, internal_str)
+
+            current_pythonpath = os.environ.get("PYTHONPATH", "")
+            pythonpath_entries = (
+                current_pythonpath.split(os.pathsep) if current_pythonpath else []
+            )
+            if internal_str not in pythonpath_entries:
+                os.environ["PYTHONPATH"] = (
+                    internal_str
+                    if not current_pythonpath
+                    else f"{internal_str}{os.pathsep}{current_pythonpath}"
+                )
+
+            current_path = os.environ.get("PATH", "")
+            path_entries = current_path.split(os.pathsep) if current_path else []
+            if internal_str not in path_entries:
+                os.environ["PATH"] = (
+                    internal_str
+                    if not current_path
+                    else f"{internal_str}{os.pathsep}{current_path}"
+                )
+
+            if hasattr(os, "add_dll_directory"):
+                os.add_dll_directory(internal_str)
+
+            internal_injected = True
+        else:
+            print(
+                "[WARN] 检测到 _internal 期望 Python "
+                f"{expected_py[0]}.{expected_py[1]}，当前为 {current_py[0]}.{current_py[1]}，"
+                "已暂不注入 _internal，后续将尝试自动切换解释器。"
             )
 
-        current_path = os.environ.get("PATH", "")
-        path_entries = current_path.split(os.pathsep) if current_path else []
-        if internal_str not in path_entries:
-            os.environ["PATH"] = (
-                internal_str if not current_path else f"{internal_str}{os.pathsep}{current_path}"
+    return expected_py, internal_injected
+
+
+_expected_python, _internal_injected = _setup_runtime_paths()
+
+try:
+    from maa.agent.agent_server import AgentServer
+except ImportError as exc:
+    current_py = (sys.version_info.major, sys.version_info.minor)
+    already_relaunched = os.environ.get("MAH_AGENT_RELAUNCHED") == "1"
+
+    if (
+        _expected_python is not None
+        and _expected_python != current_py
+        and not already_relaunched
+    ):
+        matched_python = _find_matching_python(_expected_python)
+        if matched_python:
+            print(
+                "[WARN] 当前解释器与内置运行时不匹配，"
+                f"准备切换到 Python {_expected_python[0]}.{_expected_python[1]}: {matched_python}"
             )
+            _relaunch_with_python(matched_python)
 
-        if hasattr(os, "add_dll_directory"):
-            os.add_dll_directory(internal_str)
+    expected_text = (
+        f"{_expected_python[0]}.{_expected_python[1]}" if _expected_python else "未知"
+    )
+    raise ImportError(
+        "无法导入 maa。"
+        f" 当前 Python: {current_py[0]}.{current_py[1]}，"
+        f"_internal 期望 Python: {expected_text}。"
+        "请安装匹配版本 Python，或在当前 Python 环境安装与之匹配的 maa 依赖。"
+    ) from exc
 
-
-_setup_runtime_paths()
-
-from maa.agent.agent_server import AgentServer
 print("[DEBUG] MAA 框架导入成功")
 
 # 导入 custom 包，触发所有 @AgentServer 装饰器注册
