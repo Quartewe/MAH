@@ -349,7 +349,21 @@ jobs:
       - run: |
           cd assets
           for f in *; do
-            (cd $f && zip -r ../$f-${{ needs.meta.outputs.tag }}.zip .)
+            (cd "$f" && zip -r "../$f-${{ needs.meta.outputs.tag }}.zip" .)
+
+            # 生成增量包：不包含从 mah_res 合并的资源目录
+            inc_dir="${f}-incremental"
+            rm -rf "$inc_dir"
+            mkdir -p "$inc_dir"
+            rsync -a "$f/" "$inc_dir/"
+
+            # 保护 mah_res 相关目录，不进入增量包
+            rm -rf "$inc_dir/resource/index"
+            rm -rf "$inc_dir/resource/base/image/ar"
+            rm -rf "$inc_dir/resource/base/image/character"
+
+            (cd "$inc_dir" && zip -r "../$f-incremental-${{ needs.meta.outputs.tag }}.zip" .)
+            rm -rf "$inc_dir"
           done
           
       - uses: softprops/action-gh-release@v2

@@ -35,10 +35,41 @@ def _setup_backend_log_print() -> None:
 
 _setup_backend_log_print()
 
-# 将 agent 目录加入 sys.path，使 utils/custom 包可被导入
-agent_dir = os.path.dirname(os.path.abspath(__file__))
-if agent_dir not in sys.path:
-    sys.path.insert(0, agent_dir)
+# 为打包目录与源码目录同时注入运行时路径，避免找不到 maa 模块
+def _setup_runtime_paths() -> None:
+    project_root = Path(__file__).resolve().parent.parent
+    agent_path = project_root / "agent"
+    internal_path = project_root / "_internal"
+
+    for path in (agent_path, internal_path, project_root):
+        path_str = str(path)
+        if path.exists() and path_str not in sys.path:
+            sys.path.insert(0, path_str)
+
+    if internal_path.exists():
+        internal_str = str(internal_path)
+
+        current_pythonpath = os.environ.get("PYTHONPATH", "")
+        pythonpath_entries = current_pythonpath.split(os.pathsep) if current_pythonpath else []
+        if internal_str not in pythonpath_entries:
+            os.environ["PYTHONPATH"] = (
+                internal_str
+                if not current_pythonpath
+                else f"{internal_str}{os.pathsep}{current_pythonpath}"
+            )
+
+        current_path = os.environ.get("PATH", "")
+        path_entries = current_path.split(os.pathsep) if current_path else []
+        if internal_str not in path_entries:
+            os.environ["PATH"] = (
+                internal_str if not current_path else f"{internal_str}{os.pathsep}{current_path}"
+            )
+
+        if hasattr(os, "add_dll_directory"):
+            os.add_dll_directory(internal_str)
+
+
+_setup_runtime_paths()
 
 from maa.agent.agent_server import AgentServer
 print("[DEBUG] MAA 框架导入成功")
