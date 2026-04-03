@@ -246,7 +246,7 @@ jobs:
           fi
 
       - name: Inject embedded python launcher for Windows agent
-        if: matrix.os == 'win' && matrix.arch == 'x86_64'
+        if: matrix.os == 'win'
         shell: bash
         run: |
           set -euo pipefail
@@ -281,7 +281,21 @@ jobs:
           py_minor=${py_tag:1:2}
           py_ver="${py_major}.${py_minor}.0"
 
-          embed_zip="python-${py_ver}-embed-amd64.zip"
+          embed_arch=""
+          case "${{ matrix.arch }}" in
+            x86_64)
+              embed_arch="amd64"
+              ;;
+            aarch64)
+              embed_arch="arm64"
+              ;;
+            *)
+              echo "[ERROR] unsupported windows arch for embedded python: ${{ matrix.arch }}"
+              exit 1
+              ;;
+          esac
+
+          embed_zip="python-${py_ver}-embed-${embed_arch}.zip"
           embed_url="https://www.python.org/ftp/python/${py_ver}/${embed_zip}"
 
           echo "Downloading embedded launcher from: $embed_url"
