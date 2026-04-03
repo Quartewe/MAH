@@ -488,12 +488,19 @@ jobs:
                 missing=1
               fi
 
-                if ! EXPECTED_CHILD_EXEC="$runtime_exec" python -c "import json, os; from pathlib import Path; data=json.loads(Path('install/interface.json').read_text(encoding='utf-8')); expected=os.environ['EXPECTED_CHILD_EXEC']; agents=data.get('agent'); vals=[]; vals.extend([agents.get('child_exec')]) if isinstance(agents, dict) else None; vals.extend([i.get('child_exec') for i in agents if isinstance(i, dict)]) if isinstance(agents, list) else None; bad=[v for v in vals if v != expected]; (not bad) or (_ for _ in ()).throw(SystemExit(f'[ERROR] interface agent.child_exec mismatch: expected {expected}, got {bad}')); print(f'Validated interface agent.child_exec: {expected}')"; then
+              if ! EXPECTED_CHILD_EXEC="$runtime_exec" python -c "import json, os; from pathlib import Path; data=json.loads(Path('install/interface.json').read_text(encoding='utf-8')); expected=os.environ['EXPECTED_CHILD_EXEC']; agents=data.get('agent'); vals=[]; vals.extend([agents.get('child_exec')]) if isinstance(agents, dict) else None; vals.extend([i.get('child_exec') for i in agents if isinstance(i, dict)]) if isinstance(agents, list) else None; bad=[v for v in vals if v != expected]; (not bad) or (_ for _ in ()).throw(SystemExit(f'[ERROR] interface agent.child_exec mismatch: expected {expected}, got {bad}')); print(f'Validated interface agent.child_exec: {expected}')"; then
                 missing=1
-                fi
+              fi
 
-              if ! "$runtime_dir/python.exe" -c "import hanzidentifier; from maa.agent.agent_server import AgentServer; print('runtime import smoke test passed')"; then
-                echo "[ERROR] bundled runtime import smoke test failed"
+              # CI 在 ubuntu 上构建 windows 包，不能直接执行 windows python.exe。
+              # 这里改为静态校验：确认关键模块文件已打进包体。
+              if [[ ! -d "$runtime_dir/maa" ]]; then
+                echo "[ERROR] missing bundled maa package: $runtime_dir/maa"
+                missing=1
+              fi
+
+              if ! find "$runtime_dir" -maxdepth 2 -type f \( -name "hanzidentifier.py" -o -name "hanzidentifier*.py" \) | grep -q .; then
+                echo "[ERROR] missing bundled dependency: hanzidentifier"
                 missing=1
               fi
             fi
