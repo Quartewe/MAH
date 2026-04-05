@@ -27,7 +27,7 @@
             "Activity.Select"
         ],
         "on_error": [
-            "[JumpBack]Global.GoBackToHomePage"
+            "[JumpBack]Global.Entry"
         ]
     },
     "Activity.Select": {
@@ -42,7 +42,7 @@
             "Global.AutoCombat.Entry"
         ],
         "on_error": [
-            "Global.GoBackToHomePage"
+            "Global.Entry"
         ]
     }
 }

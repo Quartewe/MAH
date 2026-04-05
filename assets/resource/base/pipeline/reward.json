@@ -225,7 +225,7 @@
             "Reward.Get"
         ],
         "on_error": [
-            "[JumpBack]Global.GoBackToHomePage"
+            "[JumpBack]Global.Entry"
         ]
     },
     "Reward.Get": {

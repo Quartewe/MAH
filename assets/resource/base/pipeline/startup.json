@@ -22,7 +22,7 @@
       "[JumpBack]Startup.Update_1",
       "Startup.OpenGame.Wait",
       "Global.HomePage",
-      "Global.GoBackToHomePage"
+      "Global.Entry"
     ],
     "on_error": [
       "[JumpBack]Global.NetworkError"

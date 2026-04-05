@@ -20,7 +20,7 @@
             "ShowSupporterScreen.Open"
         ],
         "on_error": [
-            "Global.GoBackToHomePage",
+            "Global.Entry",
             "Global.HomePage"
         ]
     },
@@ -56,7 +56,7 @@
             "ShowSupporterScreen.Completed"
         ],
         "on_error": [
-            "[JumpBack]Global.GoBackToHomePage"
+            "[JumpBack]Global.Entry"
         ]
     },
     "ShowSupporterScreen.Completed": {
@@ -116,7 +116,7 @@
             "threshold": 0.99
         },
         "next": [
-            "Global.GoBackToHomePage"
+            "Global.Entry"
         ]
     }
 }

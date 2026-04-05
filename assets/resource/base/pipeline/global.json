@@ -142,5 +142,13 @@
     "on_error": [
       "Global.GoHomePage"
     ]
+  },
+  "Global.Entry": {
+    "next": [
+      "Global.GoBackToHomePage",
+      "Global.LoginReward",
+      "Global.HomePage",
+      "Global.GoHomePage"
+    ]
   }
 }

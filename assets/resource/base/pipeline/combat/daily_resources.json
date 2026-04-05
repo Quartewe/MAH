@@ -62,7 +62,7 @@
             "DailyRes.Go0.1"
         ],
         "on_error": [
-            "[JumpBack]Global.GoBackToHomePage"
+            "[JumpBack]Global.Entry"
         ]
     },
     "DailyRes.Go0.2": {
@@ -111,7 +111,7 @@
             "Global.AutoCombat.Entry"
         ],
         "on_error": [
-            "Global.GoBackToHomePage"
+            "Global.Entry"
         ]
     },
     "DailyRes.Exp.Entry": {
@@ -131,7 +131,7 @@
             "Global.AutoCombat.Entry"
         ],
         "on_error": [
-            "Global.GoBackToHomePage"
+            "Global.Entry"
         ]
     },
     "DailyRes.Skill.Entry": {
@@ -151,7 +151,7 @@
             "Global.AutoCombat.Entry"
         ],
         "on_error": [
-            "Global.GoBackToHomePage"
+            "Global.Entry"
         ]
     },
     "DailyRes.Custom.Entry": {

@@ -81,9 +81,6 @@
         },
         "next": [
             "Global.AutoCombat.Count"
-        ],
-        "on_error": [
-            "[JumpBack]Global.GoBackToHomePage"
         ]
     },
     "Global.AutoCombat.Replay": {
@@ -243,7 +240,7 @@
             "Global.AutoCombat.TeamSelect"
         ],
         "on_error": [
-            "[JumpBack]Global.GoBackToHomePage"
+            "[JumpBack]Global.Entry"
         ]
     },
     "Global.AutoCombat.TeamSelect": {
@@ -268,7 +265,7 @@
             "Global.AutoCombat.Formation"
         ],
         "on_error": [
-            "[JumpBack]Global.GoBackToHomePage"
+            "[JumpBack]Global.Entry"
         ]
     },
     "Global.AutoCombat.Formation": {
@@ -293,7 +290,7 @@
             "Global.AutoCombat.Start"
         ],
         "on_error": [
-            "[JumpBack]Global.GoBackToHomePage"
+            "[JumpBack]Global.Entry"
         ]
     },
     "Global.AutoCombat.Start": {
@@ -384,7 +381,7 @@
             "Global.AutoCombat.SelectSupport"
         ],
         "on_error": [
-            "[JumpBack]Global.GoBackToHomePage"
+            "[JumpBack]Global.Entry"
         ]
     },
     "Global.AutoCombat.Back1": {
@@ -421,7 +418,7 @@
             "threshold": 0.999
         },
         "next": [
-            "Global.GoBackToHomePage"
+            "Global.Entry"
         ]
     },
     "Global.AutoCombat.Filter": {

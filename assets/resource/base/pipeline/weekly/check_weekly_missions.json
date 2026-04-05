@@ -39,7 +39,7 @@
             "CheckWeeklyMissions.Get"
         ],
         "on_error": [
-            "[JumpBack]Global.GoBackToHomePage"
+            "[JumpBack]Global.Entry"
         ]
     },
     "CheckWeeklyMissions.Record": {
