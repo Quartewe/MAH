@@ -476,7 +476,7 @@ class AutoCombat(CustomAction):
             else:
                 print("[DEBUG] Speed is already at 4x")
 
-        def auto_combat():
+        def auto_combat() -> bool:
             context.tasker.controller.post_screencap().wait()
             current_image = context.tasker.controller.cached_image
             auto_res = context.run_recognition(
@@ -515,8 +515,31 @@ class AutoCombat(CustomAction):
                 )
                 info_share.auto_combat_mode = True
                 print("[DEBUG] Auto combat mode enabled")
+                return True
             else:
-                print("[DEBUG] Already in auto mode")
+                on_res = context.run_recognition(
+                    "UtilsOCR",
+                    current_image,
+                    pipeline_override={
+                        "UtilsOCR": {
+                            "recognition": {
+                                "pre_wait_freezes": 0,
+                                "param": {
+                                    "roi": self.toolbar_roi,
+                                    "expected": "ON",
+                                }
+                            }
+                        }
+                    },
+                )
+                if on_res.best_result:
+                    info_share.auto_combat_mode = True
+                    print("[DEBUG] Auto combat mode already enabled")
+                    return True
+
+                info_share.auto_combat_mode = False
+                print("[WARNING] Cannot detect auto-combat switch state")
+                return False
 
         def disable_auto_combat():
             context.run_task(
@@ -614,7 +637,9 @@ class AutoCombat(CustomAction):
         def main() -> bool:
             param = argv.custom_action_param
             if isinstance(param, str):
-                param = param.strip('"')
+                param = param.strip('"').strip()
+
+            raw_data = None
 
             if param:
                 raw_data = data_io.find_target_files(self.DATA_PATH, param)
@@ -638,7 +663,9 @@ class AutoCombat(CustomAction):
 
             if auto_mode:
                 if not info_share.auto_combat_mode:
-                    auto_combat()
+                    if not auto_combat():
+                        print("[ERROR] Failed to enable or verify auto-combat mode")
+                        return False
 
                 start = time.monotonic()
                 max_wait = 180
