@@ -46,6 +46,38 @@ class Formation(CustomAction):
         print(f"[DEBUG] Target files: {param}")
         if not param:
             print(f"[DEBUG] No target file specified for searching.")
+            auto_mode = context.run_recognition(
+            "UtilsOCR",
+            current_image,
+            pipeline_override={
+                "UtilsOCR":{
+                    "recognition":{
+                        "param":{
+                            "roi": [863,5,157,82],
+                            "expected": "ON"
+                            }
+                        }
+                    }
+                }
+            )
+            if auto_mode.best_result:
+                print(f"[DEBUG] Already in auto combat mode, now disabling...")
+                context.run_action(
+                    "UtilsClick",
+                    auto_mode.best_result.box,
+                    pipeline_override={
+                        "UtilsClick": {
+                            "action": {
+                                "param": {
+                                    "target": auto_mode.best_result.box
+                                }
+                            }
+                        }
+                    }
+                )
+            else:
+                print(f"[DEBUG] Not in auto combat mode, no need to disable.")
+            info_share.auto_combat_mode = False
             return True
         try:
             raw_data = data_io.find_target_files(self.DATA_PATH, param)
@@ -609,6 +641,8 @@ class Formation(CustomAction):
                             time.sleep(0.5)
                         break
             
+        context.tasker.controller.post_screencap().wait()
+        current_image = context.tasker.controller.cached_image
         auto_mode = context.run_recognition(
             "UtilsOCR",
             current_image,
@@ -617,16 +651,30 @@ class Formation(CustomAction):
                     "recognition":{
                         "param":{
                             "roi": [863,5,157,82],
-                            "expected": "OFF"
+                            "expected": "ON"
                             }
                         }
                     }
                 }
             )
         if auto_mode.best_result:
-            info_share.auto_combat_mode = True
+            print(f"[DEBUG] Already in auto combat mode, now disabling...")
+            context.run_action(
+                "UtilsClick",
+                auto_mode.best_result.box,
+                pipeline_override={
+                    "UtilsClick": {
+                        "action": {
+                            "param": {
+                                "target": auto_mode.best_result.box
+                            }
+                        }
+                    }
+                }
+            )
         else:
-            info_share.auto_combat_mode = False
+            print(f"[DEBUG] Not in auto combat mode, no need to disable.")
+        info_share.auto_combat_mode = False
 
 
         timeout_mgr.stop_monitoring(argv.node_name)
