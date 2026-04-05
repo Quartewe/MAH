@@ -127,7 +127,7 @@ class WeeklyMission(CustomAction):
         mission_data = data_io.read_data(proj_path.STATE_FILE)
 
         if mission_data == {}:
-            print("[DEBUG] No existing mission data found, detecting language and initializing mission data")
+            print("[DEBUG] 未找到已有任务数据，正在检测语言并初始化任务数据")
             match act_mgr.detect_lang(context, [481,19,777,613], info_share.IGNORE_LIST):
                 case "jp":
                     mission_data = deepcopy(self.JP_MISSION)
@@ -141,7 +141,7 @@ class WeeklyMission(CustomAction):
         state_keys = mission_data.keys() if mission_data else None
         state_lang = act_mgr.detect_lang(context, [0,0,0,0], info_share.IGNORE_LIST, compare_list=state_keys)
         if state_lang != info_share.current_lang:
-            print(f"[WARNING] Detected language {state_lang} does not match current language {info_share.current_lang}, resetting mission data")
+            print(f"[WARNING] 检测语言 {state_lang} 与当前语言 {info_share.current_lang} 不一致，正在重置任务数据")
             match state_lang:
                 case "jp":
                     mission_data = deepcopy(self.JP_MISSION)
@@ -215,8 +215,8 @@ class WeeklyMission(CustomAction):
             
             time.sleep(1)
             if current_fingerprint != self.last_fingerprint:
-                print("[DEBUG] last_fingerprint:", self.last_fingerprint)
-                print("[DEBUG] current_fingerprint:", current_fingerprint)
+                print("[DEBUG] 上一次指纹:", self.last_fingerprint)
+                print("[DEBUG] 当前指纹:", current_fingerprint)
                 self.last_fingerprint = current_fingerprint
             else:
                 print("[DEBUG] OCR结果与上次相同，认为已经读取完成")
@@ -265,7 +265,7 @@ class WeeklyMission(CustomAction):
                 timeout_mgr.stop_monitoring(argv.node_name)
                 return True
             else:
-                print("[DEBUG] Failed to write mission data to file")
+                print("[DEBUG] 写入任务数据到文件失败")
                 return False
                 
         elif argv.node_name == "CheckWeeklyMissions.AllCompleted":

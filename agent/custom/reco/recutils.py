@@ -66,11 +66,11 @@ class TraverseMatch(CustomRecognition):
 
         for candidate in candidates:
             if candidate.exists():
-                print(f"[DEBUG] TraverseMatch image base dir: {candidate}")
+                print(f"[DEBUG] TraverseMatch 图片根目录: {candidate}")
                 return candidate
 
         fallback = candidates[0]
-        print(f"[ERROR] TraverseMatch image base dir not found, fallback to: {fallback}")
+        print(f"[ERROR] 未找到 TraverseMatch 图片根目录，回退到: {fallback}")
         return fallback
 
     def _resolve_image_path(self, raw_path):
@@ -137,7 +137,7 @@ class TraverseMatch(CustomRecognition):
         ar_name = None
         char_element = None
         
-        print(f"[DEBUG] char_name: {char_name}, char_id: {char_id}")
+        print(f"[DEBUG] 角色名: {char_name}, 角色ID: {char_id}")
 
         # 低星模式优先：有角色名、无角色ID、且提供了合法 element
         if char_name and not char_id:
@@ -145,7 +145,7 @@ class TraverseMatch(CustomRecognition):
             if char_element and char_element in self.ELEMENTS:
                 lowstar_mode = True
             else:
-                print(f"[ERROR] No valid element({char_element}) provided for low-star character")
+                print(f"[ERROR] 低星角色未提供有效属性({char_element})")
                 return CustomRecognition.AnalyzeResult(box=None, detail=None)
 
         if lowstar_mode:
@@ -166,10 +166,10 @@ class TraverseMatch(CustomRecognition):
                     ar_raw_path = ar_data.get("path") or param.get("path")
                     template_path = self._resolve_image_path(ar_raw_path)
                 else:
-                    print(f"[DEBUG] Invalid AR name: {ar_name}")
+                    print(f"[DEBUG] 无效的 AR 名称: {ar_name}")
                     return CustomRecognition.AnalyzeResult(box=None, detail=None)
             else:
-                print("[DEBUG] No valid AR data provided")
+                print("[DEBUG] 未提供有效的 AR 数据")
                 return CustomRecognition.AnalyzeResult(box=None, detail=None)
         
         match_detail = None
@@ -196,7 +196,7 @@ class TraverseMatch(CustomRecognition):
             all_hits = []
             for tpl_file in template_path.rglob("*.png"):
                 tpl_rel = tpl_file.relative_to(self.BASE_PATH)
-                print(f"[DEBUG] Finding Character: {tpl_rel}")
+                print(f"[DEBUG] 正在查找角色模板: {tpl_rel}")
                 reco_result = context.run_recognition(
                     "UtilsFeatureMatch",
                     argv.image,
@@ -214,9 +214,9 @@ class TraverseMatch(CustomRecognition):
                         box = [fr.box[0], fr.box[1], fr.box[2], fr.box[3]]
                         count = fr.count if hasattr(fr, 'count') else 0
                         if count <= 10 or fr.box[0] == 0:
-                            print(f"[DEBUG] Invalid result for {tpl_rel}, skipping")
+                            print(f"[DEBUG] {tpl_rel} 结果无效，跳过")
                             continue
-                        print(f"[DEBUG] Hit: {tpl_rel}，Box: {box}, Count: {count}")
+                        print(f"[DEBUG] 命中模板: {tpl_rel}，位置: {box}, 计数: {count}")
                         all_hits.append({
                             "template": str(tpl_rel),
                             "skin": extract_skin_from_template(str(tpl_rel)),
@@ -240,7 +240,7 @@ class TraverseMatch(CustomRecognition):
                     if not placed:
                         clusters.append([hit])
 
-                print(f"[DEBUG] Distinct object positions: {len(clusters)}")
+                print(f"[DEBUG] 去重后对象位置数量: {len(clusters)}")
 
                 # 第三步：每个 cluster（对象位置）内选 count 最高的 template 作为该 res
                 results = []
@@ -289,7 +289,7 @@ class TraverseMatch(CustomRecognition):
                 template = template_path.relative_to(self.BASE_PATH)
             except ValueError:
                 template = Path(str(template_path).replace("\\", "/"))
-            print(f"[DEBUG] Finding AR: {template}")
+            print(f"[DEBUG] 正在查找 AR: {template}")
             match_detail = context.run_recognition_direct(
                 "FeatureMatch",
                 {"template": str(template)},
@@ -297,10 +297,10 @@ class TraverseMatch(CustomRecognition):
                 )
   
             if match_detail.box:
-                print(f"[DEBUG] Found AR: {template}，Location: {match_detail.box}")
+                print(f"[DEBUG] 找到 AR: {template}，位置: {match_detail.box}")
         
         else:
-            print(f"[DEBUG] Template path does not exist: {template_path}")
+            print(f"[DEBUG] 模板路径不存在: {template_path}")
         
         return CustomRecognition.AnalyzeResult(
             box=match_detail.box if match_detail and match_detail.box else None,
@@ -446,7 +446,7 @@ class GroupAvatarInfo(CustomRecognition):
                 avatar_box = None
         
         if not avatar or not avatar.hit or avatar_box is None:
-            print(f"[DEBUG] Failed to find character: {param['name']} {param['id']}")
+            print(f"[DEBUG] 未找到角色: {param['name']} {param['id']}")
             return CustomRecognition.AnalyzeResult(box=None, detail=None)
         
         # 获取详细信息，best_result.detail 可能是 dict 或 JSON 字符串
@@ -460,7 +460,7 @@ class GroupAvatarInfo(CustomRecognition):
                     detail_dict = json.loads(raw_detail)
                 except (json.JSONDecodeError, TypeError):
                     detail_dict = {}
-            print(f"[DEBUG] detail_dict keys: {list(detail_dict.keys())}")
+            print(f"[DEBUG] detail_dict 键列表: {list(detail_dict.keys())}")
         
         # 判断是否为多结果（特征：box 为 [0,0,1,1]）
         is_multi = (avatar_box[0] == 0 and avatar_box[1] == 0
@@ -493,7 +493,7 @@ class GroupAvatarInfo(CustomRecognition):
                             if (num.box[0] - text.box[0]) in range(90,105) and (num.box[1] - text.box[1]) in range(-5,5):
                                 levres = [int(temp) for temp in num.text.split("/")]
                                 entry["Level"] = levres[0]
-                                print(f"Found Level: {levres[0]} for character {param['name']} {param['id']}")
+                                print(f"识别到等级: {levres[0]}，角色 {param['name']} {param['id']}")
                                 break
                         continue
                     elif match_mgr.fuzzy_match(text.text, ["Skill/S.A.Lv", "SkilI/S.A.Lv"], 0.8):
@@ -502,7 +502,7 @@ class GroupAvatarInfo(CustomRecognition):
                                 skillres = [int(temp) for temp in num.text.split("/")]
                                 entry["Skill"] = skillres[0]
                                 entry["S.A.Lv"] = skillres[1]
-                                print(f"Found Skill: {skillres[0]} and S.A.Lv: {skillres[1]} for character {param['name']} {param['id']}")
+                                print(f"识别到技能: {skillres[0]}，S.A.Lv: {skillres[1]}，角色 {param['name']} {param['id']}")
                                 break
                         continue
                     elif match_mgr.fuzzy_match(text.text, "HP", 0.8):
@@ -510,7 +510,7 @@ class GroupAvatarInfo(CustomRecognition):
                             if (num.box[0] - text.box[0]) in range(90,105) and (num.box[1] - text.box[1]) in range(-5,5):
                                 hpres = int(num.text)
                                 entry["HP"] = hpres
-                                print(f"Found HP: {hpres} for character {param['name']} {param['id']}")
+                                print(f"识别到 HP: {hpres}，角色 {param['name']} {param['id']}")
                                 break
                         continue
                     elif match_mgr.fuzzy_match(text.text, "ATK", 0.8):
@@ -518,7 +518,7 @@ class GroupAvatarInfo(CustomRecognition):
                             if (num.box[0] - text.box[0]) in range(90,105) and (num.box[1] - text.box[1]) in range(-5,5):
                                 atkres = int(num.text)
                                 entry["ATK"] = atkres
-                                print(f"Found ATK: {atkres} for character {param['name']} {param['id']}")
+                                print(f"识别到 ATK: {atkres}，角色 {param['name']} {param['id']}")
                                 break
                         continue
 
@@ -540,13 +540,13 @@ class GroupAvatarInfo(CustomRecognition):
                 texts = res.filtered_results
                 texts = sorted(texts, key=lambda x: x.box[1])
                 entry["SLevel"] = int(texts[0].text)
-                print(f"[DEBUG] Found Seed Level: {texts[0].text} for character {param['name']} {param['id']}")
+                print(f"[DEBUG] 识别到种子等级: {texts[0].text}，角色 {param['name']} {param['id']}")
                 entry["SSkill"] = int(texts[1].text)
-                print(f"[DEBUG] Found Seed Skill: {texts[1].text} for character {param['name']} {param['id']}")
+                print(f"[DEBUG] 识别到种子技能: {texts[1].text}，角色 {param['name']} {param['id']}")
                 entry["SHP"] = int(texts[2].text)
-                print(f"[DEBUG] Found Seed HP: {texts[2].text} for character {param['name']} {param['id']}")
+                print(f"[DEBUG] 识别到种子 HP: {texts[2].text}，角色 {param['name']} {param['id']}")
                 entry["SATK"] = int(texts[3].text)
-                print(f"[DEBUG] Found Seed ATK: {texts[3].text} for character {param['name']} {param['id']}")
+                print(f"[DEBUG] 识别到种子 ATK: {texts[3].text}，角色 {param['name']} {param['id']}")
 
         def _fill_ar(entry):
             if param.get("AR"):
@@ -574,9 +574,9 @@ class GroupAvatarInfo(CustomRecognition):
                     "name": ar_name,
                     "matched": bool(ar_result and ar_result.box)
                 }
-                print(f"[DEBUG] AR recognition for {ar_name}: {'matched' if ar_result and ar_result.box else 'not matched'}")
+                print(f"[DEBUG] AR 识别结果 {ar_name}: {'匹配' if ar_result and ar_result.box else '未匹配'}")
             else:
-                print("[DEBUG] No AR specified, skipping AR recognition.")
+                print("[DEBUG] 未指定 AR，跳过 AR 识别")
 
         # ===== 多结果模式 =====
         if is_multi:
@@ -587,7 +587,7 @@ class GroupAvatarInfo(CustomRecognition):
                 res_val = detail_dict[res_key]
                 res_box = res_val.get("box", [0, 0, 1, 1])
                 ROI = [res_box[0] - self.ROI[0], res_box[1] - self.ROI[1], self.ROI[2], self.ROI[3]]
-                print(f"[DEBUG] Multi-result {res_key}: ROI={ROI}, box={res_box}")
+                print(f"[DEBUG] 多结果 {res_key}: ROI={ROI}, box={res_box}")
 
                 # 格式: charname/id/res_\d/entry
                 entry = {
@@ -634,11 +634,11 @@ class GroupAvatarInfo(CustomRecognition):
         }
         
         if detail_dict:
-            print(f"[DEBUG] found character: {detail_dict.get('name')} {detail_dict.get('id')} at {avatar_box}, path: {detail_dict.get('path')}")
+            print(f"[DEBUG] 找到角色: {detail_dict.get('name')} {detail_dict.get('id')}，位置: {avatar_box}, 路径: {detail_dict.get('path')}")
         
         # 用 avatar_box 计算 ROI
         ROI = [avatar_box[0]-self.ROI[0], avatar_box[1]-self.ROI[1], self.ROI[2], self.ROI[3]]
-        print(f"[DEBUG] ROI for character {param['name']} {param['id']}: {ROI}")
+        print(f"[DEBUG] 角色 {param['name']} {param['id']} 的 ROI: {ROI}")
         
         _fill_ocr(single_entry, ROI)
         _fill_ar(single_entry)

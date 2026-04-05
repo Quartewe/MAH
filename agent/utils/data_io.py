@@ -27,30 +27,30 @@ class IOUtils:
             if not os.path.exists("data"):
                 os.makedirs("data")
                 # debug
-                print("[DEBUG] data folder created")
+                print("[DEBUG] data 文件夹已创建")
                 #
 
             if not os.path.exists(file_path):
                 if is_state_file:
                     # debug
-                    print(f"[DEBUG] file not found: {file_path}, creating default file")
+                    print(f"[DEBUG] 文件不存在: {file_path}，正在创建默认文件")
                     #
                     os.makedirs(os.path.dirname(file_path) or ".", exist_ok=True)
                     with open(file_path, "w", encoding="utf-8") as f:
                         json.dump({}, f, ensure_ascii=False, indent=4)
                 else:
-                    print(f"[ERROR] file not found: {file_path}")
+                    print(f"[ERROR] 文件不存在: {file_path}")
                 return {}
 
             with open(file_path, "r", encoding="utf-8") as f:
                 # debug
-                print(f"[DEBUG] reading file: {file_path}...")
+                print(f"[DEBUG] 正在读取文件: {file_path}...")
                 #
                 return json.load(f)
         except (json.JSONDecodeError, FileNotFoundError):
             if is_state_file:
                 # debug
-                print(f"[DEBUG] file {file_path} is corrupted, now will create it")
+                print(f"[DEBUG] 文件 {file_path} 已损坏，正在重新创建")
                 #
                 os.makedirs(os.path.dirname(file_path) or ".", exist_ok=True)
                 with open(file_path, "w", encoding="utf-8") as f:
@@ -58,7 +58,7 @@ class IOUtils:
                 with open(file_path, "r", encoding="utf-8") as f:
                     return json.load(f)
 
-            print(f"[ERROR] file {file_path} is corrupted")
+            print(f"[ERROR] 文件 {file_path} 已损坏")
             return {}
 
     @staticmethod
@@ -72,7 +72,7 @@ class IOUtils:
             
         with open(file_path, "w", encoding="utf-8") as f:
             # debug
-            print(f"[DEBUG] writing file: {file_path}...")
+            print(f"[DEBUG] 正在写入文件: {file_path}...")
             #
             json.dump(data, f, ensure_ascii=False, indent=4)
         
@@ -85,19 +85,19 @@ class IOUtils:
             if isinstance(state["missions"][mission], dict):
                 state["missions"][mission]["completed"] = True
                 # debug
-                print(f"[DEBUG] mission {mission} set to completed")
+                print(f"[DEBUG] 任务 {mission} 已标记为完成")
                 #
                 state["missions"][mission]["current"] = state["missions"][mission][
                     "target"
                 ]
                 # debug
                 print(
-                    f"mission {mission} value set to {state['missions'][mission]['current']}"
+                    f"任务 {mission} 数值已设置为 {state['missions'][mission]['current']}"
                 )
                 #
         state["missions"]["if_all_completed"] = True
         # debug
-        print("[DEBUG] if_all_completed set to True")
+        print("[DEBUG] if_all_completed 已设置为 True")
         #
         IOUtils.write_data(state)
         return True
@@ -111,20 +111,20 @@ class IOUtils:
         output = {}
 
         if not target_file:
-            print(f"[DEBUG] No target file specified for searching.")
+            print(f"[DEBUG] 未指定要搜索的目标文件")
             return None
 
-        print(f"[DEBUG] Searching for {target_file} in {root_path}...")
+        print(f"[DEBUG] 正在 {root_path} 中搜索 {target_file}...")
         
         # 检查路径是否存在
         if not root_path.exists():
-            print(f"[DEBUG] Search path does not exist: {root_path}")
+            print(f"[DEBUG] 搜索路径不存在: {root_path}")
             return None
             
         files = list(root_path.rglob(target_file))
-        print(f"[DEBUG] {files}")
+        print(f"[DEBUG] 搜索结果列表: {files}")
         if len(files) != 1:
-            print(f"[DEBUG] Expected 1 file, but found {len(files)}")
+            print(f"[DEBUG] 期望找到 1 个文件，实际找到 {len(files)} 个")
             return None
         for file in files:
             # 检查文件是否为空
@@ -176,12 +176,12 @@ class IOUtils:
             i += 1
 
         # debug
-        print("[DEBUG] already organized ocr log")
+        print("[DEBUG] OCR 日志已整理完成")
         #
         if not os.path.exists("debug"):
             os.makedirs("debug")
             # debug
-            print("[DEBUG] debug folder not exist, now creating debug folder...")
+            print("[DEBUG] debug 文件夹不存在，正在创建...")
             #
 
         with open("debug/ocr_detail.log", "a", encoding="utf-8") as f:
@@ -192,7 +192,7 @@ class IOUtils:
             f.write(organized_log.strip())
             f.write("\n")
             # debug
-            print("[DEBUG] ocr_detail.log written")
+            print("[DEBUG] ocr_detail.log 已写入")
             #
 
         return organized_log

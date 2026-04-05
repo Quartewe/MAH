@@ -56,7 +56,7 @@ def _append_bootstrap_error(title: str, detail: str) -> None:
         pass
 
 
-print("[DEBUG] Agent bootstrap start")
+print("[DEBUG] Agent 启动引导开始")
 
 
 def _detect_internal_python_version(internal_path: Path) -> Optional[Tuple[int, int]]:
@@ -279,7 +279,7 @@ def main():
     else:
         Agent_Identifier = "MAH"
     os.chdir(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-    print(f"[DEBUG] AgentServer 正在启动，频道 ID 为: {Agent_Identifier}")
+    print(f"[DEBUG] AgentServer 正在启动，通道 ID 为: {Agent_Identifier}")
 
     AgentServer.start_up(Agent_Identifier)
 

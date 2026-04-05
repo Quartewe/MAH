@@ -13,14 +13,14 @@ class TimeoutUtils:
         if task_name not in cls._monitoring_tasks:
             cls._monitoring_tasks[task_name] = now
             # debug
-            print(f"Start monitoring task: {task_name}, timeout: {timeout}s")
+            print(f"[MONITOR] 开始监控任务: {task_name}, 超时时间: {timeout}秒")
             #
             return False
             
         elapsed = now - cls._monitoring_tasks[task_name]
         if elapsed > timeout:
             # debug
-            print(f"Task {task_name}'s Agent Error! Elapsed: {elapsed:.2f}s")
+            print(f"[ERROR] 任务 {task_name} Agent 错误! 已耗时: {elapsed:.2f}秒")
             #
             return True
             
@@ -32,7 +32,7 @@ class TimeoutUtils:
         if task_name in cls._monitoring_tasks:
             del cls._monitoring_tasks[task_name]
             # debug
-            print(f"Stopped monitoring task: {task_name}")
+            print(f"[MONITOR] 已停止监控任务: {task_name}")
             #
 
 

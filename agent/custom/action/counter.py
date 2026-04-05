@@ -20,9 +20,9 @@ class Counter(CustomAction):
 
         if info_share.counter < param:
             info_share.counter += 1
-            print(f"[Counter] Counter increased to {info_share.counter}")
+            print(f"[COUNTER] 计数已增加到 {info_share.counter}")
             return True
         else:
-            print(f"[Counter] Counter reached maximum value {param}")
+            print(f"[COUNTER] 计数达到最大值 {param}")
             info_share.counter = 1  # Reset counter for next round
             return False

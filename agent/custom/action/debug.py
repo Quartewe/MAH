@@ -20,21 +20,21 @@ class Debug(CustomAction):
 
             case "Debug.Match":
                 # debug
-                print(f"[DEBUG] {argv.reco_detail}")
+                print(f"[DEBUG] 匹配识别详情: {argv.reco_detail}")
                 #
             case "Debug.Do": 
                 import time
                 context.tasker.controller.post_touch_down(330, 550)
-                print(f"[DEBUG] Touch down at (330, 550)")
+                print(f"[DEBUG] 在 (330, 550) 按下")
                 time.sleep(0.5)
                 context.tasker.controller.post_touch_move(330, 15).wait()
-                print(f"[DEBUG] Touch move to (330, 15)")
+                print(f"[DEBUG] 移动到 (330, 15)")
                 time.sleep(1)
                 context.tasker.controller.post_touch_up()
-                print(f"[DEBUG] Touch up")
+                print(f"[DEBUG] 抬起触点")
             case _:
                 # debug
-                print(f"[DEBUG] {argv.node_name}")
+                print(f"[DEBUG] 当前节点名: {argv.node_name}")
                 #
 
         return True

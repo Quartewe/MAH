@@ -37,7 +37,7 @@ class GoBack(CustomAction):
                     }
                 }
             )
-            print("[DEBUG]GoBack back_res:", back_res.best_result)
+            print("[DEBUG]GoBack 返回识别结果:", back_res.best_result)
             if back_res.best_result:
                 context.run_action(
                     "UtilsClick",
@@ -51,7 +51,7 @@ class GoBack(CustomAction):
                         }
                     }
                 )
-                print("[DEBUG]GoBack click back button")
+                print("[DEBUG]GoBack 点击返回按钮")
             else:
                 loading_res = context.run_recognition(
                 "UtilsOCR",
@@ -68,13 +68,13 @@ class GoBack(CustomAction):
                         }
                     }
                 )
-                print("[DEBUG]GoBack loading_res:", loading_res.best_result)
+                print("[DEBUG]GoBack 加载识别结果:", loading_res.best_result)
 
                 if last_try and not back_res.best_result:
-                    print("[DEBUG] Successfully go back")
+                    print("[DEBUG] 返回成功")
                     return True
                 else: 
-                    print("[DEBUG] Still loading, keep waiting")
+                    print("[DEBUG] 仍在加载，继续等待")
                     last_try = False
 
                 while loading_res.best_result:
@@ -95,18 +95,18 @@ class GoBack(CustomAction):
                             }
                         }
                     )
-                    print("[DEBUG]GoBack loading_res:", loading_res.best_result)
+                    print("[DEBUG]GoBack 加载识别结果:", loading_res.best_result)
                     time.sleep(1)
 
                     if not loading_res.best_result:
-                        print("[DEBUG] Last try mode")
+                        print("[DEBUG] 进入最后一次尝试模式")
                         last_try = True
                         break
 
             if not back_res.best_result and not loading_res.best_result:
-                print("[DEBUG] Successfully go back")
+                print("[DEBUG] 返回成功")
                 return True
 
             i += 1
-        print("[DEBUG]GoBack failed to go back after 15 attempts")
+        print("[DEBUG]GoBack 尝试 15 次后仍未返回")
         return False

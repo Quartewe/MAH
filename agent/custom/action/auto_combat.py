@@ -72,9 +72,9 @@ class AutoCombat(CustomAction):
                 },
             )
             if leader.best_result:
-                print(f"[DEBUG] Detected leader position: {leader.best_result.box}")
+                print(f"[DEBUG] 检测到队长位置: {leader.best_result.box}")
                 return [leader.best_result.box[0] + 38, leader.best_result.box[1] - 5]
-            print("[DEBUG] Leader not detected, retrying...")
+            print("[DEBUG] 未检测到队长位置，正在重试...")
             time.sleep(1)
             i += 1
         return None
@@ -148,7 +148,7 @@ class AutoCombat(CustomAction):
             or len(char_pos_relative) < 2
         ):
             print(
-                f"[WARNING] Invalid position data: posL={posL}, char_pos_relative={char_pos_relative}, pos_data={pos_data}"
+                f"[WARNING] 位置数据无效: posL={posL}, char_pos_relative={char_pos_relative}, pos_data={pos_data}"
             )
             return None
 
@@ -163,9 +163,6 @@ class AutoCombat(CustomAction):
         try:
             context.tasker.controller.post_screencap().wait()
             current_image = context.tasker.controller.cached_image
-            if not current_image:
-                print("[ERROR] No image captured for combat completion detection")
-                return True
             complete_res = context.run_recognition(
                 "UtilsOCR",
                 current_image,
@@ -188,6 +185,10 @@ class AutoCombat(CustomAction):
                 },
             )
             print(f"[DEBUG] _detect_complete: OCR识别结果: {complete_res.all_results}")
+            if not complete_res.all_results:
+                print("[DEBUG] 用户终止, 正在退出")
+                self.detect_complete_error = True
+                return True
             back_res = context.run_recognition(
                 "UtilsOCR",
                 current_image,
@@ -207,7 +208,7 @@ class AutoCombat(CustomAction):
                 text = complete_res.best_result.text
                 print(f"[DEBUG] _detect_complete: OCR识别结果: {text}")
                 if match_mgr.fuzzy_match("TOUCHSCREEN", text):
-                    print(f"[DEBUG] Combat complete detected with text: {text}, clicking to continue...")
+                    print(f"[DEBUG] 检测到战斗结束文本: {text}，正在点击继续...")
                     context.run_action(
                         "UtilsClick",
                         pipeline_override={
@@ -223,7 +224,7 @@ class AutoCombat(CustomAction):
                     return True
             elif back_res.best_result and back_res.best_result.score > 0.8:
                 text = back_res.best_result.text
-                print(f"[DEBUG] Combat complete detected with text: {text}, clicking to continue...")
+                print(f"[DEBUG] 检测到战斗结束文本: {text}，正在点击继续...")
                 return True
             else:
                 print("[DEBUG] _detect_complete: OCR未检测到结果")
@@ -249,7 +250,7 @@ class AutoCombat(CustomAction):
 
         for i in range(len(action_data)):
             if self._detect_complete(context):
-                print("[DEBUG] Combat complete detected during list combat, exiting...")
+                print("[DEBUG] 检测到战斗结束，正在退出...")
                 return True, current_pos_data
 
             # init
@@ -264,7 +265,7 @@ class AutoCombat(CustomAction):
 
             # action
             print(
-                f"[DEBUG] Action {i}: char {action_char}, pos {char_pos}, action list {action_list}, end points {end_points}"
+                f"[DEBUG] 动作 {i}: 角色 {action_char}, 位置 {char_pos}, 动作序列 {action_list}, 行动后坐标列表 {end_points}"
             ) 
 
             context.tasker.controller.post_screencap().wait()
@@ -289,7 +290,7 @@ class AutoCombat(CustomAction):
                 }
             )
 
-            print(f"[DEBUG] Action {i} about to execute swipe...")
+            print(f"[DEBUG] 动作 {i} 即将执行滑动...")
 
             context.run_action(
                 "UtilsSwipe",
@@ -315,14 +316,14 @@ class AutoCombat(CustomAction):
                 },
             )
 
-            print(f"[DEBUG] Action {i} executed, waiting for turn to change...")
+            print(f"[DEBUG] 动作 {i} 已执行，等待回合变化...")
 
             if self._detect_complete(context):
-                print("[DEBUG] Combat complete detected during list combat, exiting...")
+                print("[DEBUG] 检测到战斗结束，正在退出...")
                 return True, current_pos_data
 
             current_pos_data = self._get_all_pos(current_pos_data, action)
-            print(f"[DEBUG] Updated relative pos after action {i}: {current_pos_data}")
+            print(f"[DEBUG] 动作 {i} 后更新相对位置: {current_pos_data}")
 
         return True, current_pos_data
 
@@ -346,7 +347,7 @@ class AutoCombat(CustomAction):
             if lang == "en":
                 return ["Settings", "Back"]
 
-            print(f"[WARNING] Unknown language: {lang}, defaulting to English")
+            print(f"[WARNING] 未知语言: {lang}，默认使用英文")
             return ["Settings", "Back"]
         
         def enable_options():
@@ -371,7 +372,7 @@ class AutoCombat(CustomAction):
                     }
                 },
             )
-            print("[DEBUG] Clicked menu...")
+            print("[DEBUG] 已点击菜单...")
 
             markers = get_markers_by_lang()
 
@@ -389,7 +390,7 @@ class AutoCombat(CustomAction):
                     }
                 },
             )
-            print(f"[DEBUG] Clicked {markers[0]}...")
+            print(f"[DEBUG] 已点击 {markers[0]}...")
             time.sleep(5)
             context.tasker.controller.post_screencap().wait()
             current_image = context.tasker.controller.cached_image
@@ -407,11 +408,11 @@ class AutoCombat(CustomAction):
                     }
                 },
             )
-            print(f"[DEBUG] {option_res.filtered_results}")
+            print(f"[DEBUG] 选项识别结果: {option_res.filtered_results}")
             if option_res.best_result:
                 for res in option_res.filtered_results:
                     if "OFF" in res.text:
-                        print(f"[DEBUG] Clicked {res.text} option...")
+                        print(f"[DEBUG] 已点击 {res.text} 选项...")
                         context.run_action(
                             "UtilsClick",
                             pipeline_override={
@@ -465,7 +466,7 @@ class AutoCombat(CustomAction):
             )
             if speed_res.best_result:
                 speed = len(speed_res.filtered_results)
-                print(f"[DEBUG] Current speed: {speed}x, switching times: {4 - speed}")
+                print(f"[DEBUG] 当前速度: {speed}x，需要切换次数: {4 - speed}")
                 for _ in range(4 - speed):
                     context.run_action(
                         "UtilsClick",
@@ -480,7 +481,7 @@ class AutoCombat(CustomAction):
                         },
                     )
             else:
-                print("[DEBUG] Speed is already at 4x")
+                print("[DEBUG] 速度已是 4x")
 
         def auto_combat() -> bool:
             context.tasker.controller.post_screencap().wait()
@@ -520,7 +521,7 @@ class AutoCombat(CustomAction):
                     },
                 )
                 info_share.auto_combat_mode = True
-                print("[DEBUG] Auto combat mode enabled")
+                print("[DEBUG] 已开启自动战斗模式")
                 return True
             else:
                 on_res = context.run_recognition(
@@ -540,11 +541,11 @@ class AutoCombat(CustomAction):
                 )
                 if on_res.best_result:
                     info_share.auto_combat_mode = True
-                    print("[DEBUG] Auto combat mode already enabled")
+                    print("[DEBUG] 自动战斗模式已开启")
                     return True
 
                 info_share.auto_combat_mode = False
-                print("[WARNING] Cannot detect auto-combat switch state")
+                print("[WARNING] 无法识别自动战斗开关状态")
                 return False
 
         def disable_auto_combat():
@@ -562,12 +563,12 @@ class AutoCombat(CustomAction):
                     }
                 },
             )
-            print("[DEBUG] Auto combat mode disabled")
+            print("[DEBUG] 已关闭自动战斗模式")
             info_share.auto_combat_mode = False
 
         def analyze_data(action_data):
             if not isinstance(action_data, dict):
-                print(f"[WARNING] Invalid action data type: {type(action_data)}")
+                print(f"[WARNING] 动作数据类型无效: {type(action_data)}")
                 return {}, {}
 
             def normalize_actions(raw_actions):
@@ -586,13 +587,13 @@ class AutoCombat(CustomAction):
             loop_action_data = normalize_actions(action_data.get("loop", {}))
 
             print(
-                f"[DEBUG] Analyzed action data: base actions {len(base_action_data)}, loop actions {len(loop_action_data)}"
+                f"[DEBUG] 动作数据解析完成: 基础动作 {len(base_action_data)} 条, 循环动作 {len(loop_action_data)} 条"
             )
             return base_action_data, loop_action_data
 
         def list_combat(pos_data, base_action_data, posL):
             if not base_action_data:
-                print("[WARNING] No base combat actions configured")
+                print("[WARNING] 未配置基础战斗动作")
                 return False, pos_data
 
             list_complete, current_pos_data = self._combat(
@@ -606,19 +607,23 @@ class AutoCombat(CustomAction):
 
         def loop_combat(current_pos_data, loop_action_data, posL):
             if not loop_action_data:
-                print("[WARNING] Loop actions are empty")
+                print("[WARNING] 循环动作为空")
                 return False, current_pos_data
 
-            print("[DEBUG] Loop combat enabled, start looping actions.")
+            print("[DEBUG] 已启用循环战斗，开始循环执行动作")
             start = time.monotonic()
             max_wait = 300
             loop_count = 0
 
             while True:
                 if self._detect_complete(context):
-                    print("[DEBUG] Combat complete detected during list combat, exiting...")
+                    print("[DEBUG] 循环阶段检测到战斗结束，正在退出...")
                     return True, current_pos_data
                 
+                if self.detect_complete_error:
+                    print("[WARNING] 检测到 _detect_complete 之前出现错误，为避免潜在死循环，退出循环战斗")
+                    return False, current_pos_data
+
                 loop_count += 1
                 loop_complete, current_pos_data = self._combat(
                     context,
@@ -631,14 +636,14 @@ class AutoCombat(CustomAction):
                     return False, current_pos_data
                 
                 if self._detect_complete(context):
-                    print("[DEBUG] Combat complete detected during list combat, exiting...")
+                    print("[DEBUG] 循环阶段检测到战斗结束，正在退出...")
                     return True, current_pos_data
 
                 if time.monotonic() - start > max_wait:
-                    print(f"[WARNING] Loop combat waited {max_wait}s, timeout")
+                    print(f"[WARNING] 循环战斗等待 {max_wait} 秒后超时")
                     return False, current_pos_data
 
-                print(f"[DEBUG] Loop combat round {loop_count} not complete, retrying...")
+                print(f"[DEBUG] 循环战斗第 {loop_count} 轮未完成，正在重试...")
 
         def main() -> bool:
             param = argv.custom_action_param
@@ -670,19 +675,19 @@ class AutoCombat(CustomAction):
             if auto_mode:
                 if not info_share.auto_combat_mode:
                     if not auto_combat():
-                        print("[ERROR] Failed to enable or verify auto-combat mode")
+                        print("[ERROR] 开启或校验自动战斗模式失败")
                         return False
 
                 start = time.monotonic()
                 max_wait = 180
                 while True:
-                    print("[DEBUG] Auto combat mode, waiting for combat to complete...")
+                    print("[DEBUG] 自动战斗模式运行中，等待战斗结束...")
                     ifcompleted = self._detect_complete(context)
                     if ifcompleted:
                         return True
                     time.sleep(1)  # 减少 CPU 占用，保持响应速度
                     if time.monotonic() - start > max_wait:
-                        print(f"[WARNING] Auto combat waited {max_wait}s, timeout")
+                        print(f"[WARNING] 自动战斗等待 {max_wait} 秒后超时")
                         return False
 
             if info_share.auto_combat_mode:
@@ -694,32 +699,32 @@ class AutoCombat(CustomAction):
                     info_share.leader_pos = posL
                 elif abs(info_share.leader_pos[0] - posL[0]) > 20 or abs(info_share.leader_pos[1] - posL[1]) > 20:
                     time.sleep(1)
-                    print(f"[WARNING] Different leader position, try to insure it's correct...")
+                    print(f"[WARNING] 检测到队长位置变化，正在复核位置准确性...")
                     last_posL = posL
                     current_posL = self._get_posL(context)
                     if abs(last_posL[0] - current_posL[0]) > 20 or abs(last_posL[1] - current_posL[1]) > 20:
-                        print(f"[DEBUG] Correcting the error location...")
+                        print(f"[DEBUG] 正在修正位置误差...")
                         posL = current_posL
                     else:
-                        print(f"[WARNING] Leader position have changed!")
+                        print(f"[WARNING] 队长位置已发生变化!")
                     
                 if not posL:
-                    print("[ERROR] Failed to get leader position, cannot proceed with combat")
+                    print("[ERROR] 获取队长位置失败，无法继续战斗")
                     return False
                 base_action_data, loop_action_data = analyze_data(action_data)
                 list_completed, current_pos_data = list_combat(pos_data, base_action_data, posL)
                 if loop_action_data and list_completed:
-                    print("[DEBUG] List combat completed, starting loop combat...")
+                    print("[DEBUG] 基础执行完成，开始循环战斗...")
                     loop_completed, _ = loop_combat(current_pos_data, loop_action_data, posL)
                     if loop_completed:
-                        print("[DEBUG] Loop combat completed.")
+                        print("[DEBUG] 循环战斗已完成")
                         return True
                     else: 
-                        print("[WARNING] Loop combat not completed, exiting with current progress.")
+                        print("[WARNING] 循环战斗未完成，将按当前进度退出")
                     return False
                 else:
                     if list_completed:
-                        print("[DEBUG] List combat completed.")
+                        print("[DEBUG] 基础执行完成")
                         return True
             return False
 

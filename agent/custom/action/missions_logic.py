@@ -24,11 +24,11 @@ class MissionLogic(CustomAction):
             case "CheckWeeklyMissions.Stop":
                 first_key, first_value = next(iter(self.state.items()))
                 if first_value["completed"] == True:
-                    print("[DEBUG]Weekly missions already completed, skip")
+                    print("[DEBUG]每周任务已完成，跳过")
                     timeout_mgr.stop_monitoring(argv.node_name)
                     return True
                 else:
-                    print("[DEBUG]Weekly missions not completed, continue monitoring")
+                    print("[DEBUG]每周任务未完成，继续监控")
                     return False
 
 

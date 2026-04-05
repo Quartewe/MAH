@@ -60,7 +60,7 @@ class ActUtils:
         for char_name_dict in res.values():
             for char_id_dict in char_name_dict.values():
                 result_count += len([k for k in char_id_dict.keys() if k.startswith("res_")])
-        print(f"[DEBUG] number of res: {result_count}")
+        print(f"[DEBUG] 识别结果数量: {result_count}")
 
         if isinstance(keywords, str):
             keywords = [keywords]
@@ -69,7 +69,7 @@ class ActUtils:
             keywords = ["Level", "ATK"]
             
         for keyword in keywords:
-            print(f"[DEBUG] Evaluating keyword: {keyword}")
+            print(f"[DEBUG] 正在评估关键词: {keyword}")
             best = -1
             best_data = None
             best_key = None
@@ -84,7 +84,7 @@ class ActUtils:
                         try:
                             limit_val = int(limit.get(keyword, 0))
                         except ValueError:
-                            print(f"[WARNING] Invalid limit value for keyword '{keyword}': {limit.get(keyword)}. Defaulting to 0.")
+                            print(f"[WARNING] 关键词 '{keyword}' 的限制值无效: {limit.get(keyword)}，已默认使用 0")
                             limit_val = 0
                         if value > best:
                             best = value
@@ -130,9 +130,9 @@ class ActUtils:
                 for char_id_dict in char_name_dict.values():
                     for res_key, res_data in char_id_dict.items():
                         if res_data is most_common_data:
-                            print(f"[DEBUG] Chosen res_key: {res_key}")
+                            print(f"[DEBUG] 选中的 res_key: {res_key}")
                             return res_key
-        print(f"[DEBUG] No suitable res_key found")
+        print(f"[DEBUG] 未找到合适的 res_key")
         return ""
                     
     @staticmethod
@@ -187,7 +187,7 @@ class ActUtils:
                 }
             )
 
-            print(f"OCR best_results: {ocrresults.best_result}, total filtered results: {len(ocrresults.filtered_results)}")
+            print(f"OCR 最佳结果: {ocrresults.best_result}, 过滤后结果总数: {len(ocrresults.filtered_results)}")
             # 如果成功获取结果，则跳出循环
             if ocrresults.best_result:
                 has_valid_text = any(res.text and res.text.strip() for res in ocrresults.filtered_results)
@@ -195,11 +195,11 @@ class ActUtils:
                     break
             
             if retry_count < max_retries:
-                print(f"[DEBUG] OCR result not ready, retrying... ({retry_count}/{max_retries})")
+                print(f"[DEBUG] OCR 结果未就绪，正在重试... ({retry_count}/{max_retries})")
             time.sleep(2)
         
         if retry_count >= max_retries:
-            print(f"[WARNING] Max retries reached for OCR, proceeding with empty results")
+            print(f"[WARNING] OCR 已达到最大重试次数，将继续使用空结果")
         
         # 统计各语言数量
         for res in (ocrresults.filtered_results if not compare_list else compare_list):
@@ -211,7 +211,7 @@ class ActUtils:
             if ignore and not compare_list:
                 for ign in ignore:
                     if match_mgr.fuzzy_match(ign, text):
-                        print(f"[DEBUG] Ignoring result due to ignore keyword: {ign}")
+                        print(f"[DEBUG] 命中忽略关键词，跳过该结果: {ign}")
                         ignore_match = True
                         break
             
@@ -250,7 +250,7 @@ class ActUtils:
         # 获取需要处理的 ROI 列表
         roi_list = roi if ActUtils.get_list_depth(roi) != 1 else [roi]
 
-        print(f"[DEBUG] Ignore list for language detection: {ignore}")
+        print(f"[DEBUG] 语言检测的忽略列表: {ignore}")
         
         # 对每个 ROI 进行 OCR 识别和语言统计
         for current_roi in roi_list:
@@ -263,7 +263,7 @@ class ActUtils:
         # 返回计数最多的语言类型
         lang_counts = {"jp": jp, "cn": cn, "tw": tw, "en": en}
         result = max(lang_counts, key=lang_counts.get)
-        print(f"[DEBUG] Language detection: {lang_counts}, selected: {result}")
+        print(f"[DEBUG] 语言检测统计: {lang_counts}, 选中: {result}")
         info_share.current_lang = result
         return result 
 
@@ -275,7 +275,7 @@ class ActUtils:
             lang_roi = [126,22,508,91]
 
         lang_mode = act_mgr.detect_lang(context, lang_roi)
-        print(f"[DEBUG] Detected language mode: {lang_mode}")
+        print(f"[DEBUG] 检测到的语言模式: {lang_mode}")
         if lang_mode == "jp":
             markers = ["フィルタ", "全フィルタ解除", "OK", "装備可能のみ"]
         if lang_mode == "cn":
@@ -286,7 +286,7 @@ class ActUtils:
             markers = ["Filter", "Reset Filter", "OK", "Can be Equipped only"]
 
         for marker, roi in zip([markers[0], markers[1]], [[640,0,340,135], [22,537,375,181]]):
-            print(f"[DEBUG] Attempting to click marker: {marker} in ROI: {roi}")       
+            print(f"[DEBUG] 尝试点击标记: {marker}，区域: {roi}")       
             open_finish = context.run_task(
                 "UtilsOCR",
                 pipeline_override={
@@ -305,7 +305,7 @@ class ActUtils:
                 }
             )
         if not open_finish:
-            print(f"[ERROR] Failed to click filter for {element} {rarity}* {weapon}")
+            print(f"[ERROR] 点击筛选失败: {element} {rarity}* {weapon}")
             return False
         
         # 当 AR_mode=True 时，element 和 weapon 可能为 None
@@ -352,7 +352,7 @@ class ActUtils:
                     return False
                 continue
                 
-            print(f"[DEBUG] Attempting to click filter with template: {path}")
+            print(f"[DEBUG] 尝试使用模板点击筛选: {path}")
             context.run_task(
                 "UtilsTemplateMatch",
                 pipeline_override={
@@ -388,7 +388,7 @@ class ActUtils:
             )
         
         if not filter_finish:
-            print(f"[ERROR] Failed to confirm filter for {element} {rarity}* {weapon}")
+            print(f"[ERROR] 确认筛选失败: {element} {rarity}* {weapon}")
             return False
         return True
 
