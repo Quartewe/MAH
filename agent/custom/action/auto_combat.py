@@ -12,6 +12,7 @@ class AutoCombat(CustomAction):
         self.toolbar_roi = [0, 0, 640, 66]
         self.fight_roi = [643, 0, 636, 719]
         self.DATA_PATH = proj_path.AUTO_COMBAT_DIR
+        self.detect_complete_error = False
         self.UNIT_LENGTH = 110
         
     def _move_data(self, action_list, start_pos=None):
@@ -162,6 +163,9 @@ class AutoCombat(CustomAction):
         try:
             context.tasker.controller.post_screencap().wait()
             current_image = context.tasker.controller.cached_image
+            if not current_image:
+                print("[ERROR] No image captured for combat completion detection")
+                return True
             complete_res = context.run_recognition(
                 "UtilsOCR",
                 current_image,
@@ -183,6 +187,7 @@ class AutoCombat(CustomAction):
                     }
                 },
             )
+            print(f"[DEBUG] _detect_complete: OCR识别结果: {complete_res.all_results}")
             back_res = context.run_recognition(
                 "UtilsOCR",
                 current_image,
@@ -226,8 +231,9 @@ class AutoCombat(CustomAction):
         except Exception as e:
             print(f"[ERROR] _detect_complete 异常: {e}")
             import traceback
+            self.detect_complete_error = True
             traceback.print_exc()
-            return False
+            return True
         
     def _combat(
         self,
@@ -708,6 +714,8 @@ class AutoCombat(CustomAction):
                     if loop_completed:
                         print("[DEBUG] Loop combat completed.")
                         return True
+                    else: 
+                        print("[WARNING] Loop combat not completed, exiting with current progress.")
                     return False
                 else:
                     if list_completed:
