@@ -454,7 +454,7 @@ class AutoCombat(CustomAction):
                                 "target": [647,373,583,342],
                                 "threshold": 0.99,
                                 "timeout": -1,
-                            },
+                            }, 
                             "param": {
                                 "roi": self.toolbar_roi,
                                 "threshold": 0.95,
