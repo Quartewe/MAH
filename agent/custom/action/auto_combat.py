@@ -185,8 +185,8 @@ class AutoCombat(CustomAction):
                 },
             )
             print(f"[DEBUG] _detect_complete: OCR识别结果: {complete_res.all_results}")
-            if not complete_res.all_results:
-                print("[DEBUG] 用户终止, 正在退出")
+            if not context.tasker.running:
+                print("[DEBUG] 用户终止, 正在退出...")
                 self.detect_complete_error = True
                 return True
             back_res = context.run_recognition(
@@ -227,13 +227,8 @@ class AutoCombat(CustomAction):
                 print(f"[DEBUG] 检测到战斗结束文本: {text}，正在点击继续...")
                 return True
             else:
-                print("[DEBUG] _detect_complete: OCR未检测到结果，准备检测Agent是否断开...")
-                if context.tasker.running:
-                    print("[DEBUG] Agent连接正常，继续等待战斗结束...")
-                    return True
-                else:
-                    print("[DEBUG] Agent断开链接")
-                    return False
+                print("[DEBUG] _detect_complete: OCR未检测到结果")
+            return False
         except Exception as e:
             print(f"[ERROR] _detect_complete 异常: {e}")
             import traceback
