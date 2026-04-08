@@ -231,7 +231,9 @@ class AutoCombat(CustomAction):
                 if context.tasker.running:
                     print("[DEBUG] Agent连接正常，继续等待战斗结束...")
                     return True
-            return False
+                else:
+                    print("[DEBUG] Agent断开链接")
+                    return False
         except Exception as e:
             print(f"[ERROR] _detect_complete 异常: {e}")
             import traceback
