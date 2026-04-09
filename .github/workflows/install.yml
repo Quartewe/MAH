@@ -637,24 +637,177 @@ jobs:
           path: assets
 
       - run: |
+          set -euo pipefail
+
+          find_previous_package_url() {
+            local package_prefix="$1"
+            local current_tag="$2"
+
+            curl -fsSL -H "Authorization: token ${GITHUB_TOKEN}" \
+              "https://api.github.com/repos/${GITHUB_REPOSITORY}/releases?per_page=30" \
+              | jq -r \
+                --arg prefix "${package_prefix}-" \
+                --arg current_tag "$current_tag" \
+                '[.[]
+                  | .assets[]?
+                  | select(.name | startswith($prefix))
+                  | select(.name | endswith(".zip"))
+                  | select((.name | test("incremental|hotfix|patch"; "i")) | not)
+                  | select((.name | contains($current_tag)) | not)
+                  | .browser_download_url
+                ][0] // empty'
+          }
+
+          extract_ui_version() {
+            local root="$1"
+            local version_file=""
+
+            if [[ -f "$root/app/common/__version__.py" ]]; then
+              version_file="$root/app/common/__version__.py"
+            elif [[ -f "$root/_internal/app/common/__version__.py" ]]; then
+              version_file="$root/_internal/app/common/__version__.py"
+            else
+              echo ""
+              return
+            fi
+
+            local parsed=""
+            parsed=$(awk -F'"' '/__version__/ {print $2; exit}' "$version_file")
+            if [[ -z "$parsed" ]]; then
+              parsed=$(awk -F"'" '/__version__/ {print $2; exit}' "$version_file")
+            fi
+            echo "$parsed"
+          }
+
+          build_manifest() {
+            local root="$1"
+            local mode="$2"
+            local output="$3"
+            : > "$output"
+
+            while IFS= read -r -d '' rel; do
+              local path="${rel#./}"
+              local include="false"
+
+              if [[ "$mode" == "ui" ]]; then
+                if [[ "$path" != _internal/* && "$path" != agent/* && "$path" != resource/* && "$path" != docs/* ]]; then
+                  include="true"
+                fi
+              elif [[ "$mode" == "mah" ]]; then
+                if [[ "$path" == agent/* || "$path" == docs/* || "$path" == resource/* ]]; then
+                  include="true"
+                fi
+                if [[ "$path" == resource/index/* || "$path" == resource/base/image/ar/* || "$path" == resource/base/image/character/* ]]; then
+                  include="false"
+                fi
+              fi
+
+              if [[ "$include" == "true" ]]; then
+                local digest
+                digest=$(sha256sum "$root/$path" | awk '{print $1}')
+                printf '%s|%s\n' "$path" "$digest" >> "$output"
+              fi
+            done < <(cd "$root" && find . -type f -print0 | sort -z)
+          }
+
           cd assets
           for f in *; do
             (cd "$f" && zip -r "../$f-${{ needs.meta.outputs.tag }}.zip" .)
 
-            # 生成增量包：不包含从 mah_res 合并的资源目录
             inc_dir="${f}-incremental"
             rm -rf "$inc_dir"
             mkdir -p "$inc_dir"
-            rsync -a "$f/" "$inc_dir/"
 
-            # 保护 mah_res 相关目录，不进入增量包
-            rm -rf "$inc_dir/resource/index"
-            rm -rf "$inc_dir/resource/base/image/ar"
-            rm -rf "$inc_dir/resource/base/image/character"
+            tmp_dir=$(mktemp -d)
+            prev_dir="$tmp_dir/previous"
+            prev_zip="$tmp_dir/previous.zip"
+            mkdir -p "$prev_dir"
+
+            ui_changed="false"
+            mah_changed="false"
+            fallback_legacy="false"
+
+            previous_url=$(find_previous_package_url "$f" "${{ needs.meta.outputs.tag }}" || true)
+            if [[ -z "$previous_url" ]]; then
+              echo "[WARN] $f 未找到可用于对比的上一个正式包，回退到旧增量逻辑"
+              fallback_legacy="true"
+            else
+              echo "[INFO] $f 上一个对比包: $previous_url"
+              curl -fsSL -H "Authorization: token ${GITHUB_TOKEN}" -o "$prev_zip" "$previous_url"
+              unzip -o -q "$prev_zip" -d "$prev_dir"
+
+              current_ui_version=$(extract_ui_version "$f")
+              previous_ui_version=$(extract_ui_version "$prev_dir")
+
+              if [[ -n "$current_ui_version" && -n "$previous_ui_version" ]]; then
+                if [[ "$current_ui_version" != "$previous_ui_version" ]]; then
+                  ui_changed="true"
+                fi
+                echo "[INFO] $f UI版本: 当前=$current_ui_version, 上次=$previous_ui_version, 变化=$ui_changed"
+              else
+                current_ui_manifest="$tmp_dir/current_ui_manifest.txt"
+                previous_ui_manifest="$tmp_dir/previous_ui_manifest.txt"
+                build_manifest "$f" "ui" "$current_ui_manifest"
+                build_manifest "$prev_dir" "ui" "$previous_ui_manifest"
+                if ! cmp -s "$current_ui_manifest" "$previous_ui_manifest"; then
+                  ui_changed="true"
+                fi
+                echo "[INFO] $f UI版本文件缺失，已回退到UI产物哈希对比，变化=$ui_changed"
+              fi
+
+              current_mah_manifest="$tmp_dir/current_mah_manifest.txt"
+              previous_mah_manifest="$tmp_dir/previous_mah_manifest.txt"
+              build_manifest "$f" "mah" "$current_mah_manifest"
+              build_manifest "$prev_dir" "mah" "$previous_mah_manifest"
+              if ! cmp -s "$current_mah_manifest" "$previous_mah_manifest"; then
+                mah_changed="true"
+              fi
+              echo "[INFO] $f MAH目录(agent/resource/docs)变化=$mah_changed"
+            fi
+
+            if [[ "$fallback_legacy" == "true" ]]; then
+              rsync -a "$f/" "$inc_dir/"
+              rm -rf "$inc_dir/resource/index"
+              rm -rf "$inc_dir/resource/base/image/ar"
+              rm -rf "$inc_dir/resource/base/image/character"
+            else
+              if [[ "$ui_changed" == "true" ]]; then
+                # UI变更：仅打包UI构建产物，排除_internal与MAH目录
+                rsync -a \
+                  --exclude='_internal/' \
+                  --exclude='agent/' \
+                  --exclude='resource/' \
+                  --exclude='docs/' \
+                  "$f/" "$inc_dir/"
+              fi
+
+              if [[ "$mah_changed" == "true" ]]; then
+                # MAH变更：仅打包agent/resource/docs（resource沿用原有排除规则）
+                if [[ -d "$f/agent" ]]; then
+                  rsync -a "$f/agent/" "$inc_dir/agent/"
+                fi
+                if [[ -d "$f/docs" ]]; then
+                  rsync -a "$f/docs/" "$inc_dir/docs/"
+                fi
+                if [[ -d "$f/resource" ]]; then
+                  rsync -a "$f/resource/" "$inc_dir/resource/"
+                  rm -rf "$inc_dir/resource/index"
+                  rm -rf "$inc_dir/resource/base/image/ar"
+                  rm -rf "$inc_dir/resource/base/image/character"
+                fi
+              fi
+
+              # 两者都未变化时仍产出一个可追踪的增量包
+              if [[ "$ui_changed" != "true" && "$mah_changed" != "true" ]]; then
+                echo "No UI or MAH changes detected." > "$inc_dir/NO_INCREMENTAL_CHANGES.txt"
+              fi
+            fi
 
             (cd "$inc_dir" && zip -r "../$f-incremental-${{ needs.meta.outputs.tag }}.zip" .)
-            rm -rf "$inc_dir"
+            rm -rf "$inc_dir" "$tmp_dir"
           done
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
       - uses: softprops/action-gh-release@v2
         with:
