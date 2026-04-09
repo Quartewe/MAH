@@ -45,6 +45,7 @@ class SelectSupport(CustomAction):
             print(f"[DEBUG] 目标文件: {param}")
             if not param:
                 print(f"[DEBUG] 未指定要搜索的目标文件")
+                timeout_mgr.stop_monitoring(argv.node_name)
                 return False
             try:
                 raw_data = data_io.find_target_files(self.DATA_PATH, param)
@@ -56,6 +57,7 @@ class SelectSupport(CustomAction):
                     support_data = None
             except Exception as e:
                 print(f"[ERROR] 查找目标文件失败: {e}")
+                timeout_mgr.stop_monitoring(argv.node_name)
                 return False
             
         if not support_data:

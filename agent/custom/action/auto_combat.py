@@ -676,6 +676,7 @@ class AutoCombat(CustomAction):
                 if not info_share.auto_combat_mode:
                     if not auto_combat():
                         print("[ERROR] 开启或校验自动战斗模式失败")
+                        timeout_mgr.stop_monitoring(argv.node_name)
                         return False
 
                 start = time.monotonic()
@@ -684,10 +685,12 @@ class AutoCombat(CustomAction):
                     print("[DEBUG] 自动战斗模式运行中，等待战斗结束...")
                     ifcompleted = self._detect_complete(context)
                     if ifcompleted:
+                        timeout_mgr.stop_monitoring(argv.node_name)
                         return True
                     time.sleep(1)  # 减少 CPU 占用，保持响应速度
                     if time.monotonic() - start > max_wait:
                         print(f"[WARNING] 自动战斗等待 {max_wait} 秒后超时")
+                        timeout_mgr.stop_monitoring(argv.node_name)
                         return False
 
             if info_share.auto_combat_mode:
@@ -710,6 +713,7 @@ class AutoCombat(CustomAction):
                     
                 if not posL:
                     print("[ERROR] 获取队长位置失败，无法继续战斗")
+                    timeout_mgr.stop_monitoring(argv.node_name)
                     return False
                 base_action_data, loop_action_data = analyze_data(action_data)
                 list_completed, current_pos_data = list_combat(pos_data, base_action_data, posL)
@@ -718,14 +722,18 @@ class AutoCombat(CustomAction):
                     loop_completed, _ = loop_combat(current_pos_data, loop_action_data, posL)
                     if loop_completed:
                         print("[DEBUG] 循环战斗已完成")
+                        timeout_mgr.stop_monitoring(argv.node_name)
                         return True
                     else: 
                         print("[WARNING] 循环战斗未完成，将按当前进度退出")
+                    timeout_mgr.stop_monitoring(argv.node_name)
                     return False
                 else:
                     if list_completed:
                         print("[DEBUG] 基础执行完成")
+                        timeout_mgr.stop_monitoring(argv.node_name)
                         return True
+            timeout_mgr.stop_monitoring(argv.node_name)
             return False
 
         try:

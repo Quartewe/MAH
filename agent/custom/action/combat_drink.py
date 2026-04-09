@@ -205,6 +205,7 @@ class CombatDrink(CustomAction):
                     }
                 }
             )
+            timeout_mgr.stop_monitoring(argv.node_name)
             return False
 
             

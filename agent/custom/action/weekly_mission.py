@@ -266,6 +266,7 @@ class WeeklyMission(CustomAction):
                 return True
             else:
                 print("[DEBUG] 写入任务数据到文件失败")
+                timeout_mgr.stop_monitoring(argv.node_name)
                 return False
                 
         elif argv.node_name == "CheckWeeklyMissions.AllCompleted":
@@ -273,5 +274,6 @@ class WeeklyMission(CustomAction):
             timeout_mgr.stop_monitoring(argv.node_name)
             return success
 
+        timeout_mgr.stop_monitoring(argv.node_name)
         return True
         

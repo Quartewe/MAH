@@ -78,6 +78,7 @@ class Formation(CustomAction):
             else:
                 print(f"[DEBUG] 当前未处于自动战斗模式，无需关闭")
             info_share.auto_combat_mode = False
+            timeout_mgr.stop_monitoring(argv.node_name)
             return True
         try:
             raw_data = data_io.find_target_files(self.DATA_PATH, param)
@@ -85,9 +86,11 @@ class Formation(CustomAction):
             print(f"[DEBUG] 助战数据: {team_data}")
         except Exception as e:
             print(f"[ERROR] 查找目标文件失败: {e}")
+            timeout_mgr.stop_monitoring(argv.node_name)
             return False
         if not team_data:
             print(f"[WARNING] 无team数据, 跳过角色选择")
+            timeout_mgr.stop_monitoring(argv.node_name)
             return True
         lang_mode = act_mgr.detect_lang(context, [1087,88,191,633])
         if lang_mode == "jp":
@@ -343,6 +346,7 @@ class Formation(CustomAction):
             # 检查是否有识别结果
             if len(choose_finish.filtered_results) > 1 or not choose_finish.filtered_results:
                 print(f"[ERROR] 无法确认角色选择: {current_char_name} (ID: {current_char_id})")
+                timeout_mgr.stop_monitoring(argv.node_name)
                 return False
             
             # 获取第一个识别结果的位置
@@ -421,6 +425,7 @@ class Formation(CustomAction):
             )
             if not community_path:
                 print(f"[ERROR] 工会模板路径无效: {team_community}")
+                timeout_mgr.stop_monitoring(argv.node_name)
                 return False
             enter_finish = context.run_task(
                 "UtilsFeatureMatch",
@@ -514,6 +519,7 @@ class Formation(CustomAction):
 
                 if not community_found:
                     print(f"[ERROR] 未找到工会: {team_community}")
+                    timeout_mgr.stop_monitoring(argv.node_name)
                     return False
 
                 lang_mode = act_mgr.detect_lang(context, [199,23,540,51])

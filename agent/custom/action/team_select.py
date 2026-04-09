@@ -23,6 +23,7 @@ class TeamSelect(CustomAction):
         print(f"[DEBUG] TeamSelect 收到参数: {param}")
         if not param or param <= 0 or param > 15:
             print(f"[DEBUG] TeamSelect 缺少参数, 直接使用当前配队")
+            timeout_mgr.stop_monitoring(argv.node_name)
             return True
         param = int(param)
         click_box = [0, 0, 100, 45]
