@@ -49,7 +49,7 @@
 
 本项目由 **[MaaFramework](https://github.com/MaaXYZ/MaaFramework)** 强力驱动！
 
-头像支持：感谢 [喝茶先知](https://twitter.com/hechaxianzhi)老师 提供的头像支持。
+图标支持：感谢 [喝茶先知](https://twitter.com/hechaxianzhi)老师 提供的图标支持。
 
 ~~如果你觉得这个头像的框挺丑的请骂我，因为框是我自己搞的~~
 
