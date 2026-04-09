@@ -14,10 +14,6 @@
                 ]
             }
         },
-        "action": {
-            "type": "Click",
-            "param": {}
-        },
         "pre_wait_freezes": {
             "time": 1000,
             "target": [
@@ -27,6 +23,10 @@
                 107
             ],
             "threshold": 0.99
+        },
+        "action": {
+            "type": "Click",
+            "param": {}
         },
         "post_wait_freezes": {
             "time": 1000,
@@ -107,8 +107,8 @@
             "threshold": 0.999
         },
         "next": [
-            "Global.AutoCombat.Drink1",
             "Global.AutoCombat.Replay1",
+            "Global.AutoCombat.Drink1",
             "Global.AutoCombat"
         ],
         "on_error": [
@@ -149,6 +149,9 @@
         },
         "next": [
             "Global.AutoCombat.Replay"
+        ],
+        "on_error": [
+            "Global.AutoCombat.Drink1"
         ]
     },
     "Global.AutoCombat.Back0": {
@@ -393,10 +396,6 @@
                 ]
             }
         },
-        "action": {
-            "type": "Click",
-            "param": {}
-        },
         "pre_wait_freezes": {
             "time": 1000,
             "target": [
@@ -406,6 +405,10 @@
                 107
             ],
             "threshold": 0.99
+        },
+        "action": {
+            "type": "Click",
+            "param": {}
         },
         "post_wait_freezes": {
             "time": 1000,
