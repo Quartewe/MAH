@@ -1,4 +1,71 @@
 {
+    "Global.AutoCombat.FirstClear": {
+        "recognition": {
+            "type": "ColorMatch",
+            "param": {
+                "roi": [
+                    1004,
+                    584,
+                    272,
+                    133
+                ],
+                "lower": [
+                    [
+                        108,
+                        208,
+                        138
+                    ]
+                ],
+                "upper": [
+                    [
+                        128,
+                        228,
+                        158
+                    ]
+                ]
+            }
+        },
+        "action": {
+            "type": "Click",
+            "param": {}
+        },
+        "post_wait_freezes": {
+            "time": 1000,
+            "threshold": 0.99
+        },
+        "next": [
+            "Global.AutoCombat.BacktoEntry"
+        ]
+    },
+    "Global.AutoCombat.BacktoEntry": {
+        "recognition": {
+            "type": "OCR",
+            "param": {
+                "roi": [
+                    447,
+                    2,
+                    375,
+                    95
+                ],
+                "expected": [
+                    "RESULTS"
+                ]
+            }
+        },
+        "action": {
+            "type": "Click",
+            "param": {}
+        },
+        "post_wait_freezes": {
+            "time": 1000,
+            "target": [
+                9,
+                572,
+                522,
+                149
+            ]
+        }
+    },
     "Global.AutoCombat.Back0.1": {
         "recognition": {
             "type": "OCR",
@@ -81,6 +148,9 @@
         },
         "next": [
             "Global.AutoCombat.Count"
+        ],
+        "on_error": [
+            "[JumpBack]Global.GoBackToHomePage"
         ]
     },
     "Global.AutoCombat.Replay": {
@@ -107,12 +177,12 @@
             "threshold": 0.999
         },
         "next": [
-            "Global.AutoCombat.Replay1",
             "Global.AutoCombat.Drink1",
+            "Global.AutoCombat.Replay1",
             "Global.AutoCombat"
         ],
         "on_error": [
-            "Global.AutoCombat.Back0"
+            "Global.AutoCombat.FirstClear"
         ]
     },
     "Global.AutoCombat.Replay1": {
@@ -149,9 +219,6 @@
         },
         "next": [
             "Global.AutoCombat.Replay"
-        ],
-        "on_error": [
-            "Global.AutoCombat.Drink1"
         ]
     },
     "Global.AutoCombat.Back0": {
@@ -243,7 +310,7 @@
             "Global.AutoCombat.TeamSelect"
         ],
         "on_error": [
-            "[JumpBack]Global.Entry"
+            "[JumpBack]Global.GoBackToHomePage"
         ]
     },
     "Global.AutoCombat.TeamSelect": {
@@ -268,7 +335,7 @@
             "Global.AutoCombat.Formation"
         ],
         "on_error": [
-            "[JumpBack]Global.Entry"
+            "[JumpBack]Global.GoBackToHomePage"
         ]
     },
     "Global.AutoCombat.Formation": {
@@ -293,7 +360,7 @@
             "Global.AutoCombat.Start"
         ],
         "on_error": [
-            "[JumpBack]Global.Entry"
+            "[JumpBack]Global.GoBackToHomePage"
         ]
     },
     "Global.AutoCombat.Start": {
@@ -384,7 +451,7 @@
             "Global.AutoCombat.SelectSupport"
         ],
         "on_error": [
-            "[JumpBack]Global.Entry"
+            "[JumpBack]Global.GoBackToHomePage"
         ]
     },
     "Global.AutoCombat.Back1": {
@@ -421,7 +488,7 @@
             "threshold": 0.999
         },
         "next": [
-            "Global.Entry"
+            "Global.GoBackToHomePage"
         ]
     },
     "Global.AutoCombat.Filter": {

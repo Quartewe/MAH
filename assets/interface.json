@@ -165,6 +165,9 @@
                     "pipeline_override": {
                         "Dungeon.Change2": {
                             "next": "Dungeon.Shinjuku.Entry"
+                        },
+                        "Global.AutoCombat.BacktoEntry": {
+                            "next": "Dungeon.Shinjuku.Entry"
                         }
                     }
                 },
@@ -174,6 +177,9 @@
                     "description": "$ikebukuro_dungeon_description",
                     "pipeline_override": {
                         "Dungeon.Change2": {
+                            "next": "Dungeon.Ikebukuro.Entry"
+                        },
+                        "Global.AutoCombat.BacktoEntry": {
                             "next": "Dungeon.Ikebukuro.Entry"
                         }
                     }
@@ -185,6 +191,9 @@
                     "pipeline_override": {
                         "Dungeon.Change2": {
                             "next": "Dungeon.Aoyama.Entry"
+                        },
+                        "Global.AutoCombat.BacktoEntry": {
+                            "next": "Dungeon.Aoyama.Entry"
                         }
                     }
                 },
@@ -194,6 +203,9 @@
                     "description": "$barrier_temple_description",
                     "pipeline_override": {
                         "Dungeon.Change2": {
+                            "next": "Dungeon.Barrier.Entry"
+                        },
+                        "Global.AutoCombat.BacktoEntry": {
                             "next": "Dungeon.Barrier.Entry"
                         }
                     }
@@ -223,6 +235,9 @@
             ],
             "pipeline_override": {
                 "Dungeon.Change2": {
+                    "next": "Dungeon.Activity.Entry"
+                },
+                "Global.AutoCombat.BacktoEntry": {
                     "next": "Dungeon.Activity.Entry"
                 },
                 "Dungeon.Activity.Choice": {
@@ -360,6 +375,9 @@
                         "Combat.Entry": {
                             "next": "Flower.Entry"
                         },
+                        "Global.AutoCombat.BacktoEntry": {
+                            "next": "Flower.Entry"
+                        },
                         "Flower.Go1": {
                             "next": "Flower.Select.ATK"
                         }
@@ -371,6 +389,9 @@
                     "description": "$14_def_description",
                     "pipeline_override": {
                         "Combat.Entry": {
+                            "next": "Flower.Entry"
+                        },
+                        "Global.AutoCombat.BacktoEntry": {
                             "next": "Flower.Entry"
                         },
                         "Flower.Go1": {
@@ -386,6 +407,9 @@
                         "Combat.Entry": {
                             "next": "DailyRes.Entry"
                         },
+                        "Global.AutoCombat.BacktoEntry": {
+                            "next": "DailyRes.Entry"
+                        },
                         "DailyRes.Go1": {
                             "next": "DailyRes.Coin.Entry"
                         }
@@ -399,6 +423,9 @@
                         "Combat.Entry": {
                             "next": "DailyRes.Entry"
                         },
+                        "Global.AutoCombat.BacktoEntry": {
+                            "next": "DailyRes.Entry"
+                        },
                         "DailyRes.Go1": {
                             "next": "DailyRes.Exp.Entry"
                         }
@@ -410,6 +437,9 @@
                     "description": "$skill_n3_description",
                     "pipeline_override": {
                         "Combat.Entry": {
+                            "next": "DailyRes.Entry"
+                        },
+                        "Global.AutoCombat.BacktoEntry": {
                             "next": "DailyRes.Entry"
                         },
                         "DailyRes.Go1": {
@@ -493,6 +523,9 @@
             ],
             "pipeline_override": {
                 "Combat.Entry": {
+                    "next": "Activity.Entry"
+                },
+                "Global.AutoCombat.BacktoEntry": {
                     "next": "Activity.Entry"
                 },
                 "Activity.Select": {
