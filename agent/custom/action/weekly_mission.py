@@ -8,7 +8,6 @@ from copy import deepcopy
 import re
 import time
 
-# TODO: 支持多语言
 @AgentServer.custom_action("WeeklyMission")
 class WeeklyMission(CustomAction):
     def __init__(self):

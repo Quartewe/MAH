@@ -1,0 +1,141 @@
+{
+    "AutoGacha.Entry": {
+        "next": [
+            "AutoGacha.Start"
+        ]
+    },
+    "AutoGacha.Start": {
+        "recognition": {
+            "type": "OCR",
+            "param": {
+                "roi": [
+                    378,
+                    569,
+                    895,
+                    143
+                ],
+                "expected": [
+                    "20000"
+                ]
+            }
+        },
+        "action": {
+            "type": "Click",
+            "param": {}
+        },
+        "next": [
+            "AutoGacha.Start1"
+        ],
+        "on_error": [
+            "AutoGacha.Out"
+        ]
+    },
+    "AutoGacha.Start1": {
+        "recognition": {
+            "type": "OCR",
+            "param": {
+                "roi": [
+                    328,
+                    389,
+                    616,
+                    186
+                ],
+                "expected": [
+                    "OK"
+                ]
+            }
+        },
+        "action": {
+            "type": "Click",
+            "param": {}
+        },
+        "timeout": -1,
+        "next": [
+            "AutoGacha.Skip"
+        ]
+    },
+    "AutoGacha.Skip": {
+        "recognition": {
+            "type": "OCR",
+            "param": {
+                "roi": [
+                    1053,
+                    7,
+                    218,
+                    95
+                ],
+                "expected": [
+                    "SKIP ALL"
+                ]
+            }
+        },
+        "action": {
+            "type": "Click",
+            "param": {}
+        },
+        "timeout": -1,
+        "next": [
+            "AutoGacha.Record"
+        ]
+    },
+    "AutoGacha.Countinue": {
+        "recognition": {
+            "type": "OCR",
+            "param": {
+                "roi": [
+                    328,
+                    589,
+                    656,
+                    124
+                ],
+                "expected": [
+                    "TOUCHSCREEN"
+                ]
+            }
+        },
+        "action": {
+            "type": "Click",
+            "param": {}
+        },
+        "timeout": -1,
+        "next": [
+            "AutoGacha.Start"
+        ]
+    },
+    "AutoGacha.Out": {
+        "action": {
+            "type": "StopTask",
+            "param": {}
+        }
+    },
+    "AutoGacha.Record": {
+        "recognition": {
+            "type": "OCR",
+            "param": {
+                "roi": [
+                    328,
+                    589,
+                    656,
+                    124
+                ],
+                "expected": [
+                    "TOUCHSCREEN"
+                ]
+            }
+        },
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "Counter",
+                "custom_action_param": 1
+            }
+        },
+        "timeout": -1,
+        "next": [
+            "AutoGacha.Countinue"
+        ],
+        "on_error": [
+            "AutoGacha.Out"
+        ]
+    }
+}
