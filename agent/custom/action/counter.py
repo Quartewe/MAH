@@ -15,14 +15,14 @@ class Counter(CustomAction):
         context: Context,
         argv: CustomAction.RunArg,
     ) -> bool:
-        
         param = int(json.loads(argv.custom_action_param))
 
-        if info_share.counter < param:
-            info_share.counter += 1
-            print(f"[COUNTER] 计数已增加到 {info_share.counter}")
+        current_count = info_share.counter
+        print(f"[COUNTER] count={current_count} target={param}", flush=True)
+
+        if current_count < param:
+            info_share.counter = current_count + 1
             return True
         else:
-            print(f"[COUNTER] 计数达到最大值 {param}")
-            info_share.counter = 1  # Reset counter for next round
+            info_share.counter = 1
             return False
