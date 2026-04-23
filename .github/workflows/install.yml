@@ -606,7 +606,7 @@ jobs:
     needs: meta
     runs-on: ubuntu-latest
     outputs:
-      release_body: ${{ steps.git-cliff.outputs.content }}
+      release_body: ${{ steps.compose_release_body.outputs.release_body }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -626,6 +626,149 @@ jobs:
         env:
           OUTPUT: CHANGES.md
           GITHUB_REPO: ${{ github.repository }}
+
+      - name: Compose release body with MAH-UI and resource notes
+        id: compose_release_body
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MAH_UI_REPO: Quartewe/MAH-UI
+          DEFAULT_RESOURCE_REPO: quartawa/mah_res
+          INPUT_RESOURCE_REPO: ${{ github.event.inputs.resource_repo }}
+          INPUT_RESOURCE_REF: ${{ github.event.inputs.resource_ref }}
+          TARGET_TAG: ${{ needs.meta.outputs.tag }}
+        run: |
+          set -euo pipefail
+
+          resource_repo="$INPUT_RESOURCE_REPO"
+          if [[ -z "$resource_repo" ]]; then
+            resource_repo="$DEFAULT_RESOURCE_REPO"
+          fi
+
+          resource_ref="$INPUT_RESOURCE_REF"
+          if [[ -z "$resource_ref" || "$resource_ref" == "main" ]]; then
+            resource_api="https://api.github.com/repos/${resource_repo}/releases/latest"
+            echo "读取资源版本：使用 ${resource_repo} 最新 release"
+          else
+            resource_api="https://api.github.com/repos/${resource_repo}/releases/tags/${resource_ref}"
+            echo "读取资源版本：使用 ${resource_repo} 的指定 tag ${resource_ref}"
+          fi
+
+          resource_json=$(curl -fsSL -H "Authorization: token $GITHUB_TOKEN" "$resource_api" || true)
+          resource_version=$(echo "$resource_json" | jq -r '.tag_name // empty')
+          if [[ -n "$resource_version" ]]; then
+            echo "读取到资源版本: $resource_version"
+          else
+            echo "[WARNING] 未读取到资源版本号，将跳过写入 CI 分类"
+          fi
+
+          ui_api_by_tag="https://api.github.com/repos/${MAH_UI_REPO}/releases/tags/${TARGET_TAG}"
+          ui_api_latest="https://api.github.com/repos/${MAH_UI_REPO}/releases/latest"
+          ui_json=$(curl -fsSL -H "Authorization: token $GITHUB_TOKEN" "$ui_api_by_tag" || true)
+          ui_version=$(echo "$ui_json" | jq -r '.tag_name // empty')
+          if [[ -z "$ui_version" ]]; then
+            echo "未找到 MAH-UI 对应 tag ${TARGET_TAG}，回退到 latest"
+            ui_json=$(curl -fsSL -H "Authorization: token $GITHUB_TOKEN" "$ui_api_latest" || true)
+            ui_version=$(echo "$ui_json" | jq -r '.tag_name // empty')
+          fi
+
+          ui_body=$(echo "$ui_json" | jq -r '.body // empty')
+          if [[ -n "$ui_body" ]]; then
+            echo "读取到 MAH-UI 更新内容: ${ui_version}"
+          else
+            echo "[WARNING] 未读取到 MAH-UI 更新内容，将跳过 UI更新 段落"
+          fi
+
+          ui_body_file=$(mktemp)
+          printf '%s\n' "$ui_body" > "$ui_body_file"
+
+          RESOURCE_VERSION="$resource_version" UI_VERSION="$ui_version" UI_BODY_FILE="$ui_body_file" python - <<'PY'
+          import os
+          from pathlib import Path
+
+
+          def inject_resource_ci(body: str, version: str) -> str:
+              if not version:
+                  return body
+
+              heading = "### ⚙️ 持续集成"
+              entry = f"- 资源更新到: {version}"
+              lines = body.splitlines()
+
+              start = -1
+              for idx, line in enumerate(lines):
+                  if line.strip() == heading:
+                      start = idx
+                      break
+
+              if start == -1:
+                  stripped = body.rstrip()
+                  if stripped:
+                      return f"{stripped}\n\n{heading}\n{entry}\n"
+                  return f"{heading}\n{entry}\n"
+
+              end = len(lines)
+              for idx in range(start + 1, len(lines)):
+                  if lines[idx].startswith("### "):
+                      end = idx
+                      break
+
+              section_text = "\n".join(lines[start:end])
+              if entry in section_text:
+                  return body
+
+              insert_at = end
+              while insert_at > start + 1 and lines[insert_at - 1].strip() == "":
+                  insert_at -= 1
+              lines.insert(insert_at, entry)
+              return "\n".join(lines).rstrip() + "\n"
+
+
+          def normalize_ui_body(raw: str) -> str:
+              if not raw.strip():
+                  return ""
+
+              lines = raw.replace("\r\n", "\n").split("\n")
+
+              while lines and not lines[0].strip():
+                  lines.pop(0)
+
+              if lines and lines[0].lstrip().startswith("# "):
+                  lines.pop(0)
+
+              for idx, line in enumerate(lines):
+                  if line.lstrip().startswith("## "):
+                      lines.pop(idx)
+                      break
+
+              while lines and not lines[0].strip():
+                  lines.pop(0)
+              while lines and not lines[-1].strip():
+                  lines.pop()
+
+              return "\n".join(lines).strip()
+
+
+          base_path = Path("CHANGES.md")
+          base_body = base_path.read_text(encoding="utf-8") if base_path.exists() else ""
+          resource_version = os.environ.get("RESOURCE_VERSION", "").strip()
+
+          ui_body_file = Path(os.environ["UI_BODY_FILE"])
+          ui_raw = ui_body_file.read_text(encoding="utf-8") if ui_body_file.exists() else ""
+          ui_normalized = normalize_ui_body(ui_raw)
+
+          merged = inject_resource_ci(base_body, resource_version)
+          if ui_normalized:
+              merged = merged.rstrip() + "\n\nUI更新:\n\n" + ui_normalized + "\n"
+
+          output_path = Path(os.environ["GITHUB_OUTPUT"])
+          with output_path.open("a", encoding="utf-8") as output_file:
+              output_file.write("release_body<<EOF\n")
+              output_file.write(merged.rstrip() + "\n")
+              output_file.write("EOF\n")
+          PY
+
+          rm -f "$ui_body_file"
 
   release:
     if: ${{ needs.meta.outputs.is_release == 'true' }}
