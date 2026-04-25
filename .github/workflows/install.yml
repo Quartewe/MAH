@@ -684,69 +684,185 @@ jobs:
 
           RESOURCE_VERSION="$resource_version" UI_VERSION="$ui_version" UI_BODY_FILE="$ui_body_file" python - <<'PY'
           import os
+          import re
           from pathlib import Path
+
+
+          HEADING_RE = re.compile(r"^(#{1,6})\s+(.+?)\s*$")
+
+
+          def normalize_heading_text(text: str) -> str:
+              return re.sub(r"\s+", "", text).lower()
+
+
+          def classify_mah_heading(text: str):
+              normalized = normalize_heading_text(text)
+
+              if "新功能" in text or "feat" in normalized:
+                  return "feat"
+              if "bug修复" in text or "bugfix" in normalized or "修复" in text or "fix" in normalized:
+                  return "fix"
+              if "持续集成" in text or "持续集成" in normalized or normalized == "ci" or "ci" in normalized:
+                  return "ci"
+              return None
+
+
+          def classify_ui_heading(text: str):
+              normalized = normalize_heading_text(text)
+
+              if "新增" in text or "新功能" in text or "feat" in normalized:
+                  return "feat"
+              if "修复" in text or "fix" in normalized:
+                  return "fix"
+              return None
+
+
+          def split_sections(markdown: str):
+              lines = markdown.replace("\r\n", "\n").split("\n")
+              headings = []
+
+              for index, line in enumerate(lines):
+                  stripped = line.lstrip()
+                  match = HEADING_RE.match(stripped)
+                  if match:
+                      hashes = match.group(1)
+                      title = match.group(2).strip()
+                      headings.append((index, hashes, title))
+
+              if not headings:
+                  return lines, []
+
+              sections = []
+              for pos, (start, hashes, title) in enumerate(headings):
+                  end = headings[pos + 1][0] if pos + 1 < len(headings) else len(lines)
+                  sections.append(
+                      {
+                          "hashes": hashes,
+                          "title": title,
+                          "lines": lines[start:end],
+                      }
+                  )
+
+              return lines[: headings[0][0]], sections
+
+
+          def trim_blank_edges(text: str) -> str:
+              lines = text.splitlines()
+              while lines and not lines[0].strip():
+                  lines.pop(0)
+              while lines and not lines[-1].strip():
+                  lines.pop()
+              return "\n".join(lines)
+
+
+          def extract_ui_updates(raw: str):
+              updates = {"feat": "", "fix": ""}
+              if not raw.strip():
+                  return updates
+
+              _, sections = split_sections(raw)
+              if not sections:
+                  return updates
+
+              grouped = {"feat": [], "fix": []}
+              for section in sections:
+                  group = classify_ui_heading(section["title"])
+                  if not group:
+                      continue
+
+                  body_text = trim_blank_edges("\n".join(section["lines"][1:]))
+                  if body_text:
+                      grouped[group].append(body_text)
+
+              for key, chunks in grouped.items():
+                  if chunks:
+                      updates[key] = "\n\n".join(chunks)
+
+              return updates
+
+
+          def append_line_to_section(section_lines, line: str):
+              section_text = "\n".join(section_lines)
+              if line in section_text:
+                  return section_lines
+
+              updated = section_lines[:]
+              insert_at = len(updated)
+              while insert_at > 1 and not updated[insert_at - 1].strip():
+                  insert_at -= 1
+              updated.insert(insert_at, line)
+              return updated
+
+
+          def append_ui_to_section(section_lines, parent_hashes: str, ui_text: str):
+              if not ui_text.strip():
+                  return section_lines
+
+              section_text = "\n".join(section_lines)
+              if re.search(r"(?m)^\s*#{1,6}\s+UI更新[:：]?\s*$", section_text):
+                  return section_lines
+
+              updated = section_lines[:]
+              while len(updated) > 1 and not updated[-1].strip():
+                  updated.pop()
+
+              ui_heading = "#" * min(len(parent_hashes) + 1, 6) + " UI更新:"
+              updated.extend(["", ui_heading, ""])
+              updated.extend(ui_text.splitlines())
+              updated.append("")
+              return updated
+
+
+          def join_sections(prefix_lines, sections) -> str:
+              merged_lines = prefix_lines[:]
+              for section in sections:
+                  merged_lines.extend(section["lines"])
+              return "\n".join(merged_lines).rstrip() + "\n"
 
 
           def inject_resource_ci(body: str, version: str) -> str:
               if not version:
                   return body
 
-              heading = "### ⚙️ 持续集成"
               entry = f"- 资源更新到: {version}"
-              lines = body.splitlines()
-
-              start = -1
-              for idx, line in enumerate(lines):
-                  if line.strip() == heading:
-                      start = idx
-                      break
-
-              if start == -1:
+              prefix_lines, sections = split_sections(body)
+              if not sections:
                   stripped = body.rstrip()
                   if stripped:
-                      return f"{stripped}\n\n{heading}\n{entry}\n"
-                  return f"{heading}\n{entry}\n"
+                      return f"{stripped}\n\n### ⚙️ 持续集成\n{entry}\n"
+                  return f"### ⚙️ 持续集成\n{entry}\n"
 
-              end = len(lines)
-              for idx in range(start + 1, len(lines)):
-                  if lines[idx].startswith("### "):
-                      end = idx
+              ci_index = -1
+              for idx, section in enumerate(sections):
+                  if classify_mah_heading(section["title"]) == "ci":
+                      ci_index = idx
                       break
 
-              section_text = "\n".join(lines[start:end])
-              if entry in section_text:
+              if ci_index == -1:
+                  merged = join_sections(prefix_lines, sections).rstrip()
+                  if merged:
+                      return f"{merged}\n\n### ⚙️ 持续集成\n{entry}\n"
+                  return f"### ⚙️ 持续集成\n{entry}\n"
+
+              sections[ci_index]["lines"] = append_line_to_section(sections[ci_index]["lines"], entry)
+              return join_sections(prefix_lines, sections)
+
+
+          def inject_ui_updates(body: str, ui_updates) -> str:
+              prefix_lines, sections = split_sections(body)
+              if not sections:
                   return body
 
-              insert_at = end
-              while insert_at > start + 1 and lines[insert_at - 1].strip() == "":
-                  insert_at -= 1
-              lines.insert(insert_at, entry)
-              return "\n".join(lines).rstrip() + "\n"
+              for section in sections:
+                  group = classify_mah_heading(section["title"])
+                  if group not in ("feat", "fix"):
+                      continue
 
+                  ui_text = ui_updates.get(group, "")
+                  if ui_text:
+                      section["lines"] = append_ui_to_section(section["lines"], section["hashes"], ui_text)
 
-          def normalize_ui_body(raw: str) -> str:
-              if not raw.strip():
-                  return ""
-
-              lines = raw.replace("\r\n", "\n").split("\n")
-
-              while lines and not lines[0].strip():
-                  lines.pop(0)
-
-              if lines and lines[0].lstrip().startswith("# "):
-                  lines.pop(0)
-
-              for idx, line in enumerate(lines):
-                  if line.lstrip().startswith("## "):
-                      lines.pop(idx)
-                      break
-
-              while lines and not lines[0].strip():
-                  lines.pop(0)
-              while lines and not lines[-1].strip():
-                  lines.pop()
-
-              return "\n".join(lines).strip()
+              return join_sections(prefix_lines, sections)
 
 
           base_path = Path("CHANGES.md")
@@ -755,11 +871,10 @@ jobs:
 
           ui_body_file = Path(os.environ["UI_BODY_FILE"])
           ui_raw = ui_body_file.read_text(encoding="utf-8") if ui_body_file.exists() else ""
-          ui_normalized = normalize_ui_body(ui_raw)
+          ui_updates = extract_ui_updates(ui_raw)
 
           merged = inject_resource_ci(base_body, resource_version)
-          if ui_normalized:
-              merged = merged.rstrip() + "\n\nUI更新:\n\n" + ui_normalized + "\n"
+          merged = inject_ui_updates(merged, ui_updates)
 
           output_path = Path(os.environ["GITHUB_OUTPUT"])
           with output_path.open("a", encoding="utf-8") as output_file:
