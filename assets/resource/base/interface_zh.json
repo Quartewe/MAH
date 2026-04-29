@@ -63,7 +63,7 @@
     "item_choice": "兑换物副本关键词",
     "item_choice_description": "输入兑换物对应的关卡名(支持且建议只输入部分名称, 不允许输入纯数字, 但是必须保证唯一性)",
     "difficulty": "难度",
-    "difficulty_description": "选择副本难度(支持且建议只输入部分名称, 不允许输入纯数字, 但是必须保证唯一性)",
+    "difficulty_description": "选择副本难度(支持且建议只输入部分名称, 不允许输入纯数字, 但是必须保证唯一性, 别填入\"级\"这个字, 因为原文是日文汉字)",
     "json_load": "从JSON文件导入",
     "json_load_description": "使用JSON文件中预设的配置参数",
     "json_path": "文件名",
