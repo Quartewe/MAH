@@ -78,6 +78,23 @@ class SelectSupport(CustomAction):
         support_data["name"] = support_data.get("name", "").lower()
         support_data["id"] = int(support_data.get("id", 0))
         
+        context.run_task(
+                    "UtilsTemplateMatch",
+                    pipeline_override={
+                        "UtilsTemplateMatch": {
+                            "recognition":{
+                                "param": {
+                                    "template": "fight/support/support_default.png",
+                                    "threshold": 0.8,
+                                    "roi": [110,93,799,72]
+                                }
+                            },
+                            "action":{
+                                "type": "Click"
+                            }
+                        }
+                    }
+                )
 
         # 扫描并选择最佳支援
         if not self._scan_and_select_support(context, support_data if not default_mode else None, keywords, select_mode, idroi):
