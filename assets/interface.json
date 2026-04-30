@@ -240,13 +240,13 @@
             "inputs": [
                 {
                     "name": "自定义关卡",
-                    "label": "$custom_dungeon_input",
-                    "description": "$custom_dungeon_input_description",
+                    "label": "$custom_stage_input",
+                    "description": "$custom_stage_input_description",
                     "default": "",
                     "pipeline_type": "string"
                 },
                 {
-                    "name": "难度",
+                    "name": "地城难度",
                     "label": "$difficulty",
                     "description": "$difficulty_description",
                     "default": "",
@@ -270,7 +270,7 @@
                 "Dungeon.Episode": {
                     "recognition": {
                         "param": {
-                            "expected": "{难度}"
+                            "expected": "{地城难度}"
                         }
                     }
                 }
