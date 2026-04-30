@@ -69,7 +69,7 @@
     "custom_stage_activity_description": "手動輸入活動副本的兌換物和難度",
     "item_choice": "兌換物種類",
     "item_choice_description": "輸入兌換物對應的關卡名",
-    "difficulty": "難度",
+    "difficulty": "難度(若只有一個難度則填入副本名)",
     "difficulty_description": "選擇副本難度",
     "json_load": "從JSON文件導入",
     "json_load_description": "使用JSON文件中預設的配置參數",

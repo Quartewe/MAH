@@ -69,7 +69,7 @@
     "custom_stage_activity_description": "Manually input event stage exchange item and difficulty",
     "item_choice": "Exchange Item Type",
     "item_choice_description": "Input exchange item stage name",
-    "difficulty": "Difficulty",
+    "difficulty": "Difficulty(if only one difficulty, input stage name)",
     "difficulty_description": "Select stage difficulty",
     "json_load": "Import from JSON",
     "json_load_description": "Use preset configurations from JSON file",

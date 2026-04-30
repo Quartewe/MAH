@@ -69,7 +69,7 @@
     "custom_stage_activity_description": "イベントの交換アイテムダンジョンキーワードと難易度を入力",
     "item_choice": "交換アイテムダンジョンキーワード",
     "item_choice_description": "交換アイテムダンジョンキーワード",
-    "difficulty": "難易度",
+    "difficulty": "難易度(難易度が1つしかない場合はステージ名を入力)",
     "difficulty_description": "難易度",
     "json_load": "JSONからインポート",
     "json_load_description": "JSONファイルにプリセットされた設定を使用",
