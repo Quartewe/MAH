@@ -679,10 +679,17 @@ jobs:
             echo "[WARNING] 未读取到 MAH-UI 更新内容，将跳过 UI更新 段落"
           fi
 
+          # 获取上一个 MAH release 公告体，用于 UI 更新去重
+          previous_release_json=$(curl -fsSL -H "Authorization: token $GITHUB_TOKEN" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/releases/latest" || true)
+          previous_release_body=$(echo "$previous_release_json" | jq -r '.body // empty' || true)
+          previous_body_file=$(mktemp)
+          printf '%s\n' "$previous_release_body" > "$previous_body_file"
+
           ui_body_file=$(mktemp)
           printf '%s\n' "$ui_body" > "$ui_body_file"
 
-          RESOURCE_VERSION="$resource_version" UI_VERSION="$ui_version" UI_BODY_FILE="$ui_body_file" python - <<'PY'
+          RESOURCE_VERSION="$resource_version" UI_VERSION="$ui_version" UI_BODY_FILE="$ui_body_file" PREVIOUS_BODY_FILE="$previous_body_file" python - <<'PY'
           import os
           import re
           from pathlib import Path
@@ -848,7 +855,7 @@ jobs:
               return join_sections(prefix_lines, sections)
 
 
-          def inject_ui_updates(body: str, ui_updates) -> str:
+          def inject_ui_updates(body: str, ui_updates, previous_body: str = "") -> str:
               prefix_lines, sections = split_sections(body)
               if not sections:
                   return body
@@ -859,8 +866,14 @@ jobs:
                       continue
 
                   ui_text = ui_updates.get(group, "")
-                  if ui_text:
-                      section["lines"] = append_ui_to_section(section["lines"], section["hashes"], ui_text)
+                  if not ui_text:
+                      continue
+
+                  # 去重：如果上一次 MAH release 公告中已包含相同 UI 内容，则跳过
+                  if previous_body and ui_text.strip() in previous_body:
+                      continue
+
+                  section["lines"] = append_ui_to_section(section["lines"], section["hashes"], ui_text)
 
               return join_sections(prefix_lines, sections)
 
@@ -873,8 +886,11 @@ jobs:
           ui_raw = ui_body_file.read_text(encoding="utf-8") if ui_body_file.exists() else ""
           ui_updates = extract_ui_updates(ui_raw)
 
+          previous_body_file = Path(os.environ.get("PREVIOUS_BODY_FILE", ""))
+          previous_body = previous_body_file.read_text(encoding="utf-8") if previous_body_file.exists() else ""
+
           merged = inject_resource_ci(base_body, resource_version)
-          merged = inject_ui_updates(merged, ui_updates)
+          merged = inject_ui_updates(merged, ui_updates, previous_body)
 
           output_path = Path(os.environ["GITHUB_OUTPUT"])
           with output_path.open("a", encoding="utf-8") as output_file:
@@ -883,7 +899,7 @@ jobs:
               output_file.write("EOF\n")
           PY
 
-          rm -f "$ui_body_file"
+          rm -f "$ui_body_file" "$previous_body_file"
 
   release:
     if: ${{ needs.meta.outputs.is_release == 'true' }}
