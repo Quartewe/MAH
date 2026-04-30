@@ -240,8 +240,8 @@
             "inputs": [
                 {
                     "name": "自定义关卡",
-                    "label": "$custom_stage_input",
-                    "description": "$custom_stage_input_description",
+                    "label": "$custom_dungeon_input",
+                    "description": "$custom_dungeon_input_description",
                     "default": "",
                     "pipeline_type": "string"
                 },

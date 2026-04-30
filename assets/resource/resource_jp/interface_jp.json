@@ -24,6 +24,8 @@
     "barrier_temple_description": "五色結界地下霊場",
     "custom_stage": "カスタムステージ",
     "custom_stage_description": "挑戦するステージ名を手動で入力します",
+    "custom_dungeon_input": "カスタムダンジョンマップ名",
+    "custom_dungeon_input_description": "挑戦するダンジョンマップ名を手動で入力します（部分的な名前の入力をサポートし、推奨しますが、唯一性を保証する必要があります）",
     "custom_stage_input": "カスタムステージ名",
     "custom_stage_input_description": "挑戦するステージ名を手動で入力",
     "current_stage": "現在の作戦に入る",

@@ -26,6 +26,8 @@
     "custom_stage_description": "Manually input stage name to challenge (partial name supported and recommended, but must be unique)",
     "current_stage": "Enter the current operation",
     "current_stage_description": "To use this task, you need to set the screen to the formation interface before the start of the operation.",
+    "custom_dungeon_input": "Custom Dungeon Map Name",
+    "custom_dungeon_input_description": "Manually input dungeon map name to enter (partial name supported and recommended, but must be unique)",
     "custom_stage_input": "Custom Stage Name",
     "custom_stage_input_description": "Manually input stage name to challenge",
     "play_times": "Challenge Times",

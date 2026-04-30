@@ -24,6 +24,8 @@
     "barrier_temple_description": "五色結界地下靈場",
     "custom_stage": "自定義關卡",
     "custom_stage_description": "手動輸入關卡名稱進行挑戰(支持且建議只輸入部分名稱, 但是必須保證唯一性)",
+    "custom_dungeon_input": "自定義地城地圖名稱",
+    "custom_dungeon_input_description": "手動輸入地城地圖名稱進入(支持且建議只輸入部分名稱, 但是必須保證唯一性)",
     "custom_stage_input": "自定義關卡名稱",
     "custom_stage_input_description": "手動輸入關卡名稱進行挑戰",
     "current_stage": "進入當前作戰",

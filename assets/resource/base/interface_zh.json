@@ -62,6 +62,8 @@
     "custom_stage_activity_description": "手动输入活动副本的兑换物副本关键词和难度",
     "current_stage": "进入当前作战",
     "current_stage_description": "要使用该任务, 需要将画面设置到作战开始前编队界面",
+    "custom_dungeon_input": "自定义地图名称",
+    "custom_dungeon_input_description": "手动输入地图名称进入(支持且建议只输入部分名称, 但是必须保证唯一性)",
     "use_formation": "使用自动编队",
     "use_formation_description": "使用预设的角色编队配置",
     "if_formation": "使用自动编队",
