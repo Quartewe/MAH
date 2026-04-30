@@ -238,11 +238,17 @@
             "label": "$custom_stage",
             "description": "$custom_stage_description",
             "inputs": [
-                // TODO: 增加难度选择
                 {
                     "name": "自定义关卡",
                     "label": "$custom_stage_input",
                     "description": "$custom_stage_input_description",
+                    "default": "",
+                    "pipeline_type": "string"
+                },
+                {
+                    "name": "难度",
+                    "label": "$difficulty",
+                    "description": "$difficulty_description",
                     "default": "",
                     "pipeline_type": "string"
                 }
@@ -258,6 +264,13 @@
                     "recognition": {
                         "param": {
                             "expected": "{自定义关卡}"
+                        }
+                    }
+                },
+                "Dungeon.Episode": {
+                    "recognition": {
+                        "param": {
+                            "expected": "{难度}"
                         }
                     }
                 }
