@@ -217,6 +217,19 @@
                     "option": [
                         "custom_stage_dungeon"
                     ]
+                },
+                {
+                    "name": "进入当前地城作战",
+                    "label": "$current_stage",
+                    "description": "$current_stage_description",
+                    "option": [
+                        "use_formation"
+                    ],
+                    "pipeline_override": {
+                        "Dungeon.Entry": {
+                            "next": "Global.AutoCombat.Start"
+                        }
+                    }
                 }
             ]
         },
@@ -225,6 +238,7 @@
             "label": "$custom_stage",
             "description": "$custom_stage_description",
             "inputs": [
+                // TODO: 增加难度选择
                 {
                     "name": "自定义关卡",
                     "label": "$custom_stage_input",
@@ -462,6 +476,38 @@
                     "option": [
                         "custom_stage_Activity"
                     ]
+                },
+                {
+                    "name": "进入当前作战",
+                    "label": "$current_stage",
+                    "description": "$current_stage_description",
+                    "option": [
+                        "use_formation"
+                    ],
+                    "pipeline_override": {
+                        "Combat.Entry": {
+                            "next": "Global.AutoCombat.Start"
+                        }
+                    }
+                }
+            ]
+        },
+        "use_formation": {
+            "type": "checkbox",
+            "label": "$use_formation",
+            "description": "$use_formation_description",
+            "default_case": [
+                "if_formation"
+            ],
+            "cases": [
+                {
+                    "name": "if_formation",
+                    "label": "$if_formation",
+                    "pipeline_override": {
+                        "Combat.Entry": {
+                            "next": "Global.AutoCombat.TeamSelect"
+                        }
+                    }
                 }
             ]
         },
