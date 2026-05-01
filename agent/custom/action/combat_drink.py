@@ -142,6 +142,9 @@ class CombatDrink(CustomAction):
                 )
                 self.drink_times[item] += 1
                 return True
+            elif item == "Ranpoil":
+                print(f"[DEBUG] {item} 使用成功")
+                return True
             else:
                 print(f"[DEBUG] 未找到可用的 {item}")
                 return False
@@ -207,15 +210,3 @@ class CombatDrink(CustomAction):
             )
             timeout_mgr.stop_monitoring(argv.node_name)
             return False
-
-            
-        
-        # match act_mgr.detect_lang(context, [192,81,895,546], ignore=self.IGNORE_LIST):
-        #     case "jp":
-        #         markers = ["クエスト画面", "再突入", "所持", "再突入", "キャンセル"]
-        #     case "cn":
-        #         markers = ["再次挑战", "回任务画面", "持有", "再次挑战", "取消"]
-        #     case "tw":
-        #         markers = ["再次挑戰", "回任務畫面", "持有", "再次挑戰", "取消"]
-        #     case "en":
-        #         markers = ["Play Again", "Return to Quests", "Possess", "Play Again", "Cancel"]
