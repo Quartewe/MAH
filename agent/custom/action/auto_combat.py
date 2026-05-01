@@ -5,6 +5,8 @@ from utils import timeout_mgr, data_io, act_mgr, match_mgr, proj_path, info_shar
 import random
 import time
 
+# TODO: 修复无法识别skill的问题
+
 @AgentServer.custom_action("AutoCombat")
 class AutoCombat(CustomAction):
     def __init__(self):
@@ -207,7 +209,7 @@ class AutoCombat(CustomAction):
             if complete_res.best_result and complete_res.best_result.score > 0.8:
                 text = complete_res.best_result.text
                 print(f"[DEBUG] _detect_complete: OCR识别结果: {text}")
-                if match_mgr.fuzzy_match("TOUCHSCREEN", text):
+                if text in ["TOUCHSCREEN", "TOUCH", "SCREEN", "TOUCH SCREEN"]:
                     print(f"[DEBUG] 检测到战斗结束文本: {text}，正在点击继续...")
                     context.run_action(
                         "UtilsClick",
@@ -222,10 +224,6 @@ class AutoCombat(CustomAction):
                         },
                     )
                     return True
-            elif back_res.best_result and back_res.best_result.score > 0.8:
-                text = back_res.best_result.text
-                print(f"[DEBUG] 检测到战斗结束文本: {text}，正在点击继续...")
-                return True
             else:
                 print("[DEBUG] _detect_complete: OCR未检测到结果")
             return False
@@ -291,6 +289,11 @@ class AutoCombat(CustomAction):
             )
 
             print(f"[DEBUG] 动作 {i} 即将执行滑动...")
+            print(f"[DEBUG] 技能状态检测结果: {detect_skill.filtered_results}")
+            if detect_skill.best_result:
+                print(f"[DEBUG] 存在单位的技能被禁用, 尝试忽略等待, 位置为:{detect_skill.best_result}")
+            else:
+                print(f"[DEBUG] 未检测到技能状态，默认执行滑动并等待...")
 
             context.run_action(
                 "UtilsSwipe",
