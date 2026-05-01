@@ -51,6 +51,8 @@ class AutoCombat(CustomAction):
     def _get_posL(self, context):
         i = 0
         while i < 30:
+            if self._check_running(context):
+                return None
             context.tasker.controller.post_screencap().wait()
             current_image = context.tasker.controller.cached_image
             leader = context.run_recognition(
@@ -62,7 +64,7 @@ class AutoCombat(CustomAction):
                             "time": 1500,
                             "target": [647,373,583,342],
                             "threshold": 0.99,
-                            "timeout": -1,
+                            "timeout": 15000,
                         },
                         "recognition": {
                             "param": {
@@ -162,9 +164,20 @@ class AutoCombat(CustomAction):
             15,
         ]
 
+    def _check_running(self, context):
+        """轻量检查：仅检测任务是否被用户终止，不执行任何识别"""
+        if not context.tasker.running:
+            print("[DEBUG] 检测到用户终止任务，正在退出...")
+            self.if_complete = True
+            self.detect_complete_error = True
+            return True
+        return False
+
     def _detect_complete(self, context):
         """检测战斗是否结束，若结束则设置 self.if_complete = True"""
         if self.if_complete:
+            return True
+        if self._check_running(context):
             return True
         try:
             context.tasker.controller.post_screencap().wait()
@@ -178,7 +191,7 @@ class AutoCombat(CustomAction):
                             "time": 500,
                             "target": [649,25,629,693],
                             "threshold": 0.99,
-                            "timeout": -1,
+                            "timeout": 15000,
                         },
                         "recognition": {
                             "param": {
@@ -191,10 +204,7 @@ class AutoCombat(CustomAction):
                 },
             )
             print(f"[DEBUG] _detect_complete: OCR识别结果: {complete_res.all_results}")
-            if not context.tasker.running:
-                print("[DEBUG] 用户终止, 正在退出...")
-                self.detect_complete_error = True
-                self.if_complete = True
+            if self._check_running(context):
                 return True
             back_res = context.run_recognition(
                 "UtilsOCR",
@@ -309,6 +319,10 @@ class AutoCombat(CustomAction):
             else:
                 print(f"[DEBUG] 未检测到技能状态，默认执行滑动并等待...")
 
+            # 重操作前检查：若用户已取消则跳过滑动
+            if self._check_running(context):
+                return current_pos_data
+
             context.run_action(
                 "UtilsSwipe",
                 pipeline_override={
@@ -317,13 +331,13 @@ class AutoCombat(CustomAction):
                             "time": 1000 if not detect_skill.best_result else 0,
                             "target": [649,25,629,693],
                             "threshold": 0.999,
-                            "timeout": -1,
+                            "timeout": 15000,
                         },
                         "post_wait_freezes":{
                             "time": 1000 if not detect_skill.best_result else 0,
                             "target": [649,25,629,693],
                             "threshold": 0.999,
-                            "timeout": -1,
+                            "timeout": 15000,
                         },
                         "begin": char_pos,
                         "end": end_points,
@@ -334,6 +348,10 @@ class AutoCombat(CustomAction):
             )
 
             print(f"[DEBUG] 动作 {i} 已执行，等待回合变化...")
+
+            # 重操作后检查：滑动期间用户可能已取消
+            if self._check_running(context):
+                return current_pos_data
 
             if self._detect_complete(context):
                 print("[DEBUG] 检测到战斗结束，正在退出...")
@@ -376,7 +394,7 @@ class AutoCombat(CustomAction):
                             "time": 1500,
                             "target": [647,373,583,342],
                             "threshold": 0.999,
-                            "timeout": -1,
+                            "timeout": 15000,
                         },
                         "recognition": {
                             "param": {
@@ -470,7 +488,7 @@ class AutoCombat(CustomAction):
                                 "time": 500,
                                 "target": [647,373,583,342],
                                 "threshold": 0.99,
-                                "timeout": -1,
+                                "timeout": 15000,
                             }, 
                             "param": {
                                 "roi": self.toolbar_roi,
@@ -527,7 +545,7 @@ class AutoCombat(CustomAction):
                                 "time": 500,
                                 "target": [647,373,583,342],
                                 "threshold": 0.99,
-                                "timeout": -1,
+                                "timeout": 15000,
                             },
                             "action": {
                                 "param": {
@@ -642,6 +660,8 @@ class AutoCombat(CustomAction):
                     return False, current_pos_data
 
                 loop_count += 1
+                if self._check_running(context):
+                    return False, current_pos_data
                 current_pos_data = self._combat(
                     context,
                     loop_action_data,
@@ -700,6 +720,9 @@ class AutoCombat(CustomAction):
                 while not self.if_complete:
                     print("[DEBUG] 自动战斗模式运行中，等待战斗结束...")
                     self._detect_complete(context)
+                    if self._check_running(context):
+                        timeout_mgr.stop_monitoring(argv.node_name)
+                        return False
                     if time.monotonic() - start > max_wait:
                         print(f"[WARNING] 自动战斗等待 {max_wait} 秒后超时")
                         timeout_mgr.stop_monitoring(argv.node_name)
@@ -717,12 +740,12 @@ class AutoCombat(CustomAction):
                 posL = self._get_posL(context)
                 if not info_share.leader_pos:
                     info_share.leader_pos = posL
-                elif abs(info_share.leader_pos[0] - posL[0]) > 20 or abs(info_share.leader_pos[1] - posL[1]) > 20:
-                    time.sleep(1)
+                elif abs(info_share.leader_pos[0] - posL[0]) > 40 or abs(info_share.leader_pos[1] - posL[1]) > 40:
+                    time.sleep(3)
                     print(f"[WARNING] 检测到队长位置变化，正在复核位置准确性...")
                     last_posL = posL
                     current_posL = self._get_posL(context)
-                    if abs(last_posL[0] - current_posL[0]) > 20 or abs(last_posL[1] - current_posL[1]) > 20:
+                    if abs(last_posL[0] - current_posL[0]) > 40 or abs(last_posL[1] - current_posL[1]) > 40:
                         print(f"[DEBUG] 正在修正位置误差...")
                         posL = current_posL
                     else:
@@ -755,4 +778,5 @@ class AutoCombat(CustomAction):
         try:
             return main()
         finally:
+            self.if_complete = False
             timeout_mgr.stop_monitoring(argv.node_name)
