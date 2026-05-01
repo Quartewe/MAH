@@ -224,6 +224,12 @@ class AutoCombat(CustomAction):
                         },
                     )
                     return True
+                elif back_res.best_result and back_res.best_result.score > 0.8:
+                    back_text = back_res.best_result.text
+                    print(f"[DEBUG] _detect_complete: OCR识别结果: {back_text}")
+                    if back_text in ["BACK", "返回"]:
+                        print(f"[DEBUG] 检测到返回按钮文本: {back_text}，正在点击返回...")
+                        return True
             else:
                 print("[DEBUG] _detect_complete: OCR未检测到结果")
             return False
@@ -635,11 +641,8 @@ class AutoCombat(CustomAction):
                     current_pos_data
                 )
 
-                if not loop_complete:
-                    return False, current_pos_data
-                
-                if self._detect_complete(context):
-                    print("[DEBUG] 循环阶段检测到战斗结束，正在退出...")
+                if loop_complete:
+                    print("[DEBUG] 循环战斗已完成，正在退出...")
                     return True, current_pos_data
 
                 if time.monotonic() - start > max_wait:
