@@ -15,6 +15,7 @@ class AutoCombat(CustomAction):
         self.fight_roi = [643, 0, 636, 719]
         self.DATA_PATH = proj_path.AUTO_COMBAT_DIR
         self.detect_complete_error = False
+        self.if_complete = False
         self.UNIT_LENGTH = 110
         
     def _move_data(self, action_list, start_pos=None):
@@ -162,6 +163,9 @@ class AutoCombat(CustomAction):
         ]
 
     def _detect_complete(self, context):
+        """检测战斗是否结束，若结束则设置 self.if_complete = True"""
+        if self.if_complete:
+            return True
         try:
             context.tasker.controller.post_screencap().wait()
             current_image = context.tasker.controller.cached_image
@@ -190,6 +194,7 @@ class AutoCombat(CustomAction):
             if not context.tasker.running:
                 print("[DEBUG] 用户终止, 正在退出...")
                 self.detect_complete_error = True
+                self.if_complete = True
                 return True
             back_res = context.run_recognition(
                 "UtilsOCR",
@@ -223,12 +228,14 @@ class AutoCombat(CustomAction):
                             }
                         },
                     )
+                    self.if_complete = True
                     return True
                 elif back_res.best_result and back_res.best_result.score > 0.8:
                     back_text = back_res.best_result.text
                     print(f"[DEBUG] _detect_complete: OCR识别结果: {back_text}")
                     if back_text in ["BACK", "返回"]:
-                        print(f"[DEBUG] 检测到返回按钮文本: {back_text}，正在点击返回...")
+                        print(f"[DEBUG] 检测到返回按钮文本: {back_text}，正在点击继续...")
+                        self.if_complete = True
                         return True
             else:
                 print("[DEBUG] _detect_complete: OCR未检测到结果")
@@ -237,6 +244,7 @@ class AutoCombat(CustomAction):
             print(f"[ERROR] _detect_complete 异常: {e}")
             import traceback
             self.detect_complete_error = True
+            self.if_complete = True
             traceback.print_exc()
             return True
         
@@ -255,7 +263,7 @@ class AutoCombat(CustomAction):
         for i in range(len(action_data)):
             if self._detect_complete(context):
                 print("[DEBUG] 检测到战斗结束，正在退出...")
-                return True, current_pos_data
+                return current_pos_data
 
             # init
             action = action_data.get(f"{i}", None)
@@ -329,12 +337,12 @@ class AutoCombat(CustomAction):
 
             if self._detect_complete(context):
                 print("[DEBUG] 检测到战斗结束，正在退出...")
-                return True, current_pos_data
+                return current_pos_data
 
             current_pos_data = self._get_all_pos(current_pos_data, action)
             print(f"[DEBUG] 动作 {i} 后更新相对位置: {current_pos_data}")
 
-        return True, current_pos_data
+        return current_pos_data
 
 
     def run(
@@ -603,16 +611,16 @@ class AutoCombat(CustomAction):
         def list_combat(pos_data, base_action_data, posL):
             if not base_action_data:
                 print("[WARNING] 未配置基础战斗动作")
-                return False, pos_data
+                return pos_data
 
-            list_complete, current_pos_data = self._combat(
+            current_pos_data = self._combat(
                 context,
                 base_action_data,
                 posL,
                 pos_data
             )
 
-            return list_complete, current_pos_data
+            return current_pos_data
 
         def loop_combat(current_pos_data, loop_action_data, posL):
             if not loop_action_data:
@@ -624,32 +632,34 @@ class AutoCombat(CustomAction):
             max_wait = 300
             loop_count = 0
 
-            while True:
+            while not self.if_complete:
                 if self._detect_complete(context):
                     print("[DEBUG] 循环阶段检测到战斗结束，正在退出...")
-                    return True, current_pos_data
+                    break
                 
                 if self.detect_complete_error:
                     print("[WARNING] 检测到 _detect_complete 之前出现错误，为避免潜在死循环，退出循环战斗")
                     return False, current_pos_data
 
                 loop_count += 1
-                loop_complete, current_pos_data = self._combat(
+                current_pos_data = self._combat(
                     context,
                     loop_action_data,
                     posL,
                     current_pos_data
                 )
 
-                if loop_complete:
-                    print("[DEBUG] 循环战斗已完成，正在退出...")
-                    return True, current_pos_data
+                if self.if_complete:
+                    break
 
                 if time.monotonic() - start > max_wait:
                     print(f"[WARNING] 循环战斗等待 {max_wait} 秒后超时")
                     return False, current_pos_data
 
                 print(f"[DEBUG] 循环战斗第 {loop_count} 轮未完成，正在重试...")
+
+            print("[DEBUG] 循环战斗已完成，正在退出...")
+            return True, current_pos_data
 
         def main() -> bool:
             param = argv.custom_action_param
@@ -687,17 +697,18 @@ class AutoCombat(CustomAction):
 
                 start = time.monotonic()
                 max_wait = 180
-                while True:
+                while not self.if_complete:
                     print("[DEBUG] 自动战斗模式运行中，等待战斗结束...")
-                    ifcompleted = self._detect_complete(context)
-                    if ifcompleted:
-                        timeout_mgr.stop_monitoring(argv.node_name)
-                        return True
-                    time.sleep(1)  # 减少 CPU 占用，保持响应速度
+                    self._detect_complete(context)
                     if time.monotonic() - start > max_wait:
                         print(f"[WARNING] 自动战斗等待 {max_wait} 秒后超时")
                         timeout_mgr.stop_monitoring(argv.node_name)
                         return False
+                    time.sleep(1)
+
+                print("[DEBUG] 自动战斗已完成")
+                timeout_mgr.stop_monitoring(argv.node_name)
+                return True
 
             if info_share.auto_combat_mode:
                 disable_auto_combat()
@@ -722,8 +733,8 @@ class AutoCombat(CustomAction):
                     timeout_mgr.stop_monitoring(argv.node_name)
                     return False
                 base_action_data, loop_action_data = analyze_data(action_data)
-                list_completed, current_pos_data = list_combat(pos_data, base_action_data, posL)
-                if loop_action_data and list_completed:
+                current_pos_data = list_combat(pos_data, base_action_data, posL)
+                if loop_action_data and not self.if_complete:
                     print("[DEBUG] 基础执行完成，开始循环战斗...")
                     loop_completed, _ = loop_combat(current_pos_data, loop_action_data, posL)
                     if loop_completed:
@@ -735,10 +746,9 @@ class AutoCombat(CustomAction):
                     timeout_mgr.stop_monitoring(argv.node_name)
                     return False
                 else:
-                    if list_completed:
-                        print("[DEBUG] 基础执行完成")
-                        timeout_mgr.stop_monitoring(argv.node_name)
-                        return True
+                    print("[DEBUG] 完成当前战斗")
+                    timeout_mgr.stop_monitoring(argv.node_name)
+                    return True
             timeout_mgr.stop_monitoring(argv.node_name)
             return False
 
