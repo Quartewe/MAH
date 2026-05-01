@@ -3,7 +3,7 @@ from maa.custom_action import CustomAction
 from maa.context import Context
 import json
 import time
-
+from utils import timeout_mgr
 
 @AgentServer.custom_action("GoBack")
 class GoBack(CustomAction):
@@ -15,7 +15,9 @@ class GoBack(CustomAction):
         context: Context,
         argv: CustomAction.RunArg,
     ) -> bool:
-        
+        if timeout_mgr.check_timeout(argv.node_name):
+            return False
+
         param = json.loads(argv.custom_action_param)
         i = 0
         last_try = False
@@ -72,6 +74,7 @@ class GoBack(CustomAction):
 
                 if last_try and not back_res.best_result:
                     print("[DEBUG] 返回成功")
+                    timeout_mgr.stop_monitoring(argv.node_name)
                     return True
                 else: 
                     print("[DEBUG] 仍在加载，继续等待")
@@ -105,8 +108,10 @@ class GoBack(CustomAction):
 
             if not back_res.best_result and not loading_res.best_result:
                 print("[DEBUG] 返回成功")
+                timeout_mgr.stop_monitoring(argv.node_name)
                 return True
 
             i += 1
         print("[DEBUG]GoBack 尝试 15 次后仍未返回")
+        timeout_mgr.stop_monitoring(argv.node_name)
         return False
