@@ -166,10 +166,9 @@ class AutoCombat(CustomAction):
 
     def _check_running(self, context):
         """轻量检查：仅检测任务是否被用户终止，不执行任何识别"""
-        if not context.tasker.running:
+        if context.tasker.stopping:
             print("[DEBUG] 检测到用户终止任务，正在退出...")
             self.if_complete = True
-            self.detect_complete_error = True
             return True
         return False
 
@@ -778,5 +777,6 @@ class AutoCombat(CustomAction):
         try:
             return main()
         finally:
+            self.detect_complete_error = False
             self.if_complete = False
             timeout_mgr.stop_monitoring(argv.node_name)
