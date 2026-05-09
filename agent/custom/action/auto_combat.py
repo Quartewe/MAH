@@ -240,13 +240,12 @@ class AutoCombat(CustomAction):
                     )
                     self.if_complete = True
                     return True
-                elif back_res.best_result and back_res.best_result.score > 0.8:
-                    back_text = back_res.best_result.text
-                    print(f"[DEBUG] _detect_complete: OCR识别结果: {back_text}")
-                    if back_text in ["BACK", "返回"]:
-                        print(f"[DEBUG] 检测到返回按钮文本: {back_text}，正在点击继续...")
-                        self.if_complete = True
-                        return True
+                elif back_res.filtered_results:
+                    for res in back_res.filtered_results:
+                        if res.text in ["再突入", "再次挑战", "Play Again", "再次挑戰"]:
+                            print(f"[DEBUG] 检测到返回按钮文本: {res.text}，正在点击继续...")
+                            self.if_complete = True
+                            return True
             else:
                 print("[DEBUG] _detect_complete: OCR未检测到结果")
             return False
