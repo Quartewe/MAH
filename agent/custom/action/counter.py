@@ -17,6 +17,10 @@ class Counter(CustomAction):
     ) -> bool:
         param = int(json.loads(argv.custom_action_param))
 
+        if argv.node_name == "Global.AutoCombat.CountClear" or not param:
+            info_share.counter = 1
+            print(f"[COUNTER] counter cleared", flush=True)
+
         current_count = info_share.counter
         print(f"[COUNTER] count={current_count} target={param}", flush=True)
 
