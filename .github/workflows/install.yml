@@ -73,6 +73,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: true
+          fetch-depth: 0
 
       - name: Download MaaFramework
         uses: robinraju/release-downloader@v1
@@ -404,6 +405,31 @@ jobs:
             echo "Docs copied to install/docs"
           else
             echo "[WARNING] docs directory not found, skipping"
+          fi
+
+      - name: Generate release notes for update announcement
+        uses: orhun/git-cliff-action@v4
+        with:
+          config: .github/cliff.toml
+          args: -vv --latest --strip header
+        env:
+          OUTPUT: CHANGES_RELEASE.md
+
+      - name: Copy release notes into package
+        shell: bash
+        env:
+          RELEASE_TAG: ${{ needs.meta.outputs.tag }}
+        run: |
+          set -euo pipefail
+          mkdir -p install/docs/release_note
+          if [[ -f CHANGES_RELEASE.md ]]; then
+            cp CHANGES_RELEASE.md "install/docs/release_note/${RELEASE_TAG}.md"
+            echo "Release notes copied to install/docs/release_note/${RELEASE_TAG}.md"
+          else
+            echo "## ${RELEASE_TAG}" > "install/docs/release_note/${RELEASE_TAG}.md"
+            echo "" >> "install/docs/release_note/${RELEASE_TAG}.md"
+            echo "更新公告请查看 [GitHub Releases](https://github.com/${GITHUB_REPOSITORY}/releases/tag/${RELEASE_TAG})" >> "install/docs/release_note/${RELEASE_TAG}.md"
+            echo "[WARNING] git-cliff did not produce output, wrote fallback release notes"
           fi
 
       - name: Inject strenum fallback for Windows package
