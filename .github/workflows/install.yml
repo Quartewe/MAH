@@ -414,6 +414,7 @@ jobs:
           args: -vv --latest --strip header
         env:
           OUTPUT: CHANGES_RELEASE.md
+          GITHUB_REPO: ${{ github.repository }}
 
       - name: Copy release notes into package
         shell: bash
