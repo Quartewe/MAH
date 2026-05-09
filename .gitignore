@@ -461,10 +461,9 @@ ui.json
 assets/resource/base/image/ar/*
 assets/resource/base/image/character/*
 
+.nicegui/storage-general.json
 
-.nicegui/
-
-storage-general.json
+.nicegui/*
 
 state.json
 

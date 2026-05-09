@@ -68,14 +68,15 @@ class AutoCombat(CustomAction):
                         },
                         "recognition": {
                             "param": {
-                                "roi": self.fight_roi,
-                                "threshold": 0.9,
+                                "roi": [647,373,583,342],
+                                "threshold": 0.8,
                                 "template": "fight/L.png",
                             }
                         }
                     }
                 },
             )
+            print(f"[DEBUG] 原始ocr输出: {leader.all_results}")
             if leader.best_result:
                 print(f"[DEBUG] 检测到队长位置: {leader.best_result.box}")
                 return [leader.best_result.box[0] + 38, leader.best_result.box[1] - 5]
