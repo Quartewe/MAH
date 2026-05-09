@@ -382,7 +382,7 @@
             "threshold": 0.999
         },
         "next": [
-            "Global.AutoCombat"
+            "Global.AutoCombat.CountClear"
         ]
     },
     "Global.AutoCombat.Entry": {
@@ -476,7 +476,8 @@
             "threshold": 0.999
         },
         "next": [
-            "Global.GoBackToHomePage"
+            "Global.GoBackToHomePage",
+            "Global.AutoCombat.BackSupport"
         ]
     },
     "Global.AutoCombat.Filter": {
@@ -519,6 +520,50 @@
         },
         "next": [
             "Global.AutoCombat.SelectSupport"
+        ]
+    },
+    "Global.AutoCombat.CountClear": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "Counter"
+            }
+        },
+        "next": [
+            "Global.AutoCombat"
+        ]
+    },
+    "Global.AutoCombat.BackSupport": {
+        "recognition": {
+            "type": "ColorMatch",
+            "param": {
+                "lower": [
+                    [
+                        163,
+                        68,
+                        69
+                    ]
+                ],
+                "upper": [
+                    [
+                        250,
+                        191,
+                        191
+                    ]
+                ],
+                "roi": [
+                    233,
+                    476,
+                    802,
+                    125
+                ]
+            }
+        },
+        "action": {
+            "type": "Click"
+        },
+        "next": [
+            "Global.GoBackToHomePage"
         ]
     }
 }
