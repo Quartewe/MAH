@@ -196,16 +196,13 @@ class AutoCombat(CustomAction):
                         "recognition": {
                             "param": {
                                 "roi": [424,635,426,61],
-                                "expected": "",
+                                "expected": ["TOUCHSCREEN", "TOUCH", "SCREEN", "TOUCH SCREEN"],
                                 "order_by": "Expected"
                             }
                         }
                     }
                 },
             )
-            print(f"[DEBUG] _detect_complete: OCR识别结果: {complete_res.all_results}")
-            if self._check_running(context):
-                return True
             back_res = context.run_recognition(
                 "UtilsOCR",
                 current_image,
@@ -214,38 +211,38 @@ class AutoCombat(CustomAction):
                         "recognition": {
                             "param": {
                                 "roi": [1027,490,221,200],
-                                "expected": "",
+                                "expected": ["再突入", "再次挑战", "Play Again", "再次挑戰"],
                                 "order_by": "Expected",
                             }
                         }
                     }
                 },
             )
-            if complete_res.best_result and complete_res.best_result.score > 0.8:
-                text = complete_res.best_result.text
-                print(f"[DEBUG] _detect_complete: OCR识别结果: {text}")
-                if text in ["TOUCHSCREEN", "TOUCH", "SCREEN", "TOUCH SCREEN"]:
-                    print(f"[DEBUG] 检测到战斗结束文本: {text}，正在点击继续...")
-                    context.run_action(
-                        "UtilsClick",
-                        pipeline_override={
-                            "UtilsClick": {
-                                "action": {
-                                    "param": {
-                                        "target": complete_res.best_result.box,
-                                    }
+            print(f"[DEBUG] _detect_complete: TOUCH SCREEN识别结果: {complete_res.all_results}")
+            print(f"[DEBUG] _detect_complete: 返回按钮识别结果: {back_res.all_results}")
+            if self._check_running(context):
+                return True
+
+            if complete_res.best_result:
+                print(f"[DEBUG] 检测到战斗结束文本: {complete_res.best_result.text}，正在点击继续...")
+                context.run_action(
+                    "UtilsClick",
+                    pipeline_override={
+                        "UtilsClick": {
+                            "action": {
+                                "param": {
+                                    "target": complete_res.best_result.box,
                                 }
                             }
-                        },
-                    )
-                    self.if_complete = True
-                    return True
-                elif back_res.filtered_results:
-                    for res in back_res.filtered_results:
-                        if res.text in ["再突入", "再次挑战", "Play Again", "再次挑戰"]:
-                            print(f"[DEBUG] 检测到返回按钮文本: {res.text}，正在点击继续...")
-                            self.if_complete = True
-                            return True
+                        }
+                    },
+                )
+                self.if_complete = True
+                return True
+            elif back_res.best_result:
+                print(f"[DEBUG] 检测到返回按钮文本: {back_res.best_result.text}，正在点击继续...")
+                self.if_complete = True
+                return True
             else:
                 print("[DEBUG] _detect_complete: OCR未检测到结果")
             return False
