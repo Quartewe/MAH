@@ -187,6 +187,8 @@ class WeeklyMission(CustomAction):
                 if info_type == "completed":
                     mission_data[mission]["completed"] = True
                     mission_data[mission]["current"] = mission_data[mission]["target"]
+                    if next(iter(mission_data)) == mission:
+                        info_share.show_support = True
                     print(f"[DEBUG] 任务 {mission} 已完成")
                 elif info_type == "progress" and progress is not None:
                     current, target = progress
@@ -246,6 +248,7 @@ class WeeklyMission(CustomAction):
         for mission in mission_data.keys():
             mission_data[mission]["completed"] = True
             mission_data[mission]["current"] = mission_data[mission]["target"]
+        info_share.show_support = True
         return mission_data
 
     def run(
