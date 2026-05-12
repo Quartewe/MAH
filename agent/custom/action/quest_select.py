@@ -3,7 +3,7 @@ from maa.custom_action import CustomAction
 from maa.context import Context
 import time
 import json
-from utils import data_io, timeout_mgr, proj_path
+from utils import logger, data_io, timeout_mgr, proj_path
 
 
 def normalize_brackets(data):
@@ -66,23 +66,23 @@ class QuestSelect(CustomAction):
             return False
         
         param = json.loads(argv.custom_action_param)
-        print(f"[DEBUG] 原始参数: {param}")
+        logger.debug(f"原始参数: {param}")
         tile_mode = False
         folder_name = normalize_brackets(param.get("name", ""))
         difficulty = normalize_brackets(param.get("difficulty", ""))
         if not difficulty:
-            print(f"[DEBUG] 平铺模式")
+            logger.debug(f"平铺模式")
             tile_mode = True
         
-        print(f"[DEBUG] ========== QuestSelect 开始执行 ==========")
-        print(f"[DEBUG] 目标任务名: {folder_name}")
-        print(f"[DEBUG] 目标难度: {difficulty}")
+        logger.debug(f"========== QuestSelect 开始执行 ==========")
+        logger.debug(f"目标任务名: {folder_name}")
+        logger.debug(f"目标难度: {difficulty}")
         difficulty_candidates = difficulty if isinstance(difficulty, list) else [difficulty]
         difficulty_candidates = [d for d in difficulty_candidates if isinstance(d, str) and d]
-        print(f"[DEBUG] 难度候选: {difficulty_candidates}")
+        logger.debug(f"难度候选: {difficulty_candidates}")
 
         for _ in range(10 if not tile_mode else 5):
-            print(f"[DEBUG] 初始向上滑动...")
+            logger.debug(f"初始向上滑动...")
             context.run_action(
                 "UtilsSwipe",
                 pipeline_override={
@@ -120,16 +120,16 @@ class QuestSelect(CustomAction):
                     }
                 }
             )
-            print(f"[DEBUG] OCR识别完成")
+            logger.debug(f"OCR识别完成")
             if get_quest.filtered_results:
-                print(f"[DEBUG] 识别到的任务")
+                logger.debug(f"识别到的任务")
             else:
-                print(f"[DEBUG] 未识别到任何任务")
+                logger.debug(f"未识别到任何任务")
             
             if get_quest.filtered_results: 
                 found = False
                 for res in get_quest.filtered_results:
-                    print(f"[DEBUG] 检查难度匹配")
+                    logger.debug(f"检查难度匹配")
                     if any(d in res.text for d in difficulty_candidates):
                         print(f"匹配!")
                         context.run_action(
@@ -145,19 +145,19 @@ class QuestSelect(CustomAction):
                                 }
                             }
                         )
-                        print(f"[DEBUG] 成功选择任务")
+                        logger.debug(f"成功选择任务")
                         timeout_mgr.stop_monitoring(argv.node_name)
-                        print(f"[DEBUG] ========== QuestSelect 执行成功 ==========")
+                        logger.debug(f"========== QuestSelect 执行成功 ==========")
                         return True
                     else:
-                        print(f"[DEBUG] 不匹配")
+                        logger.debug(f"不匹配")
                 
                 # for 循环结束，所有结果都不匹配
-                print(f"[DEBUG] 当前屏幕的所有结果都不匹配")
+                logger.debug(f"当前屏幕的所有结果都不匹配")
                 
                 # 检查是否只识别了1个结果（可能是任务被关闭了）
                 if len(get_quest.filtered_results) == 1:
-                    print(f"[DEBUG] 仅识别1个结果，判断是否任务被关闭...")
+                    logger.debug(f"仅识别1个结果，判断是否任务被关闭...")
                     # 先向下滑动看看能否打开任务
                     context.run_action(
                         "UtilsSwipe",
@@ -190,9 +190,9 @@ class QuestSelect(CustomAction):
                             }
                         }
                     )
-                    print(f"[DEBUG] 向下滑动后识别中")
+                    logger.debug(f"向下滑动后识别中")
                     if len(get_quest.filtered_results) == 1:
-                        print(f"[DEBUG] 滑动后仍是1个结果，任务确实是关闭的，点击展开...")
+                        logger.debug(f"滑动后仍是1个结果，任务确实是关闭的，点击展开...")
                         for res in get_quest.filtered_results:
                             context.run_action(
                                 "UtilsClick",
@@ -207,11 +207,11 @@ class QuestSelect(CustomAction):
                                     }
                                 }
                             )
-                        print(f"[DEBUG] 已点击展开，返回重新识别...")
+                        logger.debug(f"已点击展开，返回重新识别...")
                     else:
-                        print(f"[DEBUG] 滑动后结果数增加，说明任务已展开或找到了新任务")
+                        logger.debug(f"滑动后结果数增加，说明任务已展开或找到了新任务")
                 else:
-                    print(f"[DEBUG] 识别到多个结果但都不匹配，先向上滑动查找目标...")
+                    logger.debug(f"识别到多个结果但都不匹配，先向上滑动查找目标...")
                     self.last_len = len(get_quest.filtered_results)
                     
                     # 向上滑动
@@ -246,11 +246,11 @@ class QuestSelect(CustomAction):
                             }
                         }
                     )
-                    print(f"[DEBUG] 向上滑动后识别中")
+                    logger.debug(f"向上滑动后识别中")
                     
                     # 判断目标是否已过
                     if self.last_len > len(get_quest.filtered_results):
-                        print(f"[DEBUG] 结果数减少，说明目标已经过了，向下返回...")
+                        logger.debug(f"结果数减少，说明目标已经过了，向下返回...")
                         context.run_action(
                             "UtilsSwipe",
                             pipeline_override={
@@ -262,7 +262,7 @@ class QuestSelect(CustomAction):
                         )
                 
                 # 继续滑动
-                print(f"[DEBUG] 向下滑动继续查找...")
+                logger.debug(f"向下滑动继续查找...")
                 context.run_action(
                     "UtilsSwipe",
                     pipeline_override={
@@ -274,7 +274,7 @@ class QuestSelect(CustomAction):
                     )
             else:
                 # 未识别到任何任务
-                print(f"[DEBUG] 未识别到任何任务，向下滑动...")
+                logger.debug(f"未识别到任何任务，向下滑动...")
                 context.run_action(
                     "UtilsSwipe",
                     pipeline_override={
@@ -327,12 +327,12 @@ class QuestSelect(CustomAction):
                         }
                     }
                 )
-                print(f"[DEBUG] 成功选择任务")
+                logger.debug(f"成功选择任务")
                 timeout_mgr.stop_monitoring(argv.node_name)
-                print(f"[DEBUG] ========== QuestSelect 执行成功 ==========")
+                logger.debug(f"========== QuestSelect 执行成功 ==========")
                 return True
             else:
-                print(f"[DEBUG] 未识别到任何任务")
+                logger.debug(f"未识别到任何任务")
                 context.run_action(
                     "UtilsSwipe",
                     pipeline_override={
@@ -345,6 +345,6 @@ class QuestSelect(CustomAction):
             i += 1
 
 
-        print(f"[DEBUG] ========== 主循环已执行30次，任务失败 ==========")
+        logger.debug(f"========== 主循环已执行30次，任务失败 ==========")
         timeout_mgr.stop_monitoring(argv.node_name)
         return False

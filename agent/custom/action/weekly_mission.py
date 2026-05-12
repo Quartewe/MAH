@@ -3,7 +3,7 @@ from maa.agent.agent_server import AgentServer
 from maa.custom_action import CustomAction
 from maa.context import Context
 from datetime import datetime
-from utils import data_io, timeout_mgr, act_mgr, info_share, proj_path
+from utils import logger, data_io, timeout_mgr, act_mgr, info_share, proj_path
 from copy import deepcopy
 import re
 import time
@@ -126,7 +126,7 @@ class WeeklyMission(CustomAction):
         mission_data = data_io.read_data(proj_path.STATE_FILE)
 
         if mission_data == {}:
-            print("[DEBUG] 未找到已有任务数据，正在检测语言并初始化任务数据")
+            logger.debug("未找到已有任务数据，正在检测语言并初始化任务数据")
             match act_mgr.detect_lang(context, [481,19,777,613], info_share.IGNORE_LIST):
                 case "jp":
                     mission_data = deepcopy(self.JP_MISSION)
@@ -140,7 +140,7 @@ class WeeklyMission(CustomAction):
         state_keys = mission_data.keys() if mission_data else None
         state_lang = act_mgr.detect_lang(context, [0,0,0,0], info_share.IGNORE_LIST, compare_list=state_keys)
         if state_lang != info_share.current_lang:
-            print(f"[WARNING] 检测语言 {state_lang} 与当前语言 {info_share.current_lang} 不一致，正在重置任务数据")
+            logger.warning(f"检测语言 {state_lang} 与当前语言 {info_share.current_lang} 不一致，正在重置任务数据")
             match state_lang:
                 case "jp":
                     mission_data = deepcopy(self.JP_MISSION)
@@ -179,7 +179,7 @@ class WeeklyMission(CustomAction):
                     continue
 
                 mission_item = max(matched_items, key=lambda item: item.score)
-                print(f"[DEBUG] 任务 {mission} 匹配到文本: {mission_item.text}")
+                logger.debug(f"任务 {mission} 匹配到文本: {mission_item.text}")
                 current_fingerprint.append(mission)
                 should_swipe = True
 
@@ -189,13 +189,13 @@ class WeeklyMission(CustomAction):
                     mission_data[mission]["current"] = mission_data[mission]["target"]
                     if next(iter(mission_data)) == mission:
                         info_share.show_support = True
-                    print(f"[DEBUG] 任务 {mission} 已完成")
+                    logger.debug(f"任务 {mission} 已完成")
                 elif info_type == "progress" and progress is not None:
                     current, target = progress
                     mission_data[mission]["current"] = current
                     mission_data[mission]["target"] = target
                     mission_data[mission]["completed"] = current >= target
-                    print(f"[DEBUG] 任务 {mission} 当前进度: {current}/{target}")
+                    logger.debug(f"任务 {mission} 当前进度: {current}/{target}")
 
             if should_swipe:
                 context.run_action(
@@ -216,11 +216,11 @@ class WeeklyMission(CustomAction):
             
             time.sleep(1)
             if current_fingerprint != self.last_fingerprint:
-                print("[DEBUG] 上一次指纹:", self.last_fingerprint)
-                print("[DEBUG] 当前指纹:", current_fingerprint)
+                logger.debug("上一次指纹:", self.last_fingerprint)
+                logger.debug("当前指纹:", current_fingerprint)
                 self.last_fingerprint = current_fingerprint
             else:
-                print("[DEBUG] OCR结果与上次相同，认为已经读取完成")
+                logger.debug("OCR结果与上次相同，认为已经读取完成")
                 return mission_data
 
     def _reset_mission_data(self, context):
@@ -267,7 +267,7 @@ class WeeklyMission(CustomAction):
                 timeout_mgr.stop_monitoring(argv.node_name)
                 return True
             else:
-                print("[DEBUG] 写入任务数据到文件失败")
+                logger.debug("写入任务数据到文件失败")
                 timeout_mgr.stop_monitoring(argv.node_name)
                 return False
                 

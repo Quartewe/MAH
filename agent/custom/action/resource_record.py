@@ -3,7 +3,7 @@ from maa.agent.agent_server import AgentServer
 from maa.custom_action import CustomAction
 from maa.context import Context
 from datetime import datetime
-from utils import data_io, timeout_mgr
+from utils import logger, data_io, timeout_mgr
 import re
 
 
@@ -29,8 +29,7 @@ class ResourceRecord(CustomAction):
             case "ResourceRecord.DP":
                 if argv.reco_detail.filtered_results:
                     num = len(argv.reco_detail.filtered_results)
-                    # debug
-                    print(f"[DEBUG] 当前 DP 数据: {num} / 3")
+                    logger.debug(f"当前 DP 数据: {num} / 3")
                     #
                     state["resources"]["DP"]["value"] = num
                     state["resources"]["DP"]["last_updated"] = now
@@ -39,8 +38,7 @@ class ResourceRecord(CustomAction):
                 if argv.reco_detail.filtered_results:
                     raw_text = argv.reco_detail.filtered_results[0].text
                     nums = re.findall(r"(\d+)", raw_text)
-                    # debug
-                    print(f"[DEBUG] 当前 AP 数据: {nums[0]} / {nums[1]}")
+                    logger.debug(f"当前 AP 数据: {nums[0]} / {nums[1]}")
                     #
                     if len(nums) >= 2:
                         state["resources"]["AP"]["value"] = int(nums[0])
@@ -51,8 +49,7 @@ class ResourceRecord(CustomAction):
                 if argv.reco_detail.filtered_results:
                     raw = argv.reco_detail.filtered_results[0].text.replace(",", "")
                     state["resources"]["Stone"] = int(raw)
-                    # debug
-                    print("[DEBUG] 当前石头:", raw)
+                    logger.debug("当前石头:", raw)
                     #
                     timeout_mgr.stop_monitoring(argv.node_name)
 
@@ -60,12 +57,11 @@ class ResourceRecord(CustomAction):
                 if argv.reco_detail.filtered_results:
                     raw = argv.reco_detail.filtered_results[0].text.replace(",", "")
                     state["resources"]["RF"] = int(raw)
-                    # debug
-                    print("[DEBUG] 当前虹碎:", raw)
+                    logger.debug("当前虹碎:", raw)
                     #
                     timeout_mgr.stop_monitoring(argv.node_name)
 
         data_io.write_data(state)
 
-        print("[DEBUG] 资源记录流程执行完成")
+        logger.debug("资源记录流程执行完成")
         return True

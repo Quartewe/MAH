@@ -4,7 +4,7 @@ from maa.context import Context
 import time
 import re
 import json
-from utils import timeout_mgr
+from utils import logger, timeout_mgr
 
 
 @AgentServer.custom_action("TeamSelect")
@@ -20,9 +20,9 @@ class TeamSelect(CustomAction):
         if timeout_mgr.check_timeout(argv.node_name):
             return False
         param = json.loads(argv.custom_action_param)
-        print(f"[DEBUG] TeamSelect 收到参数: {param}")
+        logger.debug(f"TeamSelect 收到参数: {param}")
         if not param or param <= 0 or param > 15:
-            print(f"[DEBUG] TeamSelect 缺少参数, 直接使用当前配队")
+            logger.debug(f"TeamSelect 缺少参数, 直接使用当前配队")
             timeout_mgr.stop_monitoring(argv.node_name)
             return True
         param = int(param)
@@ -79,10 +79,10 @@ class TeamSelect(CustomAction):
             )
 
             for team in team_list.filtered_results:
-                print(f"[DEBUG] 尝试 {attempt}: 找到团队...")
-                print(f"[DEBUG] 团队文本: {team.text}")
+                logger.debug(f"尝试 {attempt}: 找到团队...")
+                logger.debug(f"团队文本: {team.text}")
                 match_num = re.search(r'\d+', team.text)
-                print(f"[DEBUG] 提取的数字: {match_num.group() if match_num else '无'}")
+                logger.debug(f"提取的数字: {match_num.group() if match_num else '无'}")
                 if match_num and int(match_num.group()) == param:
                     found = True
                     click_box[0] = team.box[0] + 1000
@@ -90,7 +90,7 @@ class TeamSelect(CustomAction):
                     break
 
             if found and click_box[0] != 0 and click_box[1] != 0:
-                print(f"[DEBUG] 找到目标团队！点击位置: {click_box}")
+                logger.debug(f"找到目标团队！点击位置: {click_box}")
                 context.run_action(
                     "UtilsClick",
                     click_box,
@@ -104,7 +104,7 @@ class TeamSelect(CustomAction):
                         }
                     }
                 )
-                print(f"[DEBUG] 已点击目标团队，正在关闭")
+                logger.debug(f"已点击目标团队，正在关闭")
                 back = context.run_recognition(
                     "UtilsTemplateMatch",
                     current_image,
@@ -137,11 +137,11 @@ class TeamSelect(CustomAction):
                 timeout_mgr.stop_monitoring(argv.node_name)
                 return True
             
-            print(f"[DEBUG] 第 {attempt} 次滑动寻找下一支队伍...")
+            logger.debug(f"第 {attempt} 次滑动寻找下一支队伍...")
             context.run_action(
                 "UtilsSwipe"
             )
         
-        print(f"[DEBUG] 达到最大尝试次数 ({max_attempts})，未找到目标团队")
+        logger.debug(f"达到最大尝试次数 ({max_attempts})，未找到目标团队")
         timeout_mgr.stop_monitoring(argv.node_name)
         return False

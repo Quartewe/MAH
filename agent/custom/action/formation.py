@@ -3,7 +3,7 @@ from maa.custom_action import CustomAction
 from maa.context import Context
 from pathlib import Path
 import json
-from utils import timeout_mgr, data_io, act_mgr, match_mgr, proj_path, info_share
+from utils import logger, timeout_mgr, data_io, act_mgr, match_mgr, proj_path, info_share
 
 @AgentServer.custom_action("Formation")
 class Formation(CustomAction):
@@ -43,9 +43,9 @@ class Formation(CustomAction):
         param = argv.custom_action_param
         if isinstance(param, str):
             param = param.strip('"')
-        print(f"[DEBUG] 目标文件: {param}")
+        logger.debug(f"目标文件: {param}")
         if not param:
-            print(f"[DEBUG] 未指定要搜索的目标文件")
+            logger.debug(f"未指定要搜索的目标文件")
             auto_mode = context.run_recognition(
             "UtilsOCR",
             current_image,
@@ -61,7 +61,7 @@ class Formation(CustomAction):
                 }
             )
             if auto_mode.best_result:
-                print(f"[DEBUG] 当前已处于自动战斗模式，正在关闭...")
+                logger.debug(f"当前已处于自动战斗模式，正在关闭...")
                 context.run_action(
                     "UtilsClick",
                     auto_mode.best_result.box,
@@ -76,20 +76,20 @@ class Formation(CustomAction):
                     }
                 )
             else:
-                print(f"[DEBUG] 当前未处于自动战斗模式，无需关闭")
+                logger.debug(f"当前未处于自动战斗模式，无需关闭")
             info_share.auto_combat_mode = False
             timeout_mgr.stop_monitoring(argv.node_name)
             return True
         try:
             raw_data = data_io.find_target_files(self.DATA_PATH, param)
             team_data = raw_data.get("team", None)
-            print(f"[DEBUG] 助战数据: {team_data}")
+            logger.debug(f"助战数据: {team_data}")
         except Exception as e:
-            print(f"[ERROR] 查找目标文件失败: {e}")
+            logger.error(f"查找目标文件失败: {e}")
             timeout_mgr.stop_monitoring(argv.node_name)
             return False
         if not team_data:
-            print(f"[WARNING] 无team数据, 跳过角色选择")
+            logger.warning(f"无team数据, 跳过角色选择")
             timeout_mgr.stop_monitoring(argv.node_name)
             return True
         lang_mode = act_mgr.detect_lang(context, [1087,88,191,633])
@@ -104,7 +104,7 @@ class Formation(CustomAction):
 
 
         # 清除可能存在的旧数据
-        print(f"[DEBUG] 正在解散旧队伍...")
+        logger.debug(f"正在解散旧队伍...")
         context.run_task(
             "UtilsOCR",
             pipeline_override={
@@ -153,7 +153,7 @@ class Formation(CustomAction):
                 }
             }
         )
-        print(f"[DEBUG] 旧队伍已解散，开始新编组...")
+        logger.debug(f"旧队伍已解散，开始新编组...")
 
         context.tasker.controller.post_screencap().wait()
         current_image = context.tasker.controller.cached_image
@@ -248,8 +248,8 @@ class Formation(CustomAction):
         )
         combat_role_idx = 0
 
-        print(f"[DEBUG] 助战来源位置={support_source_pos}, 助战目标位置={support_target_pos}")
-        print(f"[DEBUG] 战斗角色列表={combat_role_list}")
+        logger.debug(f"助战来源位置={support_source_pos}, 助战目标位置={support_target_pos}")
+        logger.debug(f"战斗角色列表={combat_role_list}")
 
         
         # 计算 team_data 中的最大索引
@@ -257,12 +257,12 @@ class Formation(CustomAction):
         for idx, title in enumerate(raw_title.filtered_results):
             lowstar_mode = False
             current_pos = idx + 1
-            print(f"[DEBUG] 当前位置标题: {title.text}")
-            print(f"[DEBUG] 当前序号: {current_pos}")
+            logger.debug(f"当前位置标题: {title.text}")
+            logger.debug(f"当前序号: {current_pos}")
 
             # 运行时当前 SUPPORT 槽位始终跳过，留给最后换位处理
             if match_mgr.fuzzy_match(title.text, "SUPPORT"):
-                print(f"[DEBUG] 跳过运行时助战槽位: {current_pos}")
+                logger.debug(f"跳过运行时助战槽位: {current_pos}")
                 continue
 
             role_key = None
@@ -271,15 +271,15 @@ class Formation(CustomAction):
                 combat_role_idx += 1
 
             if not role_key:
-                print(f"[DEBUG] 位置 {current_pos} 未配置角色，跳过")
+                logger.debug(f"位置 {current_pos} 未配置角色，跳过")
                 continue
 
             current_char = team_data.get("LEADER") if role_key == "LEADER" else team_data.get(role_key, None)
             if not current_char:
-                print(f"[DEBUG] 位置 {current_pos} 的角色 {role_key} 缺少队伍数据，跳过")
+                logger.debug(f"位置 {current_pos} 的角色 {role_key} 缺少队伍数据，跳过")
                 continue
             
-            print(f"[DEBUG] 当前角色数据: {current_char}")
+            logger.debug(f"当前角色数据: {current_char}")
             click_box[0] = title.box[0] - 35
             click_box[1] = title.box[1] + 105
             click_res = context.run_action(
@@ -318,9 +318,9 @@ class Formation(CustomAction):
                 if current_char_weapon == "varies":
                     current_char_weapon = current_char_info.get(current_char_element, {}).get("weapon", "")
             
-            print(f"[DEBUG] 当前角色稀有度: {current_char_rarity}")
-            print(f"[DEBUG] 当前角色属性: {current_char_element}")
-            print(f"[DEBUG] 当前角色武器: {current_char_weapon}")
+            logger.debug(f"当前角色稀有度: {current_char_rarity}")
+            logger.debug(f"当前角色属性: {current_char_element}")
+            logger.debug(f"当前角色武器: {current_char_weapon}")
             act_mgr.choose_filter(context, current_char_element, current_char_rarity, current_char_weapon)
             context.tasker.controller.post_screencap().wait()
             current_image = context.tasker.controller.cached_image
@@ -345,13 +345,13 @@ class Formation(CustomAction):
             )
             # 检查是否有识别结果
             if len(choose_finish.filtered_results) > 1 or not choose_finish.filtered_results:
-                print(f"[ERROR] 无法确认角色选择: {current_char_name} (ID: {current_char_id})")
+                logger.error(f"无法确认角色选择: {current_char_name} (ID: {current_char_id})")
                 timeout_mgr.stop_monitoring(argv.node_name)
                 return False
             
             # 获取第一个识别结果的位置
             target_box = choose_finish.filtered_results[0].box
-            print(f"[DEBUG] {current_char_name} 的目标点击框: {target_box}")
+            logger.debug(f"{current_char_name} 的目标点击框: {target_box}")
             context.run_action(
                 "UtilsClick",
                 target_box,
@@ -424,7 +424,7 @@ class Formation(CustomAction):
                 self.UI_DATA.get("community", {}).get(team_community, "")
             )
             if not community_path:
-                print(f"[ERROR] 工会模板路径无效: {team_community}")
+                logger.error(f"工会模板路径无效: {team_community}")
                 timeout_mgr.stop_monitoring(argv.node_name)
                 return False
             enter_finish = context.run_task(
@@ -518,7 +518,7 @@ class Formation(CustomAction):
                     )
 
                 if not community_found:
-                    print(f"[ERROR] 未找到工会: {team_community}")
+                    logger.error(f"未找到工会: {team_community}")
                     timeout_mgr.stop_monitoring(argv.node_name)
                     return False
 
@@ -570,13 +570,13 @@ class Formation(CustomAction):
                 }
             )
             for ar, pos in zip(ar_list, ar_select.filtered_results):
-                print(f"[DEBUG] 当前 AR: {ar}")
-                print(f"[DEBUG] 当前 AR 位置: {pos.box}")
+                logger.debug(f"当前 AR: {ar}")
+                logger.debug(f"当前 AR 位置: {pos.box}")
                 current_ar_data = self.AR_DATA.get(ar, "")
                 current_ar_rarity = current_ar_data.get("rarity", 0)
                 ar_path = self._normalize_template_path(current_ar_data.get("path"))
                 if not ar_path:
-                    print(f"[ERROR] AR 模板路径无效: {ar}")
+                    logger.error(f"AR 模板路径无效: {ar}")
                     continue
                 context.run_action(
                     "UtilsClick",
@@ -608,9 +608,9 @@ class Formation(CustomAction):
                             }
                         }
                     )
-                    print(f"[DEBUG] AR 选择结果: {choose_ar}")
+                    logger.debug(f"AR 选择结果: {choose_ar}")
                     if not choose_ar.best_result:
-                        print(f"[WARNING] 选择 AR 失败: {ar}，正在重试...")
+                        logger.warning(f"选择 AR 失败: {ar}，正在重试...")
                         break_time += 1
                         context.run_action(
                             "UtilsSwipe",
@@ -627,7 +627,7 @@ class Formation(CustomAction):
                             }
                         )
                         if break_time >= 20:
-                            print(f"[ERROR] 多次尝试后仍无法选择 AR: {ar}，跳过...")
+                            logger.error(f"多次尝试后仍无法选择 AR: {ar}，跳过...")
                             break
                     else:
                         for _ in range(2):
@@ -664,7 +664,7 @@ class Formation(CustomAction):
                 }
             )
         if auto_mode.best_result:
-            print(f"[DEBUG] 当前已处于自动战斗模式，正在关闭...")
+            logger.debug(f"当前已处于自动战斗模式，正在关闭...")
             context.run_action(
                 "UtilsClick",
                 auto_mode.best_result.box,
@@ -679,7 +679,7 @@ class Formation(CustomAction):
                 }
             )
         else:
-            print(f"[DEBUG] 当前未处于自动战斗模式，无需关闭")
+            logger.debug(f"当前未处于自动战斗模式，无需关闭")
         info_share.auto_combat_mode = False
 
 

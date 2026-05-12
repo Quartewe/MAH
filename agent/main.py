@@ -1,44 +1,12 @@
 import sys
 import os
-import builtins
 import re
 import shutil
 import subprocess
 import traceback
 from datetime import datetime
 from pathlib import Path
-from threading import Lock
 from typing import Optional, Tuple
-
-
-_ORIGINAL_PRINT = builtins.print
-_PRINT_LOCK = Lock()
-
-
-def _setup_backend_log_print() -> None:
-    project_root = Path(__file__).resolve().parent.parent
-    log_dir = project_root / "debug"
-    log_dir.mkdir(parents=True, exist_ok=True)
-    log_file = log_dir / "backend.log"
-
-    def _patched_print(*args, **kwargs):
-        timestamp = datetime.now().strftime("[%Y-%m-%d %H:%M:%S]")
-        _ORIGINAL_PRINT(timestamp, *args, **kwargs)
-
-        sep = kwargs.get("sep", " ")
-        end = kwargs.get("end", "\n")
-        message = sep.join(str(arg) for arg in args)
-        if end is None:
-            end = ""
-
-        with _PRINT_LOCK:
-            with log_file.open("a", encoding="utf-8") as f:
-                f.write(f"{timestamp} {message}{end}")
-
-    builtins.print = _patched_print
-
-
-_setup_backend_log_print()
 
 
 def _append_bootstrap_error(title: str, detail: str) -> None:
@@ -52,11 +20,14 @@ def _append_bootstrap_error(title: str, detail: str) -> None:
         with log_file.open("a", encoding="utf-8") as f:
             f.write(f"{timestamp} [BOOTSTRAP_ERROR] {title}\n{detail}\n")
     except Exception:
-        # 兜底日志失败不应再次中断启动流程
         pass
 
 
-print("[DEBUG] Agent 启动引导开始")
+# ---------------------------------------------------------------------------
+# 日志系统（在 sys.path 就绪后初始化）
+# ---------------------------------------------------------------------------
+
+from utils.logger import logger
 
 
 def _detect_internal_python_version(internal_path: Path) -> Optional[Tuple[int, int]]:
@@ -221,8 +192,8 @@ def _setup_runtime_paths() -> Tuple[Optional[Tuple[int, int]], bool]:
 
             internal_injected = True
         else:
-            print(
-                "[WARN] 检测到 _internal 期望 Python "
+            logger.warning(
+                f"检测到 _internal 期望 Python "
                 f"{expected_py[0]}.{expected_py[1]}，当前为 {current_py[0]}.{current_py[1]}，"
                 "已暂不注入 _internal，后续将尝试自动切换解释器。"
             )
@@ -231,6 +202,8 @@ def _setup_runtime_paths() -> Tuple[Optional[Tuple[int, int]], bool]:
 
 
 _expected_python, _internal_injected = _setup_runtime_paths()
+
+logger.debug("Agent 启动引导开始")
 
 try:
     from maa.agent.agent_server import AgentServer
@@ -245,8 +218,8 @@ except ImportError as exc:
     ):
         matched_python = _find_matching_python(_expected_python)
         if matched_python:
-            print(
-                "[WARN] 当前解释器与内置运行时不匹配，"
+            logger.warning(
+                f"当前解释器与内置运行时不匹配，"
                 f"准备切换到 Python {_expected_python[0]}.{_expected_python[1]}: {matched_python}"
             )
             _relaunch_with_python(matched_python)
@@ -261,16 +234,14 @@ except ImportError as exc:
         "请安装匹配版本 Python，或在当前 Python 环境安装与之匹配的 maa 依赖。"
     )
     _append_bootstrap_error(import_error_text, traceback.format_exc())
-    print(f"[ERROR] {import_error_text}")
-    raise ImportError(
-        import_error_text
-    ) from exc
+    logger.error(import_error_text)
+    raise ImportError(import_error_text) from exc
 
-print("[DEBUG] MAA 框架导入成功")
+logger.info("MAA 框架导入成功")
 
 # 导入 custom 包，触发所有 @AgentServer 装饰器注册
 import custom  # noqa: F401
-print("[DEBUG] 所有 custom action/recognition 已注册")
+logger.info("所有 custom action/recognition 已注册")
 
 
 def main():
@@ -279,11 +250,11 @@ def main():
     else:
         Agent_Identifier = "MAH"
     os.chdir(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-    print(f"[DEBUG] AgentServer 正在启动，通道 ID 为: {Agent_Identifier}")
+    logger.info(f"AgentServer 正在启动，通道 ID 为: {Agent_Identifier}")
 
     AgentServer.start_up(Agent_Identifier)
 
-    print("[DEBUG] 服务器已启动，等待 MAA 任务触发... (按 Ctrl+C 停止)")
+    logger.info("服务器已启动，等待 MAA 任务触发... (按 Ctrl+C 停止)")
 
     AgentServer.join()
     AgentServer.shut_down()

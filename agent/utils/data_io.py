@@ -4,7 +4,7 @@ import time
 import os
 import copy
 import shutil
-from . import proj_path
+from . import proj_path, logger
 
 # 使用统一的路径管理模块
 STATE_FILE = proj_path.STATE_FILE
@@ -26,31 +26,27 @@ class IOUtils:
         try:
             if not os.path.exists("data"):
                 os.makedirs("data")
-                # debug
-                print("[DEBUG] data 文件夹已创建")
+                logger.debug("data 文件夹已创建")
                 #
 
             if not os.path.exists(file_path):
                 if is_state_file:
-                    # debug
-                    print(f"[DEBUG] 文件不存在: {file_path}，正在创建默认文件")
+                    logger.debug(f"文件不存在: {file_path}，正在创建默认文件")
                     #
                     os.makedirs(os.path.dirname(file_path) or ".", exist_ok=True)
                     with open(file_path, "w", encoding="utf-8") as f:
                         json.dump({}, f, ensure_ascii=False, indent=4)
                 else:
-                    print(f"[ERROR] 文件不存在: {file_path}")
+                    logger.error(f"文件不存在: {file_path}")
                 return {}
 
             with open(file_path, "r", encoding="utf-8") as f:
-                # debug
-                print(f"[DEBUG] 正在读取文件: {file_path}...")
+                logger.debug(f"正在读取文件: {file_path}...")
                 #
                 return json.load(f)
         except (json.JSONDecodeError, FileNotFoundError):
             if is_state_file:
-                # debug
-                print(f"[DEBUG] 文件 {file_path} 已损坏，正在重新创建")
+                logger.debug(f"文件 {file_path} 已损坏，正在重新创建")
                 #
                 os.makedirs(os.path.dirname(file_path) or ".", exist_ok=True)
                 with open(file_path, "w", encoding="utf-8") as f:
@@ -58,7 +54,7 @@ class IOUtils:
                 with open(file_path, "r", encoding="utf-8") as f:
                     return json.load(f)
 
-            print(f"[ERROR] 文件 {file_path} 已损坏")
+            logger.error(f"文件 {file_path} 已损坏")
             return {}
 
     @staticmethod
@@ -71,8 +67,7 @@ class IOUtils:
             file_path = STATE_FILE
             
         with open(file_path, "w", encoding="utf-8") as f:
-            # debug
-            print(f"[DEBUG] 正在写入文件: {file_path}...")
+            logger.debug(f"正在写入文件: {file_path}...")
             #
             json.dump(data, f, ensure_ascii=False, indent=4)
         
@@ -84,20 +79,17 @@ class IOUtils:
         for mission in state["missions"]:
             if isinstance(state["missions"][mission], dict):
                 state["missions"][mission]["completed"] = True
-                # debug
-                print(f"[DEBUG] 任务 {mission} 已标记为完成")
+                logger.debug(f"任务 {mission} 已标记为完成")
                 #
                 state["missions"][mission]["current"] = state["missions"][mission][
                     "target"
                 ]
-                # debug
-                print(
+                logger.debug(
                     f"任务 {mission} 数值已设置为 {state['missions'][mission]['current']}"
                 )
                 #
         state["missions"]["if_all_completed"] = True
-        # debug
-        print("[DEBUG] if_all_completed 已设置为 True")
+        logger.debug("if_all_completed 已设置为 True")
         #
         IOUtils.write_data(state)
         return True
@@ -111,31 +103,31 @@ class IOUtils:
         output = {}
 
         if not target_file:
-            print(f"[DEBUG] 未指定要搜索的目标文件")
+            logger.debug(f"未指定要搜索的目标文件")
             return None
 
-        print(f"[DEBUG] 正在 {root_path} 中搜索 {target_file}...")
+        logger.debug(f"正在 {root_path} 中搜索 {target_file}...")
         
         # 检查路径是否存在
         if not root_path.exists():
-            print(f"[DEBUG] 搜索路径不存在: {root_path}")
+            logger.debug(f"搜索路径不存在: {root_path}")
             return None
             
         files = list(root_path.rglob(target_file))
-        print(f"[DEBUG] 搜索结果列表: {files}")
+        logger.debug(f"搜索结果列表: {files}")
         if len(files) != 1:
-            print(f"[DEBUG] 期望找到 1 个文件，实际找到 {len(files)} 个")
+            logger.debug(f"期望找到 1 个文件，实际找到 {len(files)} 个")
             return None
         for file in files:
             # 检查文件是否为空
             if file.stat().st_size == 0:
-                print(f"[DEBUG] 找到的文件为空: {file}")
+                logger.debug(f"找到的文件为空: {file}")
                 return None
             try:
                 with open(file, "r", encoding="utf-8") as f:
                     output = json.load(f)
             except json.JSONDecodeError as e:
-                print(f"[DEBUG] JSON解析失败 {file}: {e}")
+                logger.debug(f"JSON解析失败 {file}: {e}")
                 return None
         return output
 
@@ -151,14 +143,14 @@ class IOUtils:
         while i < len(raw_log):
             char = raw_log[i]
             # 进入括号：深度+1，针对顶层列表执行内部换行缩进
-            if char in "([":# debug
+            if char in "([":
                 depth += 1
                 if depth <= 2:
                     organized_log += char + "\n" + "      " * depth
                 else:
                     organized_log += char
             # 退出括号：深度-1，回位换行
-            elif char in ")]":# debug
+            elif char in ")]":
                 if depth <= 2:
                     organized_log += "\n" + "      " * (depth - 1) + char
                 else:
@@ -175,14 +167,11 @@ class IOUtils:
                 i += 1
             i += 1
 
-        # debug
-        print("[DEBUG] OCR 日志已整理完成")
-        #
+        logger.debug("OCR 日志已整理完成")
+
         if not os.path.exists("debug"):
             os.makedirs("debug")
-            # debug
-            print("[DEBUG] debug 文件夹不存在，正在创建...")
-            #
+            logger.debug("debug 文件夹不存在，正在创建...")
 
         with open("debug/ocr_detail.log", "a", encoding="utf-8") as f:
             f.write(time.strftime("[%Y-%m-%d %H:%M:%S]", time.localtime(time.time())))
@@ -191,9 +180,7 @@ class IOUtils:
             f.write(":\n")
             f.write(organized_log.strip())
             f.write("\n")
-            # debug
-            print("[DEBUG] ocr_detail.log 已写入")
-            #
+            logger.debug("ocr_detail.log 已写入")
 
         return organized_log
 

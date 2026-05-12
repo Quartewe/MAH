@@ -1,3 +1,4 @@
+from .logger import logger
 from .data_io import IOUtils, data_io
 from .match import MatchUtils, match_mgr
 from .timeout import TimeoutUtils, timeout_mgr
