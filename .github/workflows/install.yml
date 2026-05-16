@@ -1186,44 +1186,64 @@ jobs:
             fi
 
             # ─── agent pip 依赖增量注入 ───
-            # 对比当前与上次的 agent/requirements.txt，若新增了依赖，
-            # 用 CI Python pip install --target 直接装进增量包 _internal/。
+            # 从全量包 _internal/ 中找出 agent/requirements.txt 里声明的新增包目录，
+            # 直接 rsync 到增量包 _internal/（全量包已由 PyInstaller + CI 步骤
+            # 提前装好了 Windows 兼容的包，无需在 Ubuntu 上再用 pip）。
             current_req="$f/agent/requirements.txt"
             previous_req="$prev_dir/agent/requirements.txt"
-            if [[ -f "$current_req" ]]; then
-              CI_PYTHON=""
-              for c in python3 python; do
-                command -v "$c" &>/dev/null && { CI_PYTHON="$c"; break; }
-              done
+            full_internal="$f/_internal"
+            inc_internal="$inc_dir/_internal"
 
-              if [[ -z "$CI_PYTHON" ]]; then
-                echo "[agent deps] CI 无系统 Python，跳过注入"
-              else
-                inc_internal="$inc_dir/_internal"
-                mkdir -p "$inc_internal"
+            if [[ -f "$current_req" && -d "$full_internal" ]]; then
+              # 从 requirements.txt 提取纯包名（全小写）
+              extract_pkg_names() {
+                sed -n 's/^[[:space:]]*\([A-Za-z0-9_.-]\+\).*/\1/p' "$1" \
+                  | tr '[:upper:]' '[:lower:]' | sort -u
+              }
 
-                if [[ -f "$previous_req" ]]; then
-                  # 提取纯依赖名，对比新增项
-                  extract_pkg_names() {
-                    sed -n 's/^[[:space:]]*\([A-Za-z0-9_.-]\+\).*/\1/p' "$1" \
-                      | tr '[:upper:]' '[:lower:]' | sort -u
-                  }
-                  new_pkgs=$(comm -13 <(extract_pkg_names "$previous_req") <(extract_pkg_names "$current_req") || true)
-                  if [[ -n "$new_pkgs" ]]; then
-                    echo "[agent deps] 检测到新增依赖: $new_pkgs"
-                    "$CI_PYTHON" -m pip install $(echo "$new_pkgs") --target "$inc_internal" --no-deps 2>&1 || true
-                  else
-                    echo "[agent deps] 依赖无变化，跳过注入"
-                  fi
+              if [[ -f "$previous_req" ]]; then
+                new_pkgs=$(comm -13 <(extract_pkg_names "$previous_req") <(extract_pkg_names "$current_req") || true)
+                if [[ -z "$new_pkgs" ]]; then
+                  echo "[agent deps] 依赖无变化，跳过注入"
                 else
-                  echo "[agent deps] 上一版本无 requirements.txt，安装全部依赖"
-                  "$CI_PYTHON" -m pip install -r "$current_req" --target "$inc_internal" --no-deps 2>&1 || true
+                  echo "[agent deps] 检测到新增依赖: $new_pkgs"
+                  target_pkgs="$new_pkgs"
                 fi
-
-                # 写入标记文件供 updater 判断
-                echo "${new_pkgs:-all}" > "$inc_internal/.agent_deps_stamp"
-                echo "[agent deps] 增量 _internal/ 注入完成"
+              else
+                echo "[agent deps] 上一版本无 requirements.txt，注入全部依赖"
+                target_pkgs=$(extract_pkg_names "$current_req")
               fi
+
+              if [[ -n "${target_pkgs:-}" ]]; then
+                mkdir -p "$inc_internal"
+                copied=0
+                for pkg in $target_pkgs; do
+                  # pip 包在 _internal/ 中以多种命名存在：包名、包名-dist-info、蛇形/破折号互换
+                  found=""
+                  for dir in "$full_internal"/"$pkg" "$full_internal"/"$pkg"-*.dist-info \
+                             "$full_internal"/"${pkg//-/_}" "$full_internal"/"${pkg//-/_}"-*.dist-info \
+                             "$full_internal"/"${pkg//_/-}" "$full_internal"/"${pkg//_/-}"-*.dist-info; do
+                    if [[ -d "$dir" ]]; then
+                      found="$dir"
+                      break
+                    fi
+                  done
+                  if [[ -n "$found" ]]; then
+                    dirname="${found##*/}"
+                    rsync -a "$found/" "$inc_internal/$dirname/"
+                    echo "[agent deps]   ✓ 已注入: $dirname"
+                    ((copied++)) || true
+                  else
+                    echo "[agent deps]   ⚠ 未在 _internal/ 中找到 $pkg（可能因平台编译失败，由 updater 兜底）"
+                  fi
+                done
+                echo "[agent deps] 共注入 $copied 个包目录到增量包 _internal/"
+                echo "${target_pkgs}" > "$inc_internal/.agent_deps_stamp"
+              fi
+            elif [[ ! -f "$current_req" ]]; then
+              echo "[agent deps] 当前包无 agent/requirements.txt，跳过"
+            else
+              echo "[agent deps] 全量包 _internal/ 不存在，跳过增量注入（将由 updater 运行时安装）"
             fi
 
             (cd "$inc_dir" && zip -r "../$f-incremental-${{ needs.meta.outputs.tag }}.zip" .)
