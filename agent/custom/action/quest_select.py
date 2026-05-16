@@ -70,11 +70,11 @@ class QuestSelect(CustomAction):
         tile_mode = False
         folder_name = normalize_brackets(param.get("name", ""))
         difficulty = normalize_brackets(param.get("difficulty", ""))
+        difficulty = difficulty + "級" if difficulty in ["初", "中", "上"] else difficulty
         if not difficulty:
             logger.debug(f"平铺模式")
             tile_mode = True
         
-        logger.debug(f"========== QuestSelect 开始执行 ==========")
         logger.debug(f"目标任务名: {folder_name}")
         logger.debug(f"目标难度: {difficulty}")
         difficulty_candidates = difficulty if isinstance(difficulty, list) else [difficulty]
@@ -96,7 +96,7 @@ class QuestSelect(CustomAction):
 
         i = 0
         while i < 30 and not tile_mode:
-            print(f"\n[DEBUG] ========== 主循环A 迭代第 {i} 次 ==========")
+            logger.debug(f"[DEBUG] ========== 主循环A 迭代第 {i} 次 ==========")
             context.tasker.controller.post_screencap().wait()
             current_image = context.tasker.controller.cached_image
             get_quest = context.run_recognition(
@@ -122,16 +122,16 @@ class QuestSelect(CustomAction):
             )
             logger.debug(f"OCR识别完成")
             if get_quest.filtered_results:
-                logger.debug(f"识别到的任务")
+                logger.debug(f"识别到的任务:{get_quest.filtered_results}")
             else:
                 logger.debug(f"未识别到任何任务")
             
             if get_quest.filtered_results: 
                 found = False
                 for res in get_quest.filtered_results:
-                    logger.debug(f"检查难度匹配")
+                    logger.debug(f"检查难度匹配: OCR结果='{res.text}' vs 难度候选={difficulty_candidates}")
                     if any(d in res.text for d in difficulty_candidates):
-                        print(f"匹配!")
+                        logger.debug(f"匹配")
                         context.run_action(
                             "UtilsClick",
                             res.box,
@@ -147,7 +147,6 @@ class QuestSelect(CustomAction):
                         )
                         logger.debug(f"成功选择任务")
                         timeout_mgr.stop_monitoring(argv.node_name)
-                        logger.debug(f"========== QuestSelect 执行成功 ==========")
                         return True
                     else:
                         logger.debug(f"不匹配")
