@@ -474,13 +474,25 @@ jobs:
           toolkit_file=""
           case "${{ matrix.os }}" in
             win)
-              toolkit_file="install/MaaToolkit.dll"
+              if [[ "${{ matrix.arch }}" == "x86_64" ]]; then
+                toolkit_file="install/runtimes/win-x64/native/MaaToolkit.dll"
+              else
+                toolkit_file="install/runtimes/win-arm64/native/MaaToolkit.dll"
+              fi
               ;;
             linux)
-              toolkit_file="install/libMaaToolkit.so"
+              if [[ "${{ matrix.arch }}" == "x86_64" ]]; then
+                toolkit_file="install/runtimes/linux-x64/native/libMaaToolkit.so"
+              else
+                toolkit_file="install/runtimes/linux-arm64/native/libMaaToolkit.so"
+              fi
               ;;
             macos)
-              toolkit_file="install/libMaaToolkit.dylib"
+              if [[ "${{ matrix.arch }}" == "x86_64" ]]; then
+                toolkit_file="install/runtimes/osx-x64/native/libMaaToolkit.dylib"
+              else
+                toolkit_file="install/runtimes/osx-arm64/native/libMaaToolkit.dylib"
+              fi
               ;;
             *)
               echo "[ERROR] unknown desktop os: ${{ matrix.os }}"
@@ -994,11 +1006,23 @@ jobs:
                 if [[ "$path" != _internal/* && "$path" != agent/* && "$path" != resource/* && "$path" != docs/* ]]; then
                   include="true"
                 fi
-              elif [[ "$mode" == "mah" ]]; then
-                if [[ "$path" == agent/* || "$path" == docs/* || "$path" == resource/* ]]; then
+              elif [[ "$mode" == "mah_agent" ]]; then
+                if [[ "$path" == agent/* ]]; then
                   include="true"
                 fi
-                if [[ "$path" == resource/index/* || "$path" == resource/base/image/ar/* || "$path" == resource/base/image/character/* ]]; then
+              elif [[ "$mode" == "mah_docs" ]]; then
+                if [[ "$path" == docs/* ]]; then
+                  include="true"
+                fi
+              elif [[ "$mode" == "mah_model" ]]; then
+                if [[ "$path" == resource/base/model/* ]]; then
+                  include="true"
+                fi
+              elif [[ "$mode" == "mah_resource_other" ]]; then
+                if [[ "$path" == resource/* ]]; then
+                  include="true"
+                fi
+                if [[ "$path" == resource/index/* || "$path" == resource/base/image/ar/* || "$path" == resource/base/image/character/* || "$path" == resource/base/model/* ]]; then
                   include="false"
                 fi
               fi
@@ -1056,14 +1080,26 @@ jobs:
                 echo "[INFO] $f UI版本文件缺失，已回退到UI产物哈希对比，变化=$ui_changed"
               fi
 
-              current_mah_manifest="$tmp_dir/current_mah_manifest.txt"
-              previous_mah_manifest="$tmp_dir/previous_mah_manifest.txt"
-              build_manifest "$f" "mah" "$current_mah_manifest"
-              build_manifest "$prev_dir" "mah" "$previous_mah_manifest"
-              if ! cmp -s "$current_mah_manifest" "$previous_mah_manifest"; then
+              # 细粒度 MAH 清单：agent / model / docs / resource_other 各自独立哈希
+              agent_changed="false"
+              model_changed="false"
+              docs_changed="false"
+              resource_other_changed="false"
+
+              for sub in agent model docs resource_other; do
+                curr_mf="$tmp_dir/current_mah_${sub}_manifest.txt"
+                prev_mf="$tmp_dir/previous_mah_${sub}_manifest.txt"
+                build_manifest "$f" "mah_${sub}" "$curr_mf"
+                build_manifest "$prev_dir" "mah_${sub}" "$prev_mf"
+                if ! cmp -s "$curr_mf" "$prev_mf"; then
+                  eval "${sub}_changed=true"
+                fi
+              done
+
+              if [[ "$agent_changed" == "true" || "$model_changed" == "true" || "$docs_changed" == "true" || "$resource_other_changed" == "true" ]]; then
                 mah_changed="true"
               fi
-              echo "[INFO] $f MAH目录(agent/resource/docs)变化=$mah_changed"
+              echo "[INFO] $f MAH变化: agent=$agent_changed model=$model_changed docs=$docs_changed resource_other=$resource_other_changed"
             fi
 
             if [[ "$fallback_legacy" == "true" ]]; then
@@ -1083,18 +1119,24 @@ jobs:
               fi
 
               if [[ "$mah_changed" == "true" ]]; then
-                # MAH变更：仅打包agent/resource/docs（resource沿用原有排除规则）
-                if [[ -d "$f/agent" ]]; then
+                # 按变更粒度增量打包，避免重复打入未变更的大文件（ONNX模型等）
+                if [[ "$agent_changed" == "true" && -d "$f/agent" ]]; then
                   rsync -a "$f/agent/" "$inc_dir/agent/"
                 fi
-                if [[ -d "$f/docs" ]]; then
+                if [[ "$docs_changed" == "true" && -d "$f/docs" ]]; then
                   rsync -a "$f/docs/" "$inc_dir/docs/"
                 fi
-                if [[ -d "$f/resource" ]]; then
-                  rsync -a "$f/resource/" "$inc_dir/resource/"
-                  rm -rf "$inc_dir/resource/index"
-                  rm -rf "$inc_dir/resource/base/image/ar"
-                  rm -rf "$inc_dir/resource/base/image/character"
+                if [[ "$model_changed" == "true" && -d "$f/resource/base/model" ]]; then
+                  mkdir -p "$inc_dir/resource/base/model"
+                  rsync -a "$f/resource/base/model/" "$inc_dir/resource/base/model/"
+                fi
+                if [[ "$resource_other_changed" == "true" && -d "$f/resource" ]]; then
+                  rsync -a \
+                    --exclude='index/' \
+                    --exclude='base/image/ar/' \
+                    --exclude='base/image/character/' \
+                    --exclude='base/model/' \
+                    "$f/resource/" "$inc_dir/resource/"
                 fi
               fi
 

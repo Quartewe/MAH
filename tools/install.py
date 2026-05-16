@@ -146,35 +146,6 @@ def install_deps():
             dirs_exist_ok=True,
         )
 
-        if os_name == "win":
-            shared_lib_patterns = ("*.dll",)
-        elif os_name == "linux":
-            shared_lib_patterns = ("*.so", "*.so.*")
-        elif os_name == "macos":
-            shared_lib_patterns = ("*.dylib",)
-        else:
-            shared_lib_patterns = tuple()
-
-        for pattern in shared_lib_patterns:
-            for lib_file in deps_bin.glob(pattern):
-                if lib_file.is_file():
-                    shutil.copy2(lib_file, install_path / lib_file.name)
-
-        toolkit_name = {
-            "win": "MaaToolkit.dll",
-            "linux": "libMaaToolkit.so",
-            "macos": "libMaaToolkit.dylib",
-        }.get(os_name)
-        if toolkit_name:
-            toolkit_sources = [
-                deps_bin / toolkit_name,
-                runtime_native_dir / toolkit_name,
-            ]
-            for toolkit_file in toolkit_sources:
-                if toolkit_file.exists():
-                    shutil.copy2(toolkit_file, install_path / toolkit_name)
-                    break
-
 
 def ensure_embedded_python_pth() -> None:
     """为内置 Python 运行时生成版本化 ._pth，避免解释器初始化失败。"""

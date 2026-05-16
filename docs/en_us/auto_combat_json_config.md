@@ -219,7 +219,7 @@ The `pos` object defines the starting positions for the first 4 characters (LEAD
 
 **Situation 0 Example:**
 
-![sample](./sample_pic/3x3SIT0.png)
+![sample](../sample_pic/3x3SIT0.png)
 
 ```json
 "pos": {
@@ -232,7 +232,7 @@ The `pos` object defines the starting positions for the first 4 characters (LEAD
 
 **Situation 1 Example:**
 
-![sample](./sample_pic/3x3SIT1.png)
+![sample](../sample_pic/3x3SIT1.png)
 
 ```json
 "pos": {

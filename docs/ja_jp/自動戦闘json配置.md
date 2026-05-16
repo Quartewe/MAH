@@ -219,7 +219,7 @@ else:
 
 **状況0の例：**
 
-![sample](./sample_pic/3x3SIT0.png)
+![sample](../sample_pic/3x3SIT0.png)
 
 ```json
 "pos": {
@@ -232,7 +232,7 @@ else:
 
 **状況1の例：**
 
-![sample](./sample_pic/3x3SIT1.png)
+![sample](../sample_pic/3x3SIT1.png)
 
 ```json
 "pos": {
