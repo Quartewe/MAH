@@ -396,6 +396,45 @@ jobs:
           print(f"Normalized agent child_exec to: {runtime_exec}")
           PY
 
+      - name: Inject agent pip deps into embedded Python (temporary until next full UI build)
+        if: matrix.os == 'win'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          runtime_dir=""
+          if [[ -d "install/_internal" ]]; then
+            runtime_dir="install/_internal"
+          elif [[ -d "install/python" ]]; then
+            runtime_dir="install/python"
+          else
+            echo "[WARN] no bundled runtime dir, skip agent deps injection"
+            exit 0
+          fi
+
+          python_exe="${runtime_dir}/python.exe"
+          if [[ ! -f "$python_exe" ]]; then
+            echo "[WARN] no python.exe in $runtime_dir, skip agent deps injection"
+            exit 0
+          fi
+
+          req_file="agent/requirements.txt"
+          if [[ ! -f "$req_file" ]]; then
+            echo "[WARN] no agent/requirements.txt, skip agent deps injection"
+            exit 0
+          fi
+
+          echo "[agent deps] Installing agent dependencies into $runtime_dir ..."
+          "$python_exe" -m pip install -r "$req_file" --target "$runtime_dir" 2>&1 || true
+          echo "[agent deps] Installation finished."
+
+          # Quick verification
+          if "$python_exe" -c "import loguru" 2>/dev/null; then
+            echo "[agent deps] Verified: loguru is importable"
+          else
+            echo "[WARN][agent deps] loguru still not importable after injection"
+          fi
+
       - name: Include docs in package root
         shell: bash
         run: |
@@ -1144,6 +1183,57 @@ jobs:
               if [[ "$ui_changed" != "true" && "$mah_changed" != "true" ]]; then
                 echo "No UI or MAH changes detected." > "$inc_dir/NO_INCREMENTAL_CHANGES.txt"
               fi
+            fi
+
+            # ─── agent pip 依赖增量注入 ───
+            # 对比当前与上次的 agent/requirements.txt，若新增了依赖，从全量包
+            # 把对应的 pip 包目录复制进增量包 _internal/，避免用户增量更新后
+            # 因 _internal/ 缺少依赖而 agent 启动失败。
+            current_req="$f/agent/requirements.txt"
+            previous_req="$prev_dir/agent/requirements.txt"
+            current_internal_dir="$f/_internal"
+            if [[ -f "$current_req" && -f "$previous_req" && -d "$current_internal_dir" ]]; then
+              # 提取纯依赖名集合
+              extract_pkg_names() {
+                sed -n 's/^[[:space:]]*\([A-Za-z0-9_.-]\+\).*/\1/p' "$1" \
+                  | tr '[:upper:]' '[:lower:]' | sort -u
+              }
+              current_pkgs=$(extract_pkg_names "$current_req")
+              previous_pkgs=$(extract_pkg_names "$previous_req")
+              new_pkgs=$(comm -13 <(echo "$previous_pkgs") <(echo "$current_pkgs") || true)
+              if [[ -n "$new_pkgs" ]]; then
+                echo "[agent deps] 检测到新增依赖: $new_pkgs"
+                mkdir -p "$inc_dir/_internal"
+                for pkg in $new_pkgs; do
+                  # 优先找标准化的包目录（pip 装到 --target 时会生成小写的 .dist-info）
+                  matched=$(find "$current_internal_dir" -maxdepth 1 \( \
+                    -type d -iname "${pkg}" -o \
+                    -type d -iname "${pkg}-*.dist-info" -o \
+                    -type d -iname "${pkg//-/_}-*.dist-info" -o \
+                    -type d -iname "${pkg//_/-}-*.dist-info" \
+                  \) -print -quit 2>/dev/null || true)
+                  if [[ -n "$matched" && -d "$matched" ]]; then
+                    rsync -a "$matched/" "$inc_dir/_internal/${matched##*/}/"
+                    echo "[agent deps]   ✓ 已注入: ${matched##*/}"
+                  else
+                    echo "[agent deps]   ⚠ 未在 _internal/ 中找到 $pkg，将交由 updater 运行时安装"
+                  fi
+                done
+              else
+                echo "[agent deps] agent 依赖无新增，跳过注入"
+              fi
+            elif [[ -f "$current_req" && ! -f "$previous_req" ]]; then
+              echo "[agent deps] 上一版本无 requirements.txt，注入全部依赖"
+              mkdir -p "$inc_dir/_internal"
+              for pkg_dir in $(find "$current_internal_dir" -maxdepth 1 -type d \( \
+                -iname "loguru" -o -iname "loguru-*.dist-info" -o \
+                -iname "hanzidentifier" -o -iname "hanzidentifier-*.dist-info" -o \
+                -iname "numpy" -o -iname "numpy-*.dist-info" -o \
+                -iname "strenum" -o -iname "strenum-*.dist-info" \
+              \) 2>/dev/null || true); do
+                rsync -a "$pkg_dir/" "$inc_dir/_internal/${pkg_dir##*/}/"
+                echo "[agent deps]   ✓ 已注入: ${pkg_dir##*/}"
+              done
             fi
 
             (cd "$inc_dir" && zip -r "../$f-incremental-${{ needs.meta.outputs.tag }}.zip" .)
