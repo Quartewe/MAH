@@ -1,4 +1,4 @@
+loguru
 hanzidentifier
 StrEnum
 numpy
-loguru
