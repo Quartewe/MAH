@@ -3,6 +3,7 @@ import copy
 
 
 class MatchUtils:
+    SUPPORT_ROI = [0, -20, 749, 117]  # 基于指纹位置的相对ROI，适用于好友列表和支援选择界面
     @staticmethod
     def merge_res_dicts(existing: dict, new: dict) -> dict:
         """
@@ -62,8 +63,8 @@ class MatchUtils:
                 return True
         return False
     
-    @staticmethod
-    def group_info(context, image, roi: list, filter_id: str, x_range: int, y_range: int):
+    @classmethod
+    def group_info(cls, context, image, roi: list, filter_id: str, x_range: int, y_range: int):
         """
         分组信息：根据基准点和目标点的相对位置关系，将文本分为不同组别
 
@@ -115,8 +116,8 @@ class MatchUtils:
                 
                 # 将box转为可哈希的元组用于去重
                 box_tuple = tuple(text.box)
-
-                range_box = [text.box[0], text.box[1], text.box[2] + 749, text.box[3] + 97]
+    
+                range_box = [text.box[0], text.box[1] - 20, text.box[2] + 749, text.box[3] + 117]
                 
                 if (min(0, x_range) <= diff_x <= max(0, x_range) and 
                     min(0, y_range) <= diff_y <= max(0, y_range) and 
