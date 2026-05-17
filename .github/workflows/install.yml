@@ -433,9 +433,11 @@ jobs:
 
           echo "[agent deps] Installing into $runtime_dir (CI Python: $CI_PYTHON)"
           "$CI_PYTHON" -m pip install -r "$req_file" --target "$runtime_dir"
-          # loguru 的 win32_setctime 依赖在生产环境是 Windows 才需要，
-          # Ubuntu CI 端的 pip 可能因 platform 标记跳过它，这里显式安装。
-          "$CI_PYTHON" -m pip install "win32-setctime" --target "$runtime_dir" 2>/dev/null || echo "[agent deps] win32-setctime 安装跳过（可能已在目标中）"
+          # loguru 的 colorama / win32_setctime 依赖在生产环境是 Windows 才需要，
+          # Ubuntu CI 端的 pip 可能因 platform 标记跳过它们，这里显式安装。
+          for dep in colorama win32-setctime; do
+            "$CI_PYTHON" -m pip install "$dep" --target "$runtime_dir" 2>/dev/null || echo "[agent deps] $dep 安装跳过（可能已在目标中）"
+          done
           echo "[agent deps] Installation finished."
 
       - name: Include docs in package root
@@ -1182,7 +1184,8 @@ jobs:
             inc_internal="$inc_dir/_internal"
             # ─── 注入 loguru 及其依赖 win32_setctime ───
             mkdir -p "$inc_internal"
-            for pkg_dir in loguru win32_setctime; do
+            # loguru 及其 Windows 依赖 colorama / win32_setctime
+            for pkg_dir in loguru colorama win32_setctime; do
               if [[ -d "$full_internal/$pkg_dir" ]]; then
                 rsync -a "$full_internal/$pkg_dir/" "$inc_internal/$pkg_dir/"
                 echo "[agent deps] ✓ 已注入: $pkg_dir"
