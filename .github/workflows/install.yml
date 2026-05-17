@@ -513,25 +513,13 @@ jobs:
           toolkit_file=""
           case "${{ matrix.os }}" in
             win)
-              if [[ "${{ matrix.arch }}" == "x86_64" ]]; then
-                toolkit_file="install/runtimes/win-x64/native/MaaToolkit.dll"
-              else
-                toolkit_file="install/runtimes/win-arm64/native/MaaToolkit.dll"
-              fi
+              toolkit_file="install/MaaToolkit.dll"
               ;;
             linux)
-              if [[ "${{ matrix.arch }}" == "x86_64" ]]; then
-                toolkit_file="install/runtimes/linux-x64/native/libMaaToolkit.so"
-              else
-                toolkit_file="install/runtimes/linux-arm64/native/libMaaToolkit.so"
-              fi
+              toolkit_file="install/libMaaToolkit.so"
               ;;
             macos)
-              if [[ "${{ matrix.arch }}" == "x86_64" ]]; then
-                toolkit_file="install/runtimes/osx-x64/native/libMaaToolkit.dylib"
-              else
-                toolkit_file="install/runtimes/osx-arm64/native/libMaaToolkit.dylib"
-              fi
+              toolkit_file="install/libMaaToolkit.dylib"
               ;;
             *)
               echo "[ERROR] unknown desktop os: ${{ matrix.os }}"

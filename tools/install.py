@@ -118,12 +118,9 @@ def install_deps():
             dirs_exist_ok=True,
         )
     else:
-        runtime_native_dir = (
-            install_path / "runtimes" / get_dotnet_platform_tag() / "native"
-        )
         shutil.copytree(
             deps_bin,
-            runtime_native_dir,
+            install_path,
             ignore=shutil.ignore_patterns(
                 "*MaaDbgControlUnit*",
                 "*MaaThriftControlUnit*",
