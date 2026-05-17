@@ -2,3 +2,5 @@ loguru
 hanzidentifier
 StrEnum
 numpy
+colorama
+win32_setctime
