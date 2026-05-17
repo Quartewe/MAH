@@ -994,6 +994,7 @@ jobs:
                 --arg prefix "${package_prefix}-" \
                 --arg current_tag "$current_tag" \
                 '[.[]
+                  | select(.prerelease == false)
                   | .assets[]?
                   | select(.name | startswith($prefix))
                   | select(.name | endswith(".zip"))
@@ -1040,6 +1041,10 @@ jobs:
                 fi
               elif [[ "$mode" == "mah_agent" ]]; then
                 if [[ "$path" == agent/* ]]; then
+                  include="true"
+                fi
+              elif [[ "$mode" == "mah_internal" ]]; then
+                if [[ "$path" == _internal/* ]]; then
                   include="true"
                 fi
               elif [[ "$mode" == "mah_docs" ]]; then
@@ -1112,13 +1117,14 @@ jobs:
                 echo "[INFO] $f UI版本文件缺失，已回退到UI产物哈希对比，变化=$ui_changed"
               fi
 
-              # 细粒度 MAH 清单：agent / model / docs / resource_other 各自独立哈希
+              # 细粒度 MAH 清单：agent / internal / model / docs / resource_other 各自独立哈希
               agent_changed="false"
+              internal_changed="false"
               model_changed="false"
               docs_changed="false"
               resource_other_changed="false"
 
-              for sub in agent model docs resource_other; do
+              for sub in agent internal model docs resource_other; do
                 curr_mf="$tmp_dir/current_mah_${sub}_manifest.txt"
                 prev_mf="$tmp_dir/previous_mah_${sub}_manifest.txt"
                 build_manifest "$f" "mah_${sub}" "$curr_mf"
@@ -1128,10 +1134,10 @@ jobs:
                 fi
               done
 
-              if [[ "$agent_changed" == "true" || "$model_changed" == "true" || "$docs_changed" == "true" || "$resource_other_changed" == "true" ]]; then
+              if [[ "$agent_changed" == "true" || "$internal_changed" == "true" || "$model_changed" == "true" || "$docs_changed" == "true" || "$resource_other_changed" == "true" ]]; then
                 mah_changed="true"
               fi
-              echo "[INFO] $f MAH变化: agent=$agent_changed model=$model_changed docs=$docs_changed resource_other=$resource_other_changed"
+              echo "[INFO] $f MAH变化: agent=$agent_changed internal=$internal_changed model=$model_changed docs=$docs_changed resource_other=$resource_other_changed"
             fi
 
             if [[ "$fallback_legacy" == "true" ]]; then
@@ -1154,6 +1160,24 @@ jobs:
                 # 按变更粒度增量打包，避免重复打入未变更的大文件（ONNX模型等）
                 if [[ "$agent_changed" == "true" && -d "$f/agent" ]]; then
                   rsync -a "$f/agent/" "$inc_dir/agent/"
+                fi
+                if [[ "$internal_changed" == "true" && -d "$f/_internal" ]]; then
+                  # 基于文件级哈希对比，仅复制变更的文件（非整目录）
+                  declare -A prev_internal_hash
+                  while IFS='|' read -r path hash; do
+                    prev_internal_hash["$path"]="$hash"
+                  done < "$tmp_dir/previous_mah_internal_manifest.txt"
+
+                  while IFS='|' read -r path hash; do
+                    if [[ "${prev_internal_hash[$path]}" != "$hash" ]]; then
+                      dest="$inc_dir/$path"
+                      mkdir -p "$(dirname "$dest")"
+                      cp "$f/$path" "$dest"
+                    fi
+                  done < "$tmp_dir/current_mah_internal_manifest.txt"
+
+                  changed_count=$(find "$inc_dir/_internal" -type f 2>/dev/null | wc -l)
+                  echo "[INFO] $f _internal/ 增量: 变更 ${changed_count} 个文件"
                 fi
                 if [[ "$docs_changed" == "true" && -d "$f/docs" ]]; then
                   rsync -a "$f/docs/" "$inc_dir/docs/"
@@ -1178,27 +1202,8 @@ jobs:
               fi
             fi
 
-            # ─── 硬编码注入 loguru 到增量包 _internal/ ───
-            # 从全量包 _internal/ 直接 rsync loguru 目录，无任何条件判断。
-            full_internal="$f/_internal"
-            inc_internal="$inc_dir/_internal"
-            # ─── 注入 loguru 及其依赖 win32_setctime ───
-            mkdir -p "$inc_internal"
-            # loguru 及其 Windows 依赖 colorama / win32_setctime
-            for pkg_dir in loguru colorama win32_setctime; do
-              if [[ -d "$full_internal/$pkg_dir" ]]; then
-                rsync -a "$full_internal/$pkg_dir/" "$inc_internal/$pkg_dir/"
-                echo "[agent deps] ✓ 已注入: $pkg_dir"
-              else
-                echo "[agent deps] ⚠ 全量包 _internal/$pkg_dir 不存在，跳过"
-              fi
-              # 同时复制 dist-info
-              for di in "$full_internal"/"$pkg_dir"-*.dist-info; do
-                if [[ -d "$di" ]]; then
-                  rsync -a "$di/" "$inc_internal/${di##*/}/"
-                fi
-              done
-            done
+            # _internal/ 已纳入增量包（通过文件级哈希对比），依赖变更时可增量更新。
+            # 不再因 requirements.txt 变更跳过增量包。
 
             (cd "$inc_dir" && zip -r "../$f-incremental-${{ needs.meta.outputs.tag }}.zip" .)
             rm -rf "$inc_dir" "$tmp_dir"
