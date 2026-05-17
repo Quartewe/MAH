@@ -433,6 +433,9 @@ jobs:
 
           echo "[agent deps] Installing into $runtime_dir (CI Python: $CI_PYTHON)"
           "$CI_PYTHON" -m pip install -r "$req_file" --target "$runtime_dir"
+          # loguru 的 win32_setctime 依赖在生产环境是 Windows 才需要，
+          # Ubuntu CI 端的 pip 可能因 platform 标记跳过它，这里显式安装。
+          "$CI_PYTHON" -m pip install "win32-setctime" --target "$runtime_dir" 2>/dev/null || echo "[agent deps] win32-setctime 安装跳过（可能已在目标中）"
           echo "[agent deps] Installation finished."
 
       - name: Include docs in package root
@@ -1177,19 +1180,22 @@ jobs:
             # 从全量包 _internal/ 直接 rsync loguru 目录，无任何条件判断。
             full_internal="$f/_internal"
             inc_internal="$inc_dir/_internal"
-            if [[ -d "$full_internal/loguru" ]]; then
-              mkdir -p "$inc_internal"
-              rsync -a "$full_internal/loguru/" "$inc_internal/loguru/"
-              # 同时复制 dist-info，确保 pip 元数据完整
-              for di in "$full_internal"/loguru-*.dist-info; do
+            # ─── 注入 loguru 及其依赖 win32_setctime ───
+            mkdir -p "$inc_internal"
+            for pkg_dir in loguru win32_setctime; do
+              if [[ -d "$full_internal/$pkg_dir" ]]; then
+                rsync -a "$full_internal/$pkg_dir/" "$inc_internal/$pkg_dir/"
+                echo "[agent deps] ✓ 已注入: $pkg_dir"
+              else
+                echo "[agent deps] ⚠ 全量包 _internal/$pkg_dir 不存在，跳过"
+              fi
+              # 同时复制 dist-info
+              for di in "$full_internal"/"$pkg_dir"-*.dist-info; do
                 if [[ -d "$di" ]]; then
                   rsync -a "$di/" "$inc_internal/${di##*/}/"
                 fi
               done
-              echo "[agent deps] ✓ 已硬编码注入 loguru 到增量包 _internal/"
-            else
-              echo "[agent deps] ⚠ 全量包 _internal/loguru 不存在，跳过"
-            fi
+            done
 
             (cd "$inc_dir" && zip -r "../$f-incremental-${{ needs.meta.outputs.tag }}.zip" .)
             rm -rf "$inc_dir" "$tmp_dir"
