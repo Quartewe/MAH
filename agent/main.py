@@ -24,6 +24,22 @@ def _append_bootstrap_error(title: str, detail: str) -> None:
 
 
 # ---------------------------------------------------------------------------
+# 最早期路径注入 —— 必须在任何 agent 内部模块导入前完成
+# ---------------------------------------------------------------------------
+
+def _ensure_agent_import_paths() -> None:
+    """确保 agent/ 和项目根目录在 sys.path 中，使 from utils.logger 等导入可用。"""
+    project_root = Path(__file__).resolve().parent.parent
+    agent_path = project_root / "agent"
+    for path in (agent_path, project_root):
+        path_str = str(path)
+        if path.exists() and path_str not in sys.path:
+            sys.path.insert(0, path_str)
+
+
+_ensure_agent_import_paths()
+
+# ---------------------------------------------------------------------------
 # 日志系统（在 sys.path 就绪后初始化）
 # ---------------------------------------------------------------------------
 
