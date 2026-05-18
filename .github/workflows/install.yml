@@ -1169,7 +1169,7 @@ jobs:
                   done < "$tmp_dir/previous_mah_internal_manifest.txt"
 
                   while IFS='|' read -r path hash; do
-                    if [[ "${prev_internal_hash[$path]}" != "$hash" ]]; then
+                    if [[ "${prev_internal_hash[$path]:-}" != "$hash" ]]; then
                       dest="$inc_dir/$path"
                       mkdir -p "$(dirname "$dest")"
                       cp "$f/$path" "$dest"
