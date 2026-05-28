@@ -149,6 +149,7 @@
                     "label": "$current_progress_show",
                     "description": "$current_progress_show_description",
                     "path": "$current_progress_show_path",
+                    "json_path": "MAH.weekly_missions",
                     "mode": "auto"
                 }
             ]
