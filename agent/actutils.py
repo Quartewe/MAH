@@ -5,13 +5,13 @@
 """
 
 from utils import (
-    IOUtils, data_io, DEFAULT_STATE, STATE_FILE, CHAR_FILE,
+    IOUtils, data_io,
     MatchUtils, match_mgr,
     TimeoutUtils, timeout_mgr,
-    ResourceUtils, resource_mgr,
-    MissionUtils, mission_mgr,
     ActUtils, act_mgr,
-    paths, proj_path,
+    proj_path,
 )
 
+CONFIG_FILE = proj_path.CONFIG_FILE
+CHAR_FILE = proj_path.CHAR_FILE
 

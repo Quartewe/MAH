@@ -453,6 +453,8 @@ tools/ImageCropper/**/*.png
 assets/config
 debug
 
+/.codex
+
 ar.json
 characters.json
 character_lowstar.json

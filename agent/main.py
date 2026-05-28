@@ -268,9 +268,38 @@ def main():
     os.chdir(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     logger.info(f"AgentServer 正在启动，通道 ID 为: {Agent_Identifier}")
 
+    # ================= 检查是否为本周第一次运行 =================
+    try:
+        from utils import info_share, data_io
+
+        current_year, current_week, _ = datetime.now().isocalendar()
+        run_state = data_io.read_app_state("run_state", {})
+        if not isinstance(run_state, dict):
+            run_state = {}
+
+        last_run_year = run_state.get("last_run_iso_year")
+        last_run_week = run_state.get("last_run_week")
+
+        if (last_run_year, last_run_week) != (current_year, current_week):
+            logger.info("为本周首次运行。")
+            info_share.is_first_run = True
+            data_io.write_app_state(
+                "run_state",
+                {
+                    "last_run_iso_year": current_year,
+                    "last_run_week": current_week,
+                },
+            )
+        else:
+            logger.info("本周已运行。")
+
+    except Exception as e:
+        logger.error(f"检查本周首次运行失败: {e}")
+    # ============================================================
+
     AgentServer.start_up(Agent_Identifier)
 
-    logger.info("服务器已启动，等待 MAA 任务触发... (按 Ctrl+C 停止)")
+    logger.info("AgentServer已启动，等待 MAA 任务触发...")
 
     AgentServer.join()
     AgentServer.shut_down()

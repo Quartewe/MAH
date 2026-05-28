@@ -7,8 +7,9 @@ import shutil
 from . import proj_path, logger
 
 # 使用统一的路径管理模块
-STATE_FILE = proj_path.STATE_FILE
+CONFIG_FILE = proj_path.CONFIG_FILE
 CHAR_FILE = proj_path.CHAR_FILE
+APP_CONFIG_SECTION = "MAH"
 
 
 class IOUtils:
@@ -16,12 +17,12 @@ class IOUtils:
     def read_data(file_path: str = None) -> dict:
         """
         读取数据文件
-        file_path: 文件路径，如果为None则使用默认的STATE_FILE
+        file_path: 文件路径，如果为None则使用默认的CONFIG_FILE
         """
         if file_path is None:
-            file_path = STATE_FILE
+            file_path = CONFIG_FILE
 
-        is_state_file = Path(file_path).resolve() == Path(STATE_FILE).resolve()
+        is_config_file = Path(file_path).resolve() == Path(CONFIG_FILE).resolve()
             
         try:
             if not os.path.exists("data"):
@@ -30,7 +31,7 @@ class IOUtils:
                 #
 
             if not os.path.exists(file_path):
-                if is_state_file:
+                if is_config_file:
                     logger.debug(f"文件不存在: {file_path}，正在创建默认文件")
                     #
                     os.makedirs(os.path.dirname(file_path) or ".", exist_ok=True)
@@ -45,7 +46,7 @@ class IOUtils:
                 #
                 return json.load(f)
         except (json.JSONDecodeError, FileNotFoundError):
-            if is_state_file:
+            if is_config_file:
                 logger.debug(f"文件 {file_path} 已损坏，正在重新创建")
                 #
                 os.makedirs(os.path.dirname(file_path) or ".", exist_ok=True)
@@ -61,37 +62,65 @@ class IOUtils:
     def write_data(data: dict, file_path: str = None):
         """
         写入数据文件
-        file_path: 文件路径，如果为None则使用默认的STATE_FILE
+        file_path: 文件路径，如果为None则使用默认的CONFIG_FILE
         """
         if file_path is None:
-            file_path = STATE_FILE
-            
+            file_path = CONFIG_FILE
+
+        os.makedirs(os.path.dirname(file_path) or ".", exist_ok=True)
         with open(file_path, "w", encoding="utf-8") as f:
             logger.debug(f"正在写入文件: {file_path}...")
-            #
             json.dump(data, f, ensure_ascii=False, indent=4)
         
         return True
 
     @staticmethod
+    def read_config_data():
+        if not os.path.exists(CONFIG_FILE):
+            return {}
+        try:
+            with open(CONFIG_FILE, "r", encoding="utf-8") as f:
+                config = json.load(f)
+            return config if isinstance(config, dict) else {}
+        except (json.JSONDecodeError, OSError) as e:
+            logger.error(f"读取配置文件失败，跳过运行状态写入: {CONFIG_FILE}, {e}")
+            return None
+
+    @staticmethod
+    def read_app_state(key: str = None, default=None):
+        config = IOUtils.read_config_data()
+        if config is None:
+            return default if key is not None else {}
+        app_state = config.get(APP_CONFIG_SECTION, {})
+        if not isinstance(app_state, dict):
+            app_state = {}
+        if key is None:
+            return app_state
+        return app_state.get(key, default)
+
+    @staticmethod
+    def write_app_state(key: str, value):
+        config = IOUtils.read_config_data()
+        if config is None:
+            return False
+        app_state = config.get(APP_CONFIG_SECTION, {})
+        if not isinstance(app_state, dict):
+            app_state = {}
+        app_state[key] = value
+        config[APP_CONFIG_SECTION] = app_state
+        return IOUtils.write_data(config, CONFIG_FILE)
+
+    @staticmethod
     def set_to_completed():
-        state = IOUtils.read_data()
-        for mission in state["missions"]:
-            if isinstance(state["missions"][mission], dict):
-                state["missions"][mission]["completed"] = True
+        missions = IOUtils.read_app_state("weekly_missions", {})
+        if not isinstance(missions, dict):
+            missions = {}
+        for mission, progress in missions.items():
+            if isinstance(progress, dict):
+                progress["completed"] = True
+                progress["current"] = progress.get("target", progress.get("current", 0))
                 logger.debug(f"任务 {mission} 已标记为完成")
-                #
-                state["missions"][mission]["current"] = state["missions"][mission][
-                    "target"
-                ]
-                logger.debug(
-                    f"任务 {mission} 数值已设置为 {state['missions'][mission]['current']}"
-                )
-                #
-        state["missions"]["if_all_completed"] = True
-        logger.debug("if_all_completed 已设置为 True")
-        #
-        IOUtils.write_data(state)
+        IOUtils.write_app_state("weekly_missions", missions)
         return True
     
     @staticmethod

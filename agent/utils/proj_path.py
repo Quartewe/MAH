@@ -43,7 +43,7 @@ MAA_CONFIG_PATH = _pick_existing_path(
 )
 
 # 数据文件
-STATE_FILE = str(DATA_DIR / "state.json")
+CONFIG_FILE = str(PROJECT_ROOT / "config" / "config.json")
 CHAR_FILE = str(INDEX_DIR / "characters.json")
 CHAR_LOWSTAR_FILE = str(INDEX_DIR / "characters_lowstar.json")
 AR_FILE = str(INDEX_DIR / "ar.json")

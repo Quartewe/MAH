@@ -12,6 +12,17 @@ class ResourceRecord(CustomAction):
     def __init__(self):
         super().__init__()
 
+    @staticmethod
+    def _load_resources():
+        resources = data_io.read_app_state("resources", {})
+        if not isinstance(resources, dict):
+            resources = {}
+        resources.setdefault("DP", {"value": 0, "last_updated": 0})
+        resources.setdefault("AP", {"value": 0, "upper_limit": 0, "last_updated": 0})
+        resources.setdefault("Stone", 0)
+        resources.setdefault("RF", 0)
+        return resources
+
     def run(
         self,
         context: Context,
@@ -21,7 +32,7 @@ class ResourceRecord(CustomAction):
         if timeout_mgr.check_timeout(argv.node_name):    
             return False
 
-        state = data_io.read_data()
+        resources = self._load_resources()
         now = datetime.now().timestamp()
 
 
@@ -31,8 +42,8 @@ class ResourceRecord(CustomAction):
                     num = len(argv.reco_detail.filtered_results)
                     logger.debug(f"当前 DP 数据: {num} / 3")
                     #
-                    state["resources"]["DP"]["value"] = num
-                    state["resources"]["DP"]["last_updated"] = now
+                    resources["DP"]["value"] = num
+                    resources["DP"]["last_updated"] = now
                     timeout_mgr.stop_monitoring(argv.node_name)
             case "ResourceRecord.AP":
                 if argv.reco_detail.filtered_results:
@@ -41,14 +52,14 @@ class ResourceRecord(CustomAction):
                     logger.debug(f"当前 AP 数据: {nums[0]} / {nums[1]}")
                     #
                     if len(nums) >= 2:
-                        state["resources"]["AP"]["value"] = int(nums[0])
-                        state["resources"]["AP"]["upper_limit"] = int(nums[1])
-                        state["resources"]["AP"]["last_updated"] = now
+                        resources["AP"]["value"] = int(nums[0])
+                        resources["AP"]["upper_limit"] = int(nums[1])
+                        resources["AP"]["last_updated"] = now
                     timeout_mgr.stop_monitoring(argv.node_name)
             case "ResourceRecord.Stone":
                 if argv.reco_detail.filtered_results:
                     raw = argv.reco_detail.filtered_results[0].text.replace(",", "")
-                    state["resources"]["Stone"] = int(raw)
+                    resources["Stone"] = int(raw)
                     logger.debug("当前石头:", raw)
                     #
                     timeout_mgr.stop_monitoring(argv.node_name)
@@ -56,12 +67,12 @@ class ResourceRecord(CustomAction):
             case "ResourceRecord.RF":
                 if argv.reco_detail.filtered_results:
                     raw = argv.reco_detail.filtered_results[0].text.replace(",", "")
-                    state["resources"]["RF"] = int(raw)
+                    resources["RF"] = int(raw)
                     logger.debug("当前虹碎:", raw)
                     #
                     timeout_mgr.stop_monitoring(argv.node_name)
 
-        data_io.write_data(state)
+        data_io.write_app_state("resources", resources)
 
         logger.debug("资源记录流程执行完成")
         return True
