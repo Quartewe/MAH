@@ -1,4 +1,5 @@
 class InfoShare:
+    is_first_run = False
     combat_set = False
     auto_combat_mode = False
     current_lang = None

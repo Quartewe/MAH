@@ -3,7 +3,7 @@ from maa.agent.agent_server import AgentServer
 from maa.custom_action import CustomAction
 from maa.context import Context
 from datetime import datetime
-from utils import logger, data_io, timeout_mgr, act_mgr, info_share, proj_path
+from utils import logger, data_io, timeout_mgr, act_mgr, info_share
 from copy import deepcopy
 import re
 import time
@@ -75,6 +75,27 @@ class WeeklyMission(CustomAction):
             return ""
         return str(text).strip().strip('"').strip("'").replace(" ", "")
 
+    @staticmethod
+    def _is_mission_entry(value) -> bool:
+        return (
+            isinstance(value, dict)
+            and {"current", "target", "completed"}.issubset(value.keys())
+        )
+
+    def _filter_mission_data(self, state: dict) -> dict:
+        if not isinstance(state, dict):
+            return {}
+        return {
+            mission: progress
+            for mission, progress in state.items()
+            if self._is_mission_entry(progress)
+        }
+
+    def _load_mission_data(self) -> dict:
+        return self._filter_mission_data(
+            data_io.read_app_state("weekly_missions", {})
+        )
+
     def _extract_progress(self, text: str):
         normalized = self._normalize_ocr_text(text).replace("／", "/")
         if "/" not in normalized:
@@ -123,7 +144,7 @@ class WeeklyMission(CustomAction):
         return None, None
 
     def _catch_mission_data(self, context):
-        mission_data = data_io.read_data(proj_path.STATE_FILE)
+        mission_data = self._load_mission_data()
 
         if mission_data == {}:
             logger.debug("未找到已有任务数据，正在检测语言并初始化任务数据")
@@ -140,7 +161,6 @@ class WeeklyMission(CustomAction):
         state_keys = mission_data.keys() if mission_data else None
         state_lang = act_mgr.detect_lang(context, [0,0,0,0], info_share.IGNORE_LIST, compare_list=state_keys)
         if state_lang != info_share.current_lang:
-            logger.warning(f"检测语言 {state_lang} 与当前语言 {info_share.current_lang} 不一致，正在重置任务数据")
             match state_lang:
                 case "jp":
                     mission_data = deepcopy(self.JP_MISSION)
@@ -263,7 +283,8 @@ class WeeklyMission(CustomAction):
         success = True
         # 选择任务
         if argv.node_name == "CheckWeeklyMissions.Record":
-            if data_io.write_data(self._catch_mission_data(context), proj_path.STATE_FILE):
+            mission_data = self._catch_mission_data(context)
+            if data_io.write_app_state("weekly_missions", mission_data):
                 timeout_mgr.stop_monitoring(argv.node_name)
                 return True
             else:
@@ -272,7 +293,8 @@ class WeeklyMission(CustomAction):
                 return False
                 
         elif argv.node_name == "CheckWeeklyMissions.AllCompleted":
-            success = data_io.write_data(self._set_to_completed(context), proj_path.STATE_FILE)
+            mission_data = self._set_to_completed(context)
+            success = data_io.write_app_state("weekly_missions", mission_data)
             timeout_mgr.stop_monitoring(argv.node_name)
             return success
 
