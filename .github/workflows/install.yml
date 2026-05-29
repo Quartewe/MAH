@@ -1062,6 +1062,10 @@ jobs:
                 if [[ "$path" == resource/index/* || "$path" == resource/base/image/ar/* || "$path" == resource/base/image/character/* || "$path" == resource/base/model/* ]]; then
                   include="false"
                 fi
+              elif [[ "$mode" == "mah_interface" ]]; then
+                if [[ "$path" == "interface.json" || "$path" == "interface.jsonc" ]]; then
+                  include="true"
+                fi
               fi
 
               if [[ "$include" == "true" ]]; then
@@ -1123,8 +1127,9 @@ jobs:
               model_changed="false"
               docs_changed="false"
               resource_other_changed="false"
+              interface_changed="false"
 
-              for sub in agent internal model docs resource_other; do
+              for sub in agent internal model docs resource_other interface; do
                 curr_mf="$tmp_dir/current_mah_${sub}_manifest.txt"
                 prev_mf="$tmp_dir/previous_mah_${sub}_manifest.txt"
                 build_manifest "$f" "mah_${sub}" "$curr_mf"
@@ -1134,10 +1139,10 @@ jobs:
                 fi
               done
 
-              if [[ "$agent_changed" == "true" || "$internal_changed" == "true" || "$model_changed" == "true" || "$docs_changed" == "true" || "$resource_other_changed" == "true" ]]; then
+              if [[ "$agent_changed" == "true" || "$internal_changed" == "true" || "$model_changed" == "true" || "$docs_changed" == "true" || "$resource_other_changed" == "true" || "$interface_changed" == "true" ]]; then
                 mah_changed="true"
               fi
-              echo "[INFO] $f MAH变化: agent=$agent_changed internal=$internal_changed model=$model_changed docs=$docs_changed resource_other=$resource_other_changed"
+              echo "[INFO] $f MAH变化: agent=$agent_changed internal=$internal_changed model=$model_changed docs=$docs_changed resource_other=$resource_other_changed interface=$interface_changed"
             fi
 
             if [[ "$fallback_legacy" == "true" ]]; then
@@ -1193,6 +1198,13 @@ jobs:
                     --exclude='base/image/character/' \
                     --exclude='base/model/' \
                     "$f/resource/" "$inc_dir/resource/"
+                fi
+                if [[ "$interface_changed" == "true" ]]; then
+                  for pi_file in interface.json interface.jsonc; do
+                    if [[ -f "$f/$pi_file" ]]; then
+                      cp "$f/$pi_file" "$inc_dir/$pi_file"
+                    fi
+                  done
                 fi
               fi
 
