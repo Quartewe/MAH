@@ -526,7 +526,8 @@
         "action": {
             "type": "Custom",
             "param": {
-                "custom_action": "Counter"
+                "custom_action": "Counter",
+                "custom_action_param": 0
             }
         },
         "next": [
