@@ -50,5 +50,5 @@ class InfoShareAction(CustomAction):
                 else:
                     logger.warning(f"InfoShare 中不存在键 {key}, 无法更新")
         else:
-            logger.warning("参数格式错误, 期望一个字典")
+            logger.warning(f"参数格式错误, 接收到 InfoShareAction 参数: {param}, 类型为: {type(param)}")
         return True

@@ -639,7 +639,9 @@
                         "Global.AutoCombat.SelectSupportInfo": {
                             "action": {
                                 "param": {
-                                    "custom_action_param": "{\"select_support_fast\": true}"
+                                    "custom_action_param": {
+                                        "select_support_fast": true
+                                    }
                                 }
                             }
                         }
@@ -651,7 +653,9 @@
                         "Global.AutoCombat.SelectSupportInfo": {
                             "action": {
                                 "param": {
-                                    "custom_action_param": "{\"select_support_fast\": false}"
+                                    "custom_action_param": {
+                                        "select_support_fast": false
+                                    }
                                 }
                             }
                         }
