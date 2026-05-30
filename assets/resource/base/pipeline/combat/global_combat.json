@@ -268,7 +268,7 @@
             "Global.AutoCombat.Back0"
         ]
     },
-    "Global.AutoCombat.SelectSupport": {
+    "Global.AutoCombat.SelectSupportInfo": {
         "pre_wait_freezes": {
             "time": 1000,
             "target": [
@@ -282,7 +282,7 @@
         "action": {
             "type": "Custom",
             "param": {
-                "custom_action": "SelectSupport",
+                "custom_action": "InfoShareAction",
                 "custom_action_param": ""
             }
         },
@@ -297,10 +297,7 @@
             "threshold": 0.999
         },
         "next": [
-            "Global.AutoCombat.TeamSelect"
-        ],
-        "on_error": [
-            "Global.GoBackToHomePage"
+            "Global.AutoCombat.SelectSupport"
         ]
     },
     "Global.AutoCombat.TeamSelect": {
@@ -399,7 +396,7 @@
         "next": [
             "Global.AutoCombat.PreDrink",
             "Global.AutoCombat.Filter",
-            "Global.AutoCombat.SelectSupport"
+            "Global.AutoCombat.SelectSupportInfo"
         ]
     },
     "Global.AutoCombat.PreDrink": {
@@ -437,7 +434,7 @@
         },
         "next": [
             "Global.AutoCombat.Filter",
-            "Global.AutoCombat.SelectSupport"
+            "Global.AutoCombat.SelectSupportInfo"
         ],
         "on_error": [
             "Global.GoBackToHomePage"
@@ -519,7 +516,7 @@
             "threshold": 0.999
         },
         "next": [
-            "Global.AutoCombat.SelectSupport"
+            "Global.AutoCombat.SelectSupportInfo"
         ]
     },
     "Global.AutoCombat.CountClear": {
@@ -527,7 +524,7 @@
             "type": "Custom",
             "param": {
                 "custom_action": "Counter",
-                "custom_action_param": 0
+                "custom_action_param": "0"
             }
         },
         "next": [
@@ -538,6 +535,12 @@
         "recognition": {
             "type": "ColorMatch",
             "param": {
+                "roi": [
+                    233,
+                    476,
+                    802,
+                    125
+                ],
                 "lower": [
                     [
                         163,
@@ -551,12 +554,6 @@
                         191,
                         191
                     ]
-                ],
-                "roi": [
-                    233,
-                    476,
-                    802,
-                    125
                 ]
             }
         },
@@ -565,6 +562,21 @@
         },
         "next": [
             "Global.GoBackToHomePage"
+        ]
+    },
+    "Global.AutoCombat.SelectSupport": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "SelectSupport",
+                "custom_action_param": ""
+            }
+        },
+        "on_error": [
+            "Global.GoBackToHomePage"
+        ],
+        "next": [
+            "Global.AutoCombat.TeamSelect"
         ]
     }
 }

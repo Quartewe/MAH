@@ -77,6 +77,8 @@
     "json_path_description": "输入JSON配置文件的名称（会自动遍历寻找data文件夹下的所有文件，不允许填入路径, 必须填入拓展名）",
     "select_support": "选择助战角色",
     "select_support_description": "配置助战角色的筛选方式",
+    "select_support_fast": "快速助战",
+    "select_support_fast_description": "启用快速助战模式，选择第一个满足筛选条件的助战角色",
     "select_support_distinct": "筛选助战",
     "select_support_distinct_description": "根据特定条件筛选助战角色",
     "select_from_list": "从JSON文件中自动获取",

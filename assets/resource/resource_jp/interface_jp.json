@@ -79,6 +79,8 @@
     "select_json": "JSONから自動取得",
     "select_json_description": "JSONファイルにある事前設定の構成を使用する",
     "select_support_description": "サポートキャラクターのフィルタ設定",
+    "select_support_fast": "高速サポート",
+    "select_support_fast_description": "高速サポートモードを有効にし、フィルタ条件を満たす最初のサポートを使用します",
     "select_support_distinct": "サポートフィルタ",
     "select_support_distinct_description": "特定条件でサポートキャラクターをフィルタリング",
     "select_from_list": "JSONから自動取得",

@@ -77,6 +77,8 @@
     "json_path_description": "輸入JSON配置文件的名稱",
     "select_support": "選擇助戰角色",
     "select_support_description": "配置助戰角色的篩選方式",
+    "select_support_fast": "快速助戰",
+    "select_support_fast_description": "啟用快速助戰模式，選擇第一個滿足篩選條件的助戰角色",
     "select_support_distinct": "篩選助戰",
     "select_support_distinct_description": "根據特定條件篩選助戰角色",
     "select_from_list": "從JSON文件中自動獲取",

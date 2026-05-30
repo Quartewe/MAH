@@ -251,6 +251,9 @@ class SelectSupport(CustomAction):
                         logger.info(f"找到多个角色")
                     else:
                         logger.info(f"找到一个角色: {support_data['name']} {support_data['id']}")
+                    if info_share.select_support_fast:
+                        logger.info("开启快速选择支援模式，直接使用识别结果的第一个角色")
+                        break
                     
             # 为每个 res_* 添加 pos 信息
             if add_res:
@@ -312,7 +315,11 @@ class SelectSupport(CustomAction):
                     break
                 for res_key, res_data in char_id_dict.items():
                     if res_key == best_res:
-                        swipe_time = res_data.get("pos", 0) // 3
+                        if not info_share.select_support_fast:
+                            swipe_time = res_data.get("pos", 0) // 3
+                        else:
+                            swipe_time = 0
+                            page = 0
                         logger.info(f"需要滑动次数: {swipe_time}")
                         raw_box = res_data.get("box")
                         found = True

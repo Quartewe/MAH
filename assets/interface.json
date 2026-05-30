@@ -103,6 +103,7 @@
                 "play_times",
                 "use_DP_potion",
                 "select_team",
+                "select_support_fast",
                 "json_load"
             ]
         },
@@ -117,6 +118,7 @@
                 "play_times",
                 "use_AP_potion",
                 "select_team",
+                "select_support_fast",
                 "json_load"
             ]
         },
@@ -622,6 +624,38 @@
                     "option": [
                         "select_json"
                     ]
+                }
+            ]
+        },
+        "select_support_fast": {
+            "type": "switch",
+            "label": "$select_support_fast",
+            "description": "$select_support_fast_description",
+            "default_case": "No",
+            "cases": [
+                {
+                    "name": "Yes",
+                    "pipeline_override": {
+                        "Global.AutoCombat.SelectSupportInfo": {
+                            "action": {
+                                "param": {
+                                    "custom_action_param": "{\"select_support_fast\": true}"
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "No",
+                    "pipeline_override": {
+                        "Global.AutoCombat.SelectSupportInfo": {
+                            "action": {
+                                "param": {
+                                    "custom_action_param": "{\"select_support_fast\": false}"
+                                }
+                            }
+                        }
+                    }
                 }
             ]
         },

@@ -81,6 +81,8 @@
     "custom_select_json": "Custom Select Combination",
     "custom_select_json_description": "Import combinations of preset configurations from different JSON files",
     "select_support_description": "Configure support character filter",
+    "select_support_fast": "Fast Support",
+    "select_support_fast_description": "Enable fast support mode, pick the first support that meets the filter criteria",
     "select_support_distinct": "Filter Support",
     "select_support_distinct_description": "Filter support character by specific conditions",
     "select_from_list": "Auto Fetch from JSON",
