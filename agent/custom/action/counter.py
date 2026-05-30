@@ -19,7 +19,7 @@ class Counter(CustomAction):
 
         if argv.node_name == "Global.AutoCombat.CountClear" or param == 0:
             info_share.counter = 1
-            print(f"[COUNTER] counter cleared", flush=True)
+            return True
 
         current_count = info_share.counter
         print(f"[COUNTER] count={current_count} target={param}", flush=True)
