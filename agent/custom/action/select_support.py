@@ -251,11 +251,8 @@ class SelectSupport(CustomAction):
                         logger.info(f"找到多个角色")
                     else:
                         logger.info(f"找到一个角色: {support_data['name']} {support_data['id']}")
-                    if info_share.select_support_fast:
-                        logger.info("开启快速选择支援模式，直接使用识别结果的第一个角色")
-                        break
-                    
-            # 为每个 res_* 添加 pos 信息
+
+            # 为每个 res_* 添加 pos 信息（必须在 break 之前执行，确保 add_res 已合并到 self.all_res）
             if add_res:
                 logger.info(f"已更新识别结果: {add_res}")
                 for name, id_dict in add_res.items():
@@ -279,7 +276,11 @@ class SelectSupport(CustomAction):
                                 else:
                                     logger.info(f"结果框 {res_box} 不在指纹框 {fp} 内")
                 self.all_res = match_mgr.merge_res_dicts(self.all_res, add_res)
-            
+
+            if info_share.select_support_fast:
+                logger.info("开启快速选择支援模式，直接使用识别结果的第一个角色")
+                break
+
             logger.info(f"第 {page // 3} 页，指纹: {current_fingerprint}，正在滑动...")
             context.run_action(
                 "UtilsSwipe",
@@ -292,6 +293,31 @@ class SelectSupport(CustomAction):
             )
             self.last_fingerprint = current_fingerprint
             page += 3
+
+        # 快速模式：直接从 self.all_res 取第一个结果，跳过 choose_best
+        if info_share.select_support_fast:
+            best_res = None
+            raw_box = None
+            for char_name_dict in self.all_res.values():
+                for char_id_dict in char_name_dict.values():
+                    for res_key, res_data in char_id_dict.items():
+                        if res_key.startswith("res_"):
+                            best_res = res_key
+                            raw_box = res_data.get("box")
+                            break
+                    if best_res:
+                        break
+                if best_res:
+                    break
+            if not best_res or not raw_box:
+                logger.info("快速模式未找到合适结果")
+                self.page = page
+                return False
+            logger.info(f"快速模式最佳结果: {best_res}")
+            self.raw_box = raw_box
+            self.swipe_time = 0
+            self.page = 0
+            return True
 
         # 选择最佳结果
         best_res = act_mgr.choose_best(self.all_res, support_data, keywords, mode=select_mode)
@@ -315,11 +341,7 @@ class SelectSupport(CustomAction):
                     break
                 for res_key, res_data in char_id_dict.items():
                     if res_key == best_res:
-                        if not info_share.select_support_fast:
-                            swipe_time = res_data.get("pos", 0) // 3
-                        else:
-                            swipe_time = 0
-                            page = 0
+                        swipe_time = res_data.get("pos", 0) // 3
                         logger.info(f"需要滑动次数: {swipe_time}")
                         raw_box = res_data.get("box")
                         found = True
