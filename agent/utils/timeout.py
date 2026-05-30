@@ -13,7 +13,7 @@ class TimeoutUtils:
         
         if task_name not in cls._monitoring_tasks:
             cls._monitoring_tasks[task_name] = now
-            logger.debug(f"开始监控任务: {task_name}, 超时时间: {timeout}秒")
+            logger.info(f"开始监控任务: {task_name}, 超时时间: {timeout}秒")
             #
             return False
             
@@ -30,7 +30,7 @@ class TimeoutUtils:
         """取消任务计时"""
         if task_name in cls._monitoring_tasks:
             del cls._monitoring_tasks[task_name]
-            logger.debug(f"已停止监控任务: {task_name}")
+            logger.info(f"已停止监控任务: {task_name}")
             #
 
 

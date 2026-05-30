@@ -66,7 +66,7 @@ class TraverseMatch(CustomRecognition):
 
         for candidate in candidates:
             if candidate.exists():
-                logger.debug(f"TraverseMatch 图片根目录: {candidate}")
+                logger.info(f"TraverseMatch 图片根目录: {candidate}")
                 return candidate
 
         fallback = candidates[0]
@@ -124,9 +124,9 @@ class TraverseMatch(CustomRecognition):
         elif isinstance(param_raw, dict):
             # 直接传字典时，MAA 会将其转换为字符串，所以这个分支可能不会执行
             param = param_raw
-            logger.debug(f"param_raw 本身是字典")
+            logger.info(f"param_raw 本身是字典")
         else:
-            logger.debug(f"param_raw 类型: {type(param_raw)}")
+            logger.info(f"param_raw 类型: {type(param_raw)}")
         
         char_name = param.get("name", None)
         char_id = param.get("id", None)
@@ -137,7 +137,7 @@ class TraverseMatch(CustomRecognition):
         ar_name = None
         char_element = None
         
-        logger.debug(f"角色名: {char_name}, 角色ID: {char_id}")
+        logger.info(f"角色名: {char_name}, 角色ID: {char_id}")
 
         # 低星模式优先：有角色名、无角色ID、且提供了合法 element
         if char_name and not char_id:
@@ -166,10 +166,10 @@ class TraverseMatch(CustomRecognition):
                     ar_raw_path = ar_data.get("path") or param.get("path")
                     template_path = self._resolve_image_path(ar_raw_path)
                 else:
-                    logger.debug(f"无效的 AR 名称: {ar_name}")
+                    logger.info(f"无效的 AR 名称: {ar_name}")
                     return CustomRecognition.AnalyzeResult(box=None, detail=None)
             else:
-                logger.debug("未提供有效的 AR 数据")
+                logger.info("未提供有效的 AR 数据")
                 return CustomRecognition.AnalyzeResult(box=None, detail=None)
         
         match_detail = None
@@ -196,7 +196,7 @@ class TraverseMatch(CustomRecognition):
             all_hits = []
             for tpl_file in template_path.rglob("*.png"):
                 tpl_rel = tpl_file.relative_to(self.BASE_PATH)
-                logger.debug(f"正在查找角色模板: {tpl_rel}")
+                logger.info(f"正在查找角色模板: {tpl_rel}")
                 reco_result = context.run_recognition(
                     "UtilsFeatureMatch",
                     argv.image,
@@ -214,9 +214,9 @@ class TraverseMatch(CustomRecognition):
                         box = [fr.box[0], fr.box[1], fr.box[2], fr.box[3]]
                         count = fr.count if hasattr(fr, 'count') else 0
                         if count <= 10 or fr.box[0] == 0:
-                            logger.debug(f"{tpl_rel} 结果无效，跳过")
+                            logger.info(f"{tpl_rel} 结果无效，跳过")
                             continue
-                        logger.debug(f"命中模板: {tpl_rel}，位置: {box}, 计数: {count}")
+                        logger.info(f"命中模板: {tpl_rel}，位置: {box}, 计数: {count}")
                         all_hits.append({
                             "template": str(tpl_rel),
                             "skin": extract_skin_from_template(str(tpl_rel)),
@@ -224,7 +224,7 @@ class TraverseMatch(CustomRecognition):
                             "count": count,
                         })
                 else:
-                    logger.debug(f"未找到匹配项: {tpl_rel}")
+                    logger.info(f"未找到匹配项: {tpl_rel}")
 
             if all_hits:
                 # 第二步：按 box 位置聚类，近似的 box 归为同一个对象位置
@@ -240,7 +240,7 @@ class TraverseMatch(CustomRecognition):
                     if not placed:
                         clusters.append([hit])
 
-                logger.debug(f"去重后对象位置数量: {len(clusters)}")
+                logger.info(f"去重后对象位置数量: {len(clusters)}")
 
                 # 第三步：每个 cluster（对象位置）内选 count 最高的 template 作为该 res
                 results = []
@@ -282,14 +282,14 @@ class TraverseMatch(CustomRecognition):
                         }
                     )
             else:
-                logger.debug("未找到任何匹配项")
+                logger.info("未找到任何匹配项")
 
         elif template_path and template_path.exists() and ar_mode:
             try:
                 template = template_path.relative_to(self.BASE_PATH)
             except ValueError:
                 template = Path(str(template_path).replace("\\", "/"))
-            logger.debug(f"正在查找 AR: {template}")
+            logger.info(f"正在查找 AR: {template}")
             match_detail = context.run_recognition_direct(
                 "FeatureMatch",
                 {"template": str(template)},
@@ -297,10 +297,10 @@ class TraverseMatch(CustomRecognition):
                 )
   
             if match_detail.box:
-                logger.debug(f"找到 AR: {template}，位置: {match_detail.box}")
+                logger.info(f"找到 AR: {template}，位置: {match_detail.box}")
         
         else:
-            logger.debug(f"模板路径不存在: {template_path}")
+            logger.info(f"模板路径不存在: {template_path}")
         
         return CustomRecognition.AnalyzeResult(
             box=match_detail.box if match_detail and match_detail.box else None,
@@ -378,9 +378,9 @@ class GroupAvatarInfo(CustomRecognition):
             try:
                 param = json.loads(param)
                 template_type = param.get("template_type", "A")
-                logger.debug("已解析")
+                logger.info("已解析")
             except json.JSONDecodeError as e:
-                logger.debug(f"无法解析参数: {e}，将使用默认参数")
+                logger.info(f"无法解析参数: {e}，将使用默认参数")
                 param = self.DEAFAULT_PARAM_A
                 template_type = "A"
         elif isinstance(param, dict):
@@ -391,7 +391,7 @@ class GroupAvatarInfo(CustomRecognition):
             else:                
                 template_type = "A"
         else:
-            logger.debug(f"参数类型错误: {type(param)}, 将使用默认参数")
+            logger.info(f"参数类型错误: {type(param)}, 将使用默认参数")
             param = self.DEAFAULT_PARAM_A
             template_type = "A"
 
@@ -446,7 +446,7 @@ class GroupAvatarInfo(CustomRecognition):
                 avatar_box = None
         
         if not avatar or not avatar.hit or avatar_box is None:
-            logger.debug(f"未找到角色: {param['name']} {param['id']}")
+            logger.info(f"未找到角色: {param['name']} {param['id']}")
             return CustomRecognition.AnalyzeResult(box=None, detail=None)
         
         # 获取详细信息，best_result.detail 可能是 dict 或 JSON 字符串
@@ -460,7 +460,7 @@ class GroupAvatarInfo(CustomRecognition):
                     detail_dict = json.loads(raw_detail)
                 except (json.JSONDecodeError, TypeError):
                     detail_dict = {}
-            logger.debug(f"detail_dict 键列表: {list(detail_dict.keys())}")
+            logger.info(f"detail_dict 键列表: {list(detail_dict.keys())}")
         
         # 判断是否为多结果（特征：box 为 [0,0,1,1]）
         is_multi = (avatar_box[0] == 0 and avatar_box[1] == 0
@@ -540,13 +540,13 @@ class GroupAvatarInfo(CustomRecognition):
                 texts = res.filtered_results
                 texts = sorted(texts, key=lambda x: x.box[1])
                 entry["SLevel"] = int(texts[0].text)
-                logger.debug(f"识别到种子等级: {texts[0].text}，角色 {param['name']} {param['id']}")
+                logger.info(f"识别到种子等级: {texts[0].text}，角色 {param['name']} {param['id']}")
                 entry["SSkill"] = int(texts[1].text)
-                logger.debug(f"识别到种子技能: {texts[1].text}，角色 {param['name']} {param['id']}")
+                logger.info(f"识别到种子技能: {texts[1].text}，角色 {param['name']} {param['id']}")
                 entry["SHP"] = int(texts[2].text)
-                logger.debug(f"识别到种子 HP: {texts[2].text}，角色 {param['name']} {param['id']}")
+                logger.info(f"识别到种子 HP: {texts[2].text}，角色 {param['name']} {param['id']}")
                 entry["SATK"] = int(texts[3].text)
-                logger.debug(f"识别到种子 ATK: {texts[3].text}，角色 {param['name']} {param['id']}")
+                logger.info(f"识别到种子 ATK: {texts[3].text}，角色 {param['name']} {param['id']}")
 
         def _fill_ar(entry):
             if param.get("AR"):
@@ -574,9 +574,9 @@ class GroupAvatarInfo(CustomRecognition):
                     "name": ar_name,
                     "matched": bool(ar_result and ar_result.box)
                 }
-                logger.debug(f"AR 识别结果 {ar_name}: {'匹配' if ar_result and ar_result.box else '未匹配'}")
+                logger.info(f"AR 识别结果 {ar_name}: {'匹配' if ar_result and ar_result.box else '未匹配'}")
             else:
-                logger.debug("未指定 AR，跳过 AR 识别")
+                logger.info("未指定 AR，跳过 AR 识别")
 
         # ===== 多结果模式 =====
         if is_multi:
@@ -587,7 +587,7 @@ class GroupAvatarInfo(CustomRecognition):
                 res_val = detail_dict[res_key]
                 res_box = res_val.get("box", [0, 0, 1, 1])
                 ROI = [res_box[0] - self.ROI[0], res_box[1] - self.ROI[1], self.ROI[2], self.ROI[3]]
-                logger.debug(f"多结果 {res_key}: ROI={ROI}, box={res_box}")
+                logger.info(f"多结果 {res_key}: ROI={ROI}, box={res_box}")
 
                 # 格式: charname/id/res_\d/entry
                 entry = {
@@ -634,11 +634,11 @@ class GroupAvatarInfo(CustomRecognition):
         }
         
         if detail_dict:
-            logger.debug(f"找到角色: {detail_dict.get('name')} {detail_dict.get('id')}，位置: {avatar_box}, 路径: {detail_dict.get('path')}")
+            logger.info(f"找到角色: {detail_dict.get('name')} {detail_dict.get('id')}，位置: {avatar_box}, 路径: {detail_dict.get('path')}")
         
         # 用 avatar_box 计算 ROI
         ROI = [avatar_box[0]-self.ROI[0], avatar_box[1]-self.ROI[1], self.ROI[2], self.ROI[3]]
-        logger.debug(f"角色 {param['name']} {param['id']} 的 ROI: {ROI}")
+        logger.info(f"角色 {param['name']} {param['id']} 的 ROI: {ROI}")
         
         _fill_ocr(single_entry, ROI)
         _fill_ar(single_entry)

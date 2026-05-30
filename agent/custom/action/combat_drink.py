@@ -73,9 +73,9 @@ class CombatDrink(CustomAction):
                     }
                 )
             else:
-                logger.debug(f"屏幕上未找到 {item}")
+                logger.info(f"屏幕上未找到 {item}")
                 return False
-            logger.debug(f"尝试使用 {item}")
+            logger.info(f"尝试使用 {item}")
         
             drink_scuccess = False
             context.tasker.controller.post_screencap().wait()
@@ -118,7 +118,7 @@ class CombatDrink(CustomAction):
                 else:
                     drink_scuccess = False
             if drink_scuccess:
-                logger.debug(f"{item} 使用成功")
+                logger.info(f"{item} 使用成功")
                 context.run_task(
                     "UtilsOCR",
                     pipeline_override={
@@ -143,13 +143,13 @@ class CombatDrink(CustomAction):
                 self.drink_times[item] += 1
                 return True
             elif item == "Ranpoil":
-                logger.debug(f"{item} 使用成功")
+                logger.info(f"{item} 使用成功")
                 return True
             else:
-                logger.debug(f"未找到可用的 {item}")
+                logger.info(f"未找到可用的 {item}")
                 return False
         else:
-            logger.debug(f"{item} 已达到使用上限")
+            logger.info(f"{item} 已达到使用上限")
             return False
 
     def run(
@@ -162,7 +162,7 @@ class CombatDrink(CustomAction):
             return False
         
         drink_limit = json.loads(argv.custom_action_param)
-        logger.debug(f"药剂使用上限: {drink_limit}")
+        logger.info(f"药剂使用上限: {drink_limit}")
 
         match act_mgr.detect_lang(context, [286,298,779,295], ignore=self.IGNORE_LIST):
             case "jp":
@@ -191,7 +191,7 @@ class CombatDrink(CustomAction):
             timeout_mgr.stop_monitoring(argv.node_name)
             return True
         else:
-            logger.debug(f"未找到可用的补给道具")
+            logger.info(f"未找到可用的补给道具")
             context.run_task(
                 "UtilsOCR",
                 pipeline_override={

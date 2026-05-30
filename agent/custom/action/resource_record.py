@@ -40,7 +40,7 @@ class ResourceRecord(CustomAction):
             case "ResourceRecord.DP":
                 if argv.reco_detail.filtered_results:
                     num = len(argv.reco_detail.filtered_results)
-                    logger.debug(f"当前 DP 数据: {num} / 3")
+                    logger.info(f"当前 DP 数据: {num} / 3")
                     #
                     resources["DP"]["value"] = num
                     resources["DP"]["last_updated"] = now
@@ -49,7 +49,7 @@ class ResourceRecord(CustomAction):
                 if argv.reco_detail.filtered_results:
                     raw_text = argv.reco_detail.filtered_results[0].text
                     nums = re.findall(r"(\d+)", raw_text)
-                    logger.debug(f"当前 AP 数据: {nums[0]} / {nums[1]}")
+                    logger.info(f"当前 AP 数据: {nums[0]} / {nums[1]}")
                     #
                     if len(nums) >= 2:
                         resources["AP"]["value"] = int(nums[0])
@@ -60,7 +60,7 @@ class ResourceRecord(CustomAction):
                 if argv.reco_detail.filtered_results:
                     raw = argv.reco_detail.filtered_results[0].text.replace(",", "")
                     resources["Stone"] = int(raw)
-                    logger.debug("当前石头:", raw)
+                    logger.info("当前石头:", raw)
                     #
                     timeout_mgr.stop_monitoring(argv.node_name)
 
@@ -68,11 +68,11 @@ class ResourceRecord(CustomAction):
                 if argv.reco_detail.filtered_results:
                     raw = argv.reco_detail.filtered_results[0].text.replace(",", "")
                     resources["RF"] = int(raw)
-                    logger.debug("当前虹碎:", raw)
+                    logger.info("当前虹碎:", raw)
                     #
                     timeout_mgr.stop_monitoring(argv.node_name)
 
         data_io.write_app_state("resources", resources)
 
-        logger.debug("资源记录流程执行完成")
+        logger.info("资源记录流程执行完成")
         return True

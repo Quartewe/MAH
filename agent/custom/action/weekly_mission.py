@@ -147,7 +147,7 @@ class WeeklyMission(CustomAction):
         mission_data = self._load_mission_data()
 
         if mission_data == {}:
-            logger.debug("未找到已有任务数据，正在检测语言并初始化任务数据")
+            logger.info("未找到已有任务数据，正在检测语言并初始化任务数据")
             match act_mgr.detect_lang(context, [481,19,777,613], info_share.IGNORE_LIST):
                 case "jp":
                     mission_data = deepcopy(self.JP_MISSION)
@@ -199,7 +199,7 @@ class WeeklyMission(CustomAction):
                     continue
 
                 mission_item = max(matched_items, key=lambda item: item.score)
-                logger.debug(f"任务 {mission} 匹配到文本: {mission_item.text}")
+                logger.info(f"任务 {mission} 匹配到文本: {mission_item.text}")
                 current_fingerprint.append(mission)
                 should_swipe = True
 
@@ -209,13 +209,13 @@ class WeeklyMission(CustomAction):
                     mission_data[mission]["current"] = mission_data[mission]["target"]
                     if next(iter(mission_data)) == mission:
                         info_share.show_support = True
-                    logger.debug(f"任务 {mission} 已完成")
+                    logger.info(f"任务 {mission} 已完成")
                 elif info_type == "progress" and progress is not None:
                     current, target = progress
                     mission_data[mission]["current"] = current
                     mission_data[mission]["target"] = target
                     mission_data[mission]["completed"] = current >= target
-                    logger.debug(f"任务 {mission} 当前进度: {current}/{target}")
+                    logger.info(f"任务 {mission} 当前进度: {current}/{target}")
 
             if should_swipe:
                 context.run_action(
@@ -236,11 +236,11 @@ class WeeklyMission(CustomAction):
             
             time.sleep(1)
             if current_fingerprint != self.last_fingerprint:
-                logger.debug("上一次指纹:", self.last_fingerprint)
-                logger.debug("当前指纹:", current_fingerprint)
+                logger.info("上一次指纹:", self.last_fingerprint)
+                logger.info("当前指纹:", current_fingerprint)
                 self.last_fingerprint = current_fingerprint
             else:
-                logger.debug("OCR结果与上次相同，认为已经读取完成")
+                logger.info("OCR结果与上次相同，认为已经读取完成")
                 return mission_data
 
     def _reset_mission_data(self, context):
@@ -288,7 +288,7 @@ class WeeklyMission(CustomAction):
                 timeout_mgr.stop_monitoring(argv.node_name)
                 return True
             else:
-                logger.debug("写入任务数据到文件失败")
+                logger.info("写入任务数据到文件失败")
                 timeout_mgr.stop_monitoring(argv.node_name)
                 return False
                 

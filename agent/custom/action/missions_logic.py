@@ -20,16 +20,16 @@ class MissionLogic(CustomAction):
         match argv.node_name:
             case "CheckWeeklyMissions.Stop":
                 if info_share.is_first_run:
-                    logger.debug("[DEBUG]为本周第一次运行, 初始化每周任务状态")
+                    logger.info("[DEBUG]为本周第一次运行, 初始化每周任务状态")
                     info_share.show_support = False
                     info_share.is_first_run = False
 
                 if info_share.show_support:
-                    logger.debug("[DEBUG]每周任务已完成，跳过")
+                    logger.info("[DEBUG]每周任务已完成，跳过")
                     timeout_mgr.stop_monitoring(argv.node_name)
                     return True
                 else:
-                    logger.debug("[DEBUG]每周任务未完成，继续监控")
+                    logger.info("[DEBUG]每周任务未完成，继续监控")
                     return False
 
         timeout_mgr.stop_monitoring(argv.node_name)

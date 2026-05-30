@@ -76,11 +76,11 @@ class AutoCombat(CustomAction):
                     }
                 },
             )
-            logger.debug(f"原始ocr输出: {leader.all_results}")
+            logger.info(f"原始ocr输出: {leader.all_results}")
             if leader.best_result:
-                logger.debug(f"检测到队长位置: {leader.best_result.box}")
+                logger.info(f"检测到队长位置: {leader.best_result.box}")
                 return [leader.best_result.box[0] + 38, leader.best_result.box[1] - 5]
-            logger.debug("未检测到队长位置，正在重试...")
+            logger.info("未检测到队长位置，正在重试...")
             time.sleep(1)
             i += 1
         return None
@@ -168,7 +168,7 @@ class AutoCombat(CustomAction):
     def _check_running(self, context):
         """轻量检查：仅检测任务是否被用户终止，不执行任何识别"""
         if context.tasker.stopping:
-            logger.debug("检测到用户终止任务，正在退出...")
+            logger.info("检测到用户终止任务，正在退出...")
             self.if_complete = True
             return True
         return False
@@ -218,13 +218,13 @@ class AutoCombat(CustomAction):
                     }
                 },
             )
-            logger.debug(f"_detect_complete: TOUCH SCREEN识别结果: {complete_res.all_results}")
-            logger.debug(f"_detect_complete: 返回按钮识别结果: {back_res.all_results}")
+            logger.info(f"_detect_complete: TOUCH SCREEN识别结果: {complete_res.all_results}")
+            logger.info(f"_detect_complete: 返回按钮识别结果: {back_res.all_results}")
             if self._check_running(context):
                 return True
 
             if complete_res.best_result:
-                logger.debug(f"检测到战斗结束文本: {complete_res.best_result.text}，正在点击继续...")
+                logger.info(f"检测到战斗结束文本: {complete_res.best_result.text}，正在点击继续...")
                 context.run_action(
                     "UtilsClick",
                     pipeline_override={
@@ -240,11 +240,11 @@ class AutoCombat(CustomAction):
                 self.if_complete = True
                 return True
             elif back_res.best_result:
-                logger.debug(f"检测到返回按钮文本: {back_res.best_result.text}，正在点击继续...")
+                logger.info(f"检测到返回按钮文本: {back_res.best_result.text}，正在点击继续...")
                 self.if_complete = True
                 return True
             else:
-                logger.debug("_detect_complete: OCR未检测到结果")
+                logger.info("_detect_complete: OCR未检测到结果")
             return False
         except Exception as e:
             logger.error(f"_detect_complete 异常: {e}")
@@ -268,7 +268,7 @@ class AutoCombat(CustomAction):
 
         for i in range(len(action_data)):
             if self._detect_complete(context):
-                logger.debug("检测到战斗结束，正在退出...")
+                logger.info("检测到战斗结束，正在退出...")
                 return current_pos_data
 
             # init
@@ -282,7 +282,7 @@ class AutoCombat(CustomAction):
             end_points = self._move_data(action_list, char_pos)
 
             # action
-            print(
+            logger.info(
                 f"[DEBUG] 动作 {i}: 角色 {action_char}, 位置 {char_pos}, 动作序列 {action_list}, 行动后坐标列表 {end_points}"
             ) 
 
@@ -308,12 +308,12 @@ class AutoCombat(CustomAction):
                 }
             )
 
-            logger.debug(f"动作 {i} 即将执行滑动...")
-            logger.debug(f"技能状态检测结果: {detect_skill.filtered_results}")
+            logger.info(f"动作 {i} 即将执行滑动...")
+            logger.info(f"技能状态检测结果: {detect_skill.filtered_results}")
             if detect_skill.best_result:
-                logger.debug(f"存在单位的技能被禁用, 尝试忽略等待, 位置为:{detect_skill.best_result}")
+                logger.info(f"存在单位的技能被禁用, 尝试忽略等待, 位置为:{detect_skill.best_result}")
             else:
-                logger.debug(f"未检测到技能状态，默认执行滑动并等待...")
+                logger.info(f"未检测到技能状态，默认执行滑动并等待...")
 
             # 重操作前检查：若用户已取消则跳过滑动
             if self._check_running(context):
@@ -343,18 +343,18 @@ class AutoCombat(CustomAction):
                 },
             )
 
-            logger.debug(f"动作 {i} 已执行，等待回合变化...")
+            logger.info(f"动作 {i} 已执行，等待回合变化...")
 
             # 重操作后检查：滑动期间用户可能已取消
             if self._check_running(context):
                 return current_pos_data
 
             if self._detect_complete(context):
-                logger.debug("检测到战斗结束，正在退出...")
+                logger.info("检测到战斗结束，正在退出...")
                 return current_pos_data
 
             current_pos_data = self._get_all_pos(current_pos_data, action)
-            logger.debug(f"动作 {i} 后更新相对位置: {current_pos_data}")
+            logger.info(f"动作 {i} 后更新相对位置: {current_pos_data}")
 
         return current_pos_data
 
@@ -403,7 +403,7 @@ class AutoCombat(CustomAction):
                     }
                 },
             )
-            logger.debug("已点击菜单...")
+            logger.info("已点击菜单...")
 
             markers = get_markers_by_lang()
 
@@ -421,7 +421,7 @@ class AutoCombat(CustomAction):
                     }
                 },
             )
-            logger.debug(f"已点击 {markers[0]}...")
+            logger.info(f"已点击 {markers[0]}...")
             time.sleep(5)
             context.tasker.controller.post_screencap().wait()
             current_image = context.tasker.controller.cached_image
@@ -439,11 +439,11 @@ class AutoCombat(CustomAction):
                     }
                 },
             )
-            logger.debug(f"选项识别结果: {option_res.filtered_results}")
+            logger.info(f"选项识别结果: {option_res.filtered_results}")
             if option_res.best_result:
                 for res in option_res.filtered_results:
                     if "OFF" in res.text:
-                        logger.debug(f"已点击 {res.text} 选项...")
+                        logger.info(f"已点击 {res.text} 选项...")
                         context.run_action(
                             "UtilsClick",
                             pipeline_override={
@@ -497,7 +497,7 @@ class AutoCombat(CustomAction):
             )
             if speed_res.best_result:
                 speed = len(speed_res.filtered_results)
-                logger.debug(f"当前速度: {speed}x，需要切换次数: {4 - speed}")
+                logger.info(f"当前速度: {speed}x，需要切换次数: {4 - speed}")
                 for _ in range(4 - speed):
                     context.run_action(
                         "UtilsClick",
@@ -512,7 +512,7 @@ class AutoCombat(CustomAction):
                         },
                     )
             else:
-                logger.debug("速度已是 4x")
+                logger.info("速度已是 4x")
 
         def auto_combat() -> bool:
             context.tasker.controller.post_screencap().wait()
@@ -552,7 +552,7 @@ class AutoCombat(CustomAction):
                     },
                 )
                 info_share.auto_combat_mode = True
-                logger.debug("已开启自动战斗模式")
+                logger.info("已开启自动战斗模式")
                 return True
             else:
                 on_res = context.run_recognition(
@@ -572,7 +572,7 @@ class AutoCombat(CustomAction):
                 )
                 if on_res.best_result:
                     info_share.auto_combat_mode = True
-                    logger.debug("自动战斗模式已开启")
+                    logger.info("自动战斗模式已开启")
                     return True
 
                 info_share.auto_combat_mode = False
@@ -594,7 +594,7 @@ class AutoCombat(CustomAction):
                     }
                 },
             )
-            logger.debug("已关闭自动战斗模式")
+            logger.info("已关闭自动战斗模式")
             info_share.auto_combat_mode = False
 
         def analyze_data(action_data):
@@ -641,14 +641,14 @@ class AutoCombat(CustomAction):
                 logger.warning("循环动作为空")
                 return False, current_pos_data
 
-            logger.debug("已启用循环战斗，开始循环执行动作")
+            logger.info("已启用循环战斗，开始循环执行动作")
             start = time.monotonic()
             max_wait = 300
             loop_count = 0
 
             while not self.if_complete:
                 if self._detect_complete(context):
-                    logger.debug("循环阶段检测到战斗结束，正在退出...")
+                    logger.info("循环阶段检测到战斗结束，正在退出...")
                     break
                 
                 if self.detect_complete_error:
@@ -672,9 +672,9 @@ class AutoCombat(CustomAction):
                     logger.warning(f"循环战斗等待 {max_wait} 秒后超时")
                     return False, current_pos_data
 
-                logger.debug(f"循环战斗第 {loop_count} 轮未完成，正在重试...")
+                logger.info(f"循环战斗第 {loop_count} 轮未完成，正在重试...")
 
-            logger.debug("循环战斗已完成，正在退出...")
+            logger.info("循环战斗已完成，正在退出...")
             return True, current_pos_data
 
         def main() -> bool:
@@ -714,7 +714,7 @@ class AutoCombat(CustomAction):
                 start = time.monotonic()
                 max_wait = 180
                 while not self.if_complete:
-                    logger.debug("自动战斗模式运行中，等待战斗结束...")
+                    logger.info("自动战斗模式运行中，等待战斗结束...")
                     self._detect_complete(context)
                     if self._check_running(context):
                         timeout_mgr.stop_monitoring(argv.node_name)
@@ -725,7 +725,7 @@ class AutoCombat(CustomAction):
                         return False
                     time.sleep(1)
 
-                logger.debug("自动战斗已完成")
+                logger.info("自动战斗已完成")
                 timeout_mgr.stop_monitoring(argv.node_name)
                 return True
 
@@ -742,7 +742,7 @@ class AutoCombat(CustomAction):
                     last_posL = posL
                     current_posL = self._get_posL(context)
                     if abs(last_posL[0] - current_posL[0]) > 40 or abs(last_posL[1] - current_posL[1]) > 40:
-                        logger.debug(f"正在修正位置误差...")
+                        logger.info(f"正在修正位置误差...")
                         posL = current_posL
                     else:
                         logger.warning(f"队长位置已发生变化!")
@@ -754,10 +754,10 @@ class AutoCombat(CustomAction):
                 base_action_data, loop_action_data = analyze_data(action_data)
                 current_pos_data = list_combat(pos_data, base_action_data, posL)
                 if loop_action_data and not self.if_complete:
-                    logger.debug("基础执行完成，开始循环战斗...")
+                    logger.info("基础执行完成，开始循环战斗...")
                     loop_completed, _ = loop_combat(current_pos_data, loop_action_data, posL)
                     if loop_completed:
-                        logger.debug("循环战斗已完成")
+                        logger.info("循环战斗已完成")
                         timeout_mgr.stop_monitoring(argv.node_name)
                         return True
                     else: 
@@ -765,7 +765,7 @@ class AutoCombat(CustomAction):
                     timeout_mgr.stop_monitoring(argv.node_name)
                     return False
                 else:
-                    logger.debug("完成当前战斗")
+                    logger.info("完成当前战斗")
                     timeout_mgr.stop_monitoring(argv.node_name)
                     return True
             timeout_mgr.stop_monitoring(argv.node_name)

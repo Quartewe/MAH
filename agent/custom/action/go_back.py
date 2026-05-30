@@ -73,11 +73,11 @@ class GoBack(CustomAction):
                 print("[DEBUG]GoBack 加载识别结果:", loading_res.best_result)
 
                 if last_try and not back_res.best_result:
-                    logger.debug("返回成功")
+                    logger.info("返回成功")
                     timeout_mgr.stop_monitoring(argv.node_name)
                     return True
                 else: 
-                    logger.debug("仍在加载，继续等待")
+                    logger.info("仍在加载，继续等待")
                     last_try = False
 
                 while loading_res.best_result:
@@ -102,12 +102,12 @@ class GoBack(CustomAction):
                     time.sleep(1)
 
                     if not loading_res.best_result:
-                        logger.debug("进入最后一次尝试模式")
+                        logger.info("进入最后一次尝试模式")
                         last_try = True
                         break
 
             if not back_res.best_result and not loading_res.best_result:
-                logger.debug("返回成功")
+                logger.info("返回成功")
                 timeout_mgr.stop_monitoring(argv.node_name)
                 return True
 
