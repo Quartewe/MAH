@@ -1,4 +1,23 @@
 {
+    "Global.AutoCombat.Wait": {
+        "recognition": {
+            "type": "OCR",
+            "param": {
+                "expected": [
+                    "Loading"
+                ]
+            }
+        },
+        "post_wait_freezes": 1000,
+        "next": [
+            "Global.AutoCombat.Wait"
+        ],
+        "on_error": [
+            "Global.AutoCombat.Replay1",
+            "Global.AutoCombat.Drink1",
+            "Global.AutoCombat"
+        ]
+    },
     "Global.AutoCombat.FirstClear": {
         "recognition": {
             "type": "ColorMatch",
@@ -173,7 +192,8 @@
         "next": [
             "Global.AutoCombat.Replay1",
             "Global.AutoCombat.Drink1",
-            "Global.AutoCombat"
+            "Global.AutoCombat",
+            "Global.AutoCombat.Wait"
         ]
     },
     "Global.AutoCombat.Replay1": {
@@ -565,12 +585,32 @@
         ]
     },
     "Global.AutoCombat.SelectSupport": {
+        "pre_wait_freezes": {
+            "time": 1000,
+            "target": [
+                1162,
+                610,
+                115,
+                107
+            ],
+            "threshold": 0.999
+        },
         "action": {
             "type": "Custom",
             "param": {
                 "custom_action": "SelectSupport",
                 "custom_action_param": ""
             }
+        },
+        "post_wait_freezes": {
+            "time": 1000,
+            "target": [
+                1162,
+                610,
+                115,
+                107
+            ],
+            "threshold": 0.999
         },
         "on_error": [
             "Global.GoBackToHomePage"
