@@ -22,8 +22,6 @@ class MissionLogic(CustomAction):
                 if info_share.is_first_run:
                     logger.info("[DEBUG]为本周第一次运行, 初始化每周任务状态")
                     info_share.show_support = False
-                    info_share.is_first_run = False
-
                 if info_share.show_support:
                     logger.info("[DEBUG]每周任务已完成，跳过")
                     timeout_mgr.stop_monitoring(argv.node_name)
@@ -31,6 +29,8 @@ class MissionLogic(CustomAction):
                 else:
                     logger.info("[DEBUG]每周任务未完成，继续监控")
                     return False
+            case "ShowSupporterScreen.SetRun":
+                info_share.is_first_run = False
 
         timeout_mgr.stop_monitoring(argv.node_name)
         return True
