@@ -1,9 +1,8 @@
 {
     "CheckWeeklyMissions.Entry": {
         "next": [
-            "CheckWeeklyMissions.OpenMissionInterface",
-            "CheckWeeklyMissions.Get",
-            "CheckWeeklyMissions.Back"
+            "CheckWeeklyMissions.Select",
+            "CheckWeeklyMissions.OpenMissionInterface"
         ]
     },
     "CheckWeeklyMissions.OpenMissionInterface": {
@@ -22,8 +21,7 @@
             }
         },
         "action": {
-            "type": "Click",
-            "param": {}
+            "type": "Click"
         },
         "post_wait_freezes": {
             "time": 1000,
@@ -35,22 +33,11 @@
             ],
             "threshold": 0.95
         },
-        "next": [
-            "CheckWeeklyMissions.Get"
-        ],
         "on_error": [
             "[JumpBack]Global.Entry"
-        ]
-    },
-    "CheckWeeklyMissions.Record": {
-        "action": {
-            "type": "Custom",
-            "param": {
-                "custom_action": "WeeklyMission"
-            }
-        },
+        ],
         "next": [
-            "CheckWeeklyMissions.toHomePage"
+            "CheckWeeklyMissions.Select"
         ]
     },
     "CheckWeeklyMissions.Stop": {
@@ -75,25 +62,15 @@
             "CheckWeeklyMissions.toHomePage"
         ]
     },
-    "CheckWeeklyMissions.Back": {
-        "recognition": {
-            "type": "OCR",
+    "CheckWeeklyMissions.Record": {
+        "action": {
+            "type": "Custom",
             "param": {
-                "roi": [
-                    500,
-                    100,
-                    300,
-                    75
-                ],
-                "expected": "正在进行中的任务"
+                "custom_action": "WeeklyMission"
             }
         },
-        "action": {
-            "type": "Click",
-            "param": {}
-        },
         "next": [
-            "CheckWeeklyMissions.Back_1"
+            "CheckWeeklyMissions.toHomePage"
         ]
     },
     "CheckWeeklyMissions.Select": {
@@ -112,8 +89,7 @@
             }
         },
         "action": {
-            "type": "Click",
-            "param": {}
+            "type": "Click"
         },
         "next": [
             "CheckWeeklyMissions.Select_1"
@@ -133,13 +109,12 @@
             }
         },
         "action": {
-            "type": "Click",
-            "param": {}
+            "type": "Click"
         },
         "post_wait_freezes": 500,
         "next": [
             "CheckWeeklyMissions.Search",
-            "CheckWeeklyMissions.Back"
+            "CheckWeeklyMissions.Record"
         ]
     },
     "CheckWeeklyMissions.Search": {
@@ -161,80 +136,7 @@
             "CheckWeeklyMissions.AllCompleted"
         ],
         "on_error": [
-            "CheckWeeklyMissions.Back"
-        ]
-    },
-    "CheckWeeklyMissions.Back_1": {
-        "recognition": {
-            "type": "OCR",
-            "param": {
-                "roi": [
-                    500,
-                    100,
-                    300,
-                    400
-                ],
-                "expected": [
-                    "显示全部"
-                ]
-            }
-        },
-        "action": {
-            "type": "Click",
-            "param": {}
-        },
-        "post_wait_freezes": 500,
-        "next": [
             "CheckWeeklyMissions.Record"
-        ]
-    },
-    "CheckWeeklyMissions.Get": {
-        "recognition": {
-            "type": "OCR",
-            "param": {
-                "roi": [
-                    933,
-                    94,
-                    340,
-                    82
-                ],
-                "expected": [
-                    "全部领取"
-                ]
-            }
-        },
-        "action": {
-            "type": "Click",
-            "param": {}
-        },
-        "post_wait_freezes": 1000,
-        "next": [
-            "CheckWeeklyMissions.GetClose",
-            "CheckWeeklyMissions.Select"
-        ]
-    },
-    "CheckWeeklyMissions.GetClose": {
-        "recognition": {
-            "type": "OCR",
-            "param": {
-                "roi": [
-                    491,
-                    476,
-                    276,
-                    108
-                ],
-                "expected": [
-                    "CLOSE"
-                ]
-            }
-        },
-        "action": {
-            "type": "Click",
-            "param": {}
-        },
-        "post_wait_freezes": 1000,
-        "next": [
-            "CheckWeeklyMissions.Select"
         ]
     },
     "CheckWeeklyMissions.toHomePage": {

@@ -127,9 +127,6 @@ class WeeklyMission(CustomAction):
             if not (50 <= dx <= 420 and -20 <= dy <= 140):
                 continue
 
-            if info_text.upper() == "COMPLETED":
-                return "completed", None
-
             progress = self._extract_progress(info_text)
             if not progress:
                 continue
@@ -140,11 +137,12 @@ class WeeklyMission(CustomAction):
                 best_progress = progress
 
         if best_progress is not None:
-            return "progress", best_progress
-        return None, None
+            return best_progress
+        return None
 
     def _catch_mission_data(self, context):
         mission_data = self._load_mission_data()
+        ongoing_missions = set()
 
         if mission_data == {}:
             logger.info("未找到已有任务数据，正在检测语言并初始化任务数据")
@@ -201,16 +199,13 @@ class WeeklyMission(CustomAction):
                 mission_item = max(matched_items, key=lambda item: item.score)
                 logger.info(f"任务 {mission} 匹配到文本: {mission_item.text}")
                 current_fingerprint.append(mission)
+                ongoing_missions.add(mission)
                 should_swipe = True
 
-                info_type, progress = self._pick_mission_info(mission_item, ocr_results)
-                if info_type == "completed":
-                    mission_data[mission]["completed"] = True
-                    mission_data[mission]["current"] = mission_data[mission]["target"]
-                    if next(iter(mission_data)) == mission:
-                        info_share.show_support = True
-                    logger.info(f"任务 {mission} 已完成")
-                elif info_type == "progress" and progress is not None:
+                progress = self._pick_mission_info(mission_item, ocr_results)
+                if progress is None:
+                    logger.info(f"任务 {mission} 未识别到进度，保留当前记录")
+                else:
                     current, target = progress
                     mission_data[mission]["current"] = current
                     mission_data[mission]["target"] = target
@@ -241,6 +236,14 @@ class WeeklyMission(CustomAction):
                 self.last_fingerprint = current_fingerprint
             else:
                 logger.info("OCR结果与上次相同，认为已经读取完成")
+                for mission in mission_data.keys():
+                    if mission in ongoing_missions:
+                        continue
+                    mission_data[mission]["completed"] = True
+                    mission_data[mission]["current"] = mission_data[mission]["target"]
+                    if next(iter(mission_data)) == mission:
+                        info_share.show_support = True
+                    logger.info(f"任务 {mission} 不在进行中列表，标记为已完成")
                 return mission_data
 
     def _reset_mission_data(self, context):

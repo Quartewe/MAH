@@ -8,13 +8,6 @@
             }
         }
     },
-    "CheckWeeklyMissions.Back": {
-        "recognition": {
-            "param": {
-                "expected": "進行中的任務"
-            }
-        }
-    },
     "CheckWeeklyMissions.Select": {
         "recognition": {
             "param": {
@@ -36,15 +29,6 @@
             "param": {
                 "expected": [
                     "無內容顯示"
-                ]
-            }
-        }
-    },
-    "CheckWeeklyMissions.Back_1": {
-        "recognition": {
-            "param": {
-                "expected": [
-                    "顯示全部"
                 ]
             }
         }

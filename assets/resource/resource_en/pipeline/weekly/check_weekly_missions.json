@@ -8,13 +8,6 @@
             }
         }
     },
-    "CheckWeeklyMissions.Back": {
-        "recognition": {
-            "param": {
-                "expected": "Ongoing mission"
-            }
-        }
-    },
     "CheckWeeklyMissions.Select": {
         "recognition": {
             "param": {
@@ -38,17 +31,6 @@
             "param": {
                 "expected": [
                     "No items."
-                ]
-            }
-        }
-    },
-    "CheckWeeklyMissions.Back_1": {
-        "recognition": {
-            "param": {
-                "expected": [
-                    "Show AllI",
-                    "Show All",
-                    "Show AII"
                 ]
             }
         }

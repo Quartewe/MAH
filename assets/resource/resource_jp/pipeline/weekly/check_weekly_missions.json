@@ -18,13 +18,6 @@
             }
         }
     },
-    "CheckWeeklyMissions.Back": {
-        "recognition": {
-            "param": {
-                "expected": "進行中のミッション"
-            }
-        }
-    },
     "CheckWeeklyMissions.Select": {
         "recognition": {
             "param": {
@@ -46,15 +39,6 @@
             "param": {
                 "expected": [
                     "表示する内容がありません。"
-                ]
-            }
-        }
-    },
-    "CheckWeeklyMissions.Back_1": {
-        "recognition": {
-            "param": {
-                "expected": [
-                    "全て表示する"
                 ]
             }
         }
