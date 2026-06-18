@@ -202,12 +202,28 @@ jobs:
       - name: Clean up MAH-UI archive
         if: matrix.os != 'android'
         shell: bash
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           DOWNLOAD_FILES='${{ steps.download_mfa.outputs.downloaded_files }}'
           if [[ -z "$DOWNLOAD_FILES" || "$DOWNLOAD_FILES" == '[]' ]]; then
             DOWNLOAD_FILES='${{ steps.download_mfa_legacy.outputs.downloaded_files }}'
           fi
           ARCHIVE_FILE_PATH="$(echo "$DOWNLOAD_FILES" | jq -r '.[0]')"
+
+          UI_RELEASE_JSON="$(curl -fsSL -H "Authorization: token ${GITHUB_TOKEN}" https://api.github.com/repos/Quartewe/MAH-UI/releases/latest || true)"
+          UI_VERSION="$(echo "$UI_RELEASE_JSON" | jq -r '.tag_name // empty' 2>/dev/null || true)"
+          if [[ -z "$UI_VERSION" || "$UI_VERSION" == "null" ]]; then
+            archive_name="$(basename "$ARCHIVE_FILE_PATH")"
+            UI_VERSION="$(echo "$archive_name" | grep -oE 'v[0-9][0-9A-Za-z._-]*' | head -n 1 || true)"
+          fi
+          if [[ -n "$UI_VERSION" && "$UI_VERSION" != "null" && -d "MFA" ]]; then
+            printf '%s\n' "$UI_VERSION" > MFA/.mah_ui_version
+            echo "Recorded MAH-UI version: $UI_VERSION"
+          else
+            echo "[WARN] Unable to record MAH-UI version"
+          fi
+
           rm -f "${ARCHIVE_FILE_PATH}"
           echo "Archive cleanup command executed for MAH-UI."
 
@@ -1013,7 +1029,10 @@ jobs:
             local root="$1"
             local version_file=""
 
-            if [[ -f "$root/app/common/__version__.py" ]]; then
+            if [[ -f "$root/.mah_ui_version" ]]; then
+              head -n 1 "$root/.mah_ui_version" | tr -d '\r\n'
+              return
+            elif [[ -f "$root/app/common/__version__.py" ]]; then
               version_file="$root/app/common/__version__.py"
             elif [[ -f "$root/_internal/app/common/__version__.py" ]]; then
               version_file="$root/_internal/app/common/__version__.py"
@@ -1248,16 +1267,21 @@ jobs:
               curl -fsSL -H "Authorization: token ${GITHUB_TOKEN}" -o "$prev_zip" "$previous_url"
               unzip -o -q "$prev_zip" -d "$prev_dir"
 
-              current_ui_version=$(extract_ui_version "$f")
-              previous_ui_version=$(extract_ui_version "$prev_dir")
-
-              if [[ -n "$current_ui_version" && -n "$previous_ui_version" ]]; then
-                if [[ "$current_ui_version" != "$previous_ui_version" ]]; then
-                  ui_changed="true"
-                fi
-                echo "[INFO] $f UI版本: 当前=$current_ui_version, 上次=$previous_ui_version, 变化=$ui_changed"
+              if [[ "$f" == *android* ]]; then
+                echo "[INFO] $f has no bundled MAH-UI, skip UI version comparison"
               else
-                echo "[WARN] $f UI version missing, skip UI incremental copy: current='$current_ui_version' previous='$previous_ui_version'"
+                current_ui_version=$(extract_ui_version "$f")
+                previous_ui_version=$(extract_ui_version "$prev_dir")
+
+                if [[ -n "$current_ui_version" && -n "$previous_ui_version" ]]; then
+                  if [[ "$current_ui_version" != "$previous_ui_version" ]]; then
+                    ui_changed="true"
+                  fi
+                  echo "[INFO] $f UI version: current=$current_ui_version previous=$previous_ui_version changed=$ui_changed"
+                else
+                  ui_changed="true"
+                  echo "[WARN] $f UI version metadata incomplete, include UI payload for safety: current='$current_ui_version' previous='$previous_ui_version'"
+                fi
               fi
 
               if [[ "$agent_changed" == "true" || "$internal_changed" == "true" || "$model_changed" == "true" || "$pipeline_changed" == "true" || "$index_changed" == "true" || "$image_changed" == "true" || "$docs_changed" == "true" || "$resource_other_changed" == "true" || "$interface_changed" == "true" || "$data_changed" == "true" || "$config_changed" == "true" || "$root_metadata_changed" == "true" || "$deps_changed" == "true" ]]; then
