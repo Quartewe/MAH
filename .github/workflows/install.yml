@@ -977,6 +977,11 @@ jobs:
     needs: [meta, install, changelog]
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+        with:
+          path: source
+          fetch-depth: 0
+
       - uses: actions/download-artifact@v4
         with:
           path: assets
@@ -1025,56 +1030,180 @@ jobs:
             echo "$parsed"
           }
 
-          build_manifest() {
+          find_previous_stable_tag() {
+            local source_dir="$1"
+            local current_tag="$2"
+
+            git -C "$source_dir" tag --merged HEAD --list "v*" --sort=-v:refname \
+              | grep -Evi 'alpha|beta|rc|dev|ci' \
+              | grep -vx "$current_tag" \
+              | head -n 1 || true
+          }
+
+          build_internal_manifest() {
             local root="$1"
-            local mode="$2"
-            local output="$3"
+            local output="$2"
             : > "$output"
+
+            if [[ ! -d "$root/_internal" ]]; then
+              return
+            fi
 
             while IFS= read -r -d '' rel; do
               local path="${rel#./}"
-              local include="false"
-
-              if [[ "$mode" == "ui" ]]; then
-                if [[ "$path" != _internal/* && "$path" != agent/* && "$path" != resource/* && "$path" != docs/* ]]; then
-                  include="true"
-                fi
-              elif [[ "$mode" == "mah_agent" ]]; then
-                if [[ "$path" == agent/* ]]; then
-                  include="true"
-                fi
-              elif [[ "$mode" == "mah_internal" ]]; then
-                if [[ "$path" == _internal/* ]]; then
-                  include="true"
-                fi
-              elif [[ "$mode" == "mah_docs" ]]; then
-                if [[ "$path" == docs/* ]]; then
-                  include="true"
-                fi
-              elif [[ "$mode" == "mah_model" ]]; then
-                if [[ "$path" == resource/base/model/* ]]; then
-                  include="true"
-                fi
-              elif [[ "$mode" == "mah_resource_other" ]]; then
-                if [[ "$path" == resource/* ]]; then
-                  include="true"
-                fi
-                if [[ "$path" == resource/index/* || "$path" == resource/base/image/ar/* || "$path" == resource/base/image/character/* || "$path" == resource/base/model/* ]]; then
-                  include="false"
-                fi
-              elif [[ "$mode" == "mah_interface" ]]; then
-                if [[ "$path" == "interface.json" || "$path" == "interface.jsonc" ]]; then
-                  include="true"
-                fi
-              fi
-
-              if [[ "$include" == "true" ]]; then
-                local digest
-                digest=$(sha256sum "$root/$path" | awk '{print $1}')
-                printf '%s|%s\n' "$path" "$digest" >> "$output"
-              fi
-            done < <(cd "$root" && find . -type f -print0 | sort -z)
+              local digest
+              digest=$(sha256sum "$root/$path" | awk '{print $1}')
+              printf '%s|%s\n' "$path" "$digest" >> "$output"
+            done < <(cd "$root" && find ./_internal -type f -print0 | sort -z)
           }
+
+          mark_mah_changed_path() {
+            local path="$1"
+
+            case "$path" in
+              agent/*)
+                global_agent_changed="true"
+                if [[ "$path" == "agent/requirements.txt" ]]; then
+                  global_internal_changed="true"
+                fi
+                ;;
+              data/*)
+                global_data_changed="true"
+                ;;
+              config/*)
+                global_config_changed="true"
+                ;;
+              docs/*)
+                global_docs_changed="true"
+                ;;
+              assets/interface.json|assets/interface.jsonc)
+                global_interface_changed="true"
+                ;;
+              assets/icon.png|icon.png|README.md|LICENSE)
+                global_root_metadata_changed="true"
+                ;;
+              assets/index/*|assets/resource/index/*)
+                global_index_changed="true"
+                ;;
+              assets/resource/base/model/*|assets/resource/model/*)
+                global_model_changed="true"
+                ;;
+              assets/resource/base/pipeline/*|assets/resource/pipeline/*|assets/resource/*/pipeline/*)
+                global_pipeline_changed="true"
+                ;;
+              assets/resource/base/image/*|assets/resource/image/*|assets/image/*)
+                global_image_changed="true"
+                ;;
+              assets/resource/*)
+                global_resource_other_changed="true"
+                ;;
+              deps/*|.gitmodules)
+                global_deps_changed="true"
+                ;;
+            esac
+          }
+
+          copy_dir_contents() {
+            local src="$1"
+            local dst="$2"
+            if [[ -d "$src" ]]; then
+              mkdir -p "$dst"
+              rsync -a "$src/" "$dst/"
+            fi
+          }
+
+          copy_file_if_exists() {
+            local src="$1"
+            local dst="$2"
+            if [[ -f "$src" ]]; then
+              mkdir -p "$(dirname "$dst")"
+              cp -f "$src" "$dst"
+            fi
+          }
+
+          copy_root_metadata() {
+            local package_root="$1"
+            local inc_dir="$2"
+            for file_name in README.md LICENSE icon.png; do
+              copy_file_if_exists "$package_root/$file_name" "$inc_dir/$file_name"
+            done
+          }
+
+          copy_dependency_payload() {
+            local package_root="$1"
+            local inc_dir="$2"
+            shopt -s nullglob
+            copy_dir_contents "$package_root/libs" "$inc_dir/libs"
+            copy_dir_contents "$package_root/plugins" "$inc_dir/plugins"
+            for root_file in \
+              "$package_root"/Maa*.dll \
+              "$package_root"/fastdeploy*.dll \
+              "$package_root"/onnxruntime*.dll \
+              "$package_root"/opencv*.dll \
+              "$package_root"/DirectML.dll \
+              "$package_root"/ViGEmClient.dll; do
+              copy_file_if_exists "$root_file" "$inc_dir/$(basename "$root_file")"
+            done
+            shopt -u nullglob
+          }
+
+          copy_pipeline_dirs() {
+            local package_root="$1"
+            local inc_dir="$2"
+            local resource_root="$package_root/resource"
+            if [[ ! -d "$resource_root" ]]; then
+              return
+            fi
+
+            while IFS= read -r -d '' pipeline_dir; do
+              local rel="${pipeline_dir#"$package_root/"}"
+              copy_dir_contents "$pipeline_dir" "$inc_dir/$rel"
+            done < <(find "$resource_root" -type d -name pipeline -print0)
+          }
+
+          source_dir="$GITHUB_WORKSPACE/source"
+          current_tag="${{ needs.meta.outputs.tag }}"
+          previous_stable_tag=""
+          mah_diff_available="false"
+
+          global_agent_changed="false"
+          global_internal_changed="false"
+          global_docs_changed="false"
+          global_model_changed="false"
+          global_pipeline_changed="false"
+          global_index_changed="false"
+          global_image_changed="false"
+          global_resource_other_changed="false"
+          # tools/install.py rewrites packaged interface.json with the release
+          # tag and resource_version on every build, so every incremental
+          # package must carry the generated metadata even when source
+          # assets/interface.json did not change.
+          global_interface_changed="true"
+          global_data_changed="false"
+          global_config_changed="false"
+          global_root_metadata_changed="false"
+          global_deps_changed="false"
+
+          if [[ -d "$source_dir/.git" ]]; then
+            git -C "$source_dir" fetch --tags --force
+            previous_stable_tag=$(find_previous_stable_tag "$source_dir" "$current_tag")
+          fi
+
+          if [[ -n "$previous_stable_tag" ]]; then
+            mah_diff_available="true"
+            changed_paths_file=$(mktemp)
+            git -C "$source_dir" diff --name-only "$previous_stable_tag" HEAD > "$changed_paths_file"
+            while IFS= read -r changed_path; do
+              [[ -n "$changed_path" ]] || continue
+              mark_mah_changed_path "$changed_path"
+            done < "$changed_paths_file"
+            rm -f "$changed_paths_file"
+            echo "[INFO] MAH stable diff: $previous_stable_tag..HEAD"
+          else
+            echo "[WARN] Unable to find previous stable tag for MAH diff; incremental package will use legacy fallback."
+          fi
+
+          echo "[INFO] MAH source flags: agent=$global_agent_changed internal=$global_internal_changed docs=$global_docs_changed model=$global_model_changed pipeline=$global_pipeline_changed index=$global_index_changed image=$global_image_changed resource_other=$global_resource_other_changed interface=$global_interface_changed data=$global_data_changed config=$global_config_changed root_metadata=$global_root_metadata_changed deps=$global_deps_changed"
 
           cd assets
           for f in *; do
@@ -1092,6 +1221,23 @@ jobs:
             ui_changed="false"
             mah_changed="false"
             fallback_legacy="false"
+            agent_changed="$global_agent_changed"
+            internal_changed="$global_internal_changed"
+            model_changed="$global_model_changed"
+            pipeline_changed="$global_pipeline_changed"
+            index_changed="$global_index_changed"
+            image_changed="$global_image_changed"
+            docs_changed="$global_docs_changed"
+            resource_other_changed="$global_resource_other_changed"
+            interface_changed="$global_interface_changed"
+            data_changed="$global_data_changed"
+            config_changed="$global_config_changed"
+            root_metadata_changed="$global_root_metadata_changed"
+            deps_changed="$global_deps_changed"
+
+            if [[ "$mah_diff_available" != "true" ]]; then
+              fallback_legacy="true"
+            fi
 
             previous_url=$(find_previous_package_url "$f" "${{ needs.meta.outputs.tag }}" || true)
             if [[ -z "$previous_url" ]]; then
@@ -1111,38 +1257,13 @@ jobs:
                 fi
                 echo "[INFO] $f UI版本: 当前=$current_ui_version, 上次=$previous_ui_version, 变化=$ui_changed"
               else
-                current_ui_manifest="$tmp_dir/current_ui_manifest.txt"
-                previous_ui_manifest="$tmp_dir/previous_ui_manifest.txt"
-                build_manifest "$f" "ui" "$current_ui_manifest"
-                build_manifest "$prev_dir" "ui" "$previous_ui_manifest"
-                if ! cmp -s "$current_ui_manifest" "$previous_ui_manifest"; then
-                  ui_changed="true"
-                fi
-                echo "[INFO] $f UI版本文件缺失，已回退到UI产物哈希对比，变化=$ui_changed"
+                echo "[WARN] $f UI version missing, skip UI incremental copy: current='$current_ui_version' previous='$previous_ui_version'"
               fi
 
-              # 细粒度 MAH 清单：agent / internal / model / docs / resource_other 各自独立哈希
-              agent_changed="false"
-              internal_changed="false"
-              model_changed="false"
-              docs_changed="false"
-              resource_other_changed="false"
-              interface_changed="false"
-
-              for sub in agent internal model docs resource_other interface; do
-                curr_mf="$tmp_dir/current_mah_${sub}_manifest.txt"
-                prev_mf="$tmp_dir/previous_mah_${sub}_manifest.txt"
-                build_manifest "$f" "mah_${sub}" "$curr_mf"
-                build_manifest "$prev_dir" "mah_${sub}" "$prev_mf"
-                if ! cmp -s "$curr_mf" "$prev_mf"; then
-                  eval "${sub}_changed=true"
-                fi
-              done
-
-              if [[ "$agent_changed" == "true" || "$internal_changed" == "true" || "$model_changed" == "true" || "$docs_changed" == "true" || "$resource_other_changed" == "true" || "$interface_changed" == "true" ]]; then
+              if [[ "$agent_changed" == "true" || "$internal_changed" == "true" || "$model_changed" == "true" || "$pipeline_changed" == "true" || "$index_changed" == "true" || "$image_changed" == "true" || "$docs_changed" == "true" || "$resource_other_changed" == "true" || "$interface_changed" == "true" || "$data_changed" == "true" || "$config_changed" == "true" || "$root_metadata_changed" == "true" || "$deps_changed" == "true" ]]; then
                 mah_changed="true"
               fi
-              echo "[INFO] $f MAH变化: agent=$agent_changed internal=$internal_changed model=$model_changed docs=$docs_changed resource_other=$resource_other_changed interface=$interface_changed"
+              echo "[INFO] $f MAH changes: agent=$agent_changed internal=$internal_changed model=$model_changed pipeline=$pipeline_changed index=$index_changed image=$image_changed docs=$docs_changed resource_other=$resource_other_changed interface=$interface_changed data=$data_changed config=$config_changed root_metadata=$root_metadata_changed deps=$deps_changed"
             fi
 
             if [[ "$fallback_legacy" == "true" ]]; then
@@ -1158,20 +1279,33 @@ jobs:
                   --exclude='agent/' \
                   --exclude='resource/' \
                   --exclude='docs/' \
+                  --exclude='data/' \
+                  --exclude='config/' \
+                  --exclude='libs/' \
+                  --exclude='plugins/' \
+                  --exclude='interface.json' \
+                  --exclude='interface.jsonc' \
+                  --exclude='icon.png' \
+                  --exclude='README.md' \
+                  --exclude='LICENSE' \
                   "$f/" "$inc_dir/"
               fi
 
               if [[ "$mah_changed" == "true" ]]; then
                 # 按变更粒度增量打包，避免重复打入未变更的大文件（ONNX模型等）
-                if [[ "$agent_changed" == "true" && -d "$f/agent" ]]; then
-                  rsync -a "$f/agent/" "$inc_dir/agent/"
+                if [[ "$agent_changed" == "true" ]]; then
+                  copy_dir_contents "$f/agent" "$inc_dir/agent"
                 fi
                 if [[ "$internal_changed" == "true" && -d "$f/_internal" ]]; then
+                  current_internal_manifest="$tmp_dir/current_mah_internal_manifest.txt"
+                  previous_internal_manifest="$tmp_dir/previous_mah_internal_manifest.txt"
+                  build_internal_manifest "$f" "$current_internal_manifest"
+                  build_internal_manifest "$prev_dir" "$previous_internal_manifest"
                   # 基于文件级哈希对比，仅复制变更的文件（非整目录）
                   declare -A prev_internal_hash
                   while IFS='|' read -r path hash; do
                     prev_internal_hash["$path"]="$hash"
-                  done < "$tmp_dir/previous_mah_internal_manifest.txt"
+                  done < "$previous_internal_manifest"
 
                   while IFS='|' read -r path hash; do
                     if [[ "${prev_internal_hash[$path]:-}" != "$hash" ]]; then
@@ -1179,24 +1313,45 @@ jobs:
                       mkdir -p "$(dirname "$dest")"
                       cp "$f/$path" "$dest"
                     fi
-                  done < "$tmp_dir/current_mah_internal_manifest.txt"
+                  done < "$current_internal_manifest"
 
                   changed_count=$(find "$inc_dir/_internal" -type f 2>/dev/null | wc -l)
-                  echo "[INFO] $f _internal/ 增量: 变更 ${changed_count} 个文件"
+                  echo "[INFO] $f _internal incremental: changed ${changed_count} files"
                 fi
-                if [[ "$docs_changed" == "true" && -d "$f/docs" ]]; then
-                  rsync -a "$f/docs/" "$inc_dir/docs/"
+                if [[ "$docs_changed" == "true" ]]; then
+                  copy_dir_contents "$f/docs" "$inc_dir/docs"
                 fi
-                if [[ "$model_changed" == "true" && -d "$f/resource/base/model" ]]; then
-                  mkdir -p "$inc_dir/resource/base/model"
-                  rsync -a "$f/resource/base/model/" "$inc_dir/resource/base/model/"
+                if [[ "$data_changed" == "true" ]]; then
+                  copy_dir_contents "$f/data" "$inc_dir/data"
+                fi
+                if [[ "$config_changed" == "true" ]]; then
+                  copy_dir_contents "$f/config" "$inc_dir/config"
+                fi
+                if [[ "$root_metadata_changed" == "true" ]]; then
+                  copy_root_metadata "$f" "$inc_dir"
+                fi
+                if [[ "$deps_changed" == "true" ]]; then
+                  copy_dependency_payload "$f" "$inc_dir"
+                fi
+                if [[ "$index_changed" == "true" ]]; then
+                  copy_dir_contents "$f/resource/index" "$inc_dir/resource/index"
+                fi
+                if [[ "$image_changed" == "true" ]]; then
+                  copy_dir_contents "$f/resource/base/image" "$inc_dir/resource/base/image"
+                fi
+                if [[ "$model_changed" == "true" ]]; then
+                  copy_dir_contents "$f/resource/base/model" "$inc_dir/resource/base/model"
+                fi
+                if [[ "$pipeline_changed" == "true" ]]; then
+                  copy_pipeline_dirs "$f" "$inc_dir"
                 fi
                 if [[ "$resource_other_changed" == "true" && -d "$f/resource" ]]; then
                   rsync -a \
                     --exclude='index/' \
-                    --exclude='base/image/ar/' \
-                    --exclude='base/image/character/' \
+                    --exclude='base/image/' \
                     --exclude='base/model/' \
+                    --exclude='base/pipeline/' \
+                    --exclude='*/pipeline/' \
                     "$f/resource/" "$inc_dir/resource/"
                 fi
                 if [[ "$interface_changed" == "true" ]]; then
