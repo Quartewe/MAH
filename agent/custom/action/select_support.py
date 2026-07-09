@@ -278,8 +278,10 @@ class SelectSupport(CustomAction):
                 self.all_res = match_mgr.merge_res_dicts(self.all_res, add_res)
 
             if info_share.select_support_fast:
-                logger.info("开启快速选择支援模式，直接使用识别结果的第一个角色")
-                break
+                if self._has_support_result(self.all_res):
+                    logger.info("开启快速选择支援模式，已找到首个匹配结果")
+                    break
+                logger.info("开启快速选择支援模式，本页未找到匹配结果，继续滑动")
 
             logger.info(f"第 {page // 3} 页，指纹: {current_fingerprint}，正在滑动...")
             context.run_action(
@@ -356,3 +358,16 @@ class SelectSupport(CustomAction):
         self.swipe_time = swipe_time
         self.page = page
         return True
+
+    @staticmethod
+    def _has_support_result(results):
+        for id_dict in results.values():
+            if not isinstance(id_dict, dict):
+                continue
+            for res_dict in id_dict.values():
+                if not isinstance(res_dict, dict):
+                    continue
+                for res_key in res_dict.keys():
+                    if isinstance(res_key, str) and res_key.startswith("res_"):
+                        return True
+        return False
