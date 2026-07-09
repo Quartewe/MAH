@@ -7,7 +7,6 @@
         "zh_tw": "resource/resource_tw/interface_tw.json"
     },
     "name": "MAH",
-    "title": "MAH v1.0.0",
     "icon": "icon.png",
     "mirrorchyan_rid": "mah",
     "mirrorchyan_multiplatform": true,
@@ -294,7 +293,12 @@
         },
         "play_times": {
             "type": "input",
+            "label": "$play_times",
             "description": "$play_times_description",
+            "binding": [
+                "choose_stage_dungeon",
+                "choose_stage_AP"
+            ],
             "inputs": [
                 {
                     "name": "挑战次数",
@@ -319,6 +323,9 @@
             "type": "input",
             "label": "$use_AP_potion",
             "description": "$use_AP_potion_description",
+            "binding": [
+                "choose_stage_AP"
+            ],
             "inputs": [
                 {
                     "name": "全体力",
@@ -374,6 +381,9 @@
             "type": "input",
             "label": "$use_DP_potion",
             "description": "$use_DP_potion_description",
+            "binding": [
+                "choose_stage_dungeon"
+            ],
             "inputs": [
                 {
                     "name": "DP",
@@ -619,6 +629,10 @@
             "type": "select",
             "label": "$json_load",
             "description": "$json_load_description",
+            "binding": [
+                "choose_stage_dungeon",
+                "choose_stage_AP"
+            ],
             "cases": [
                 {
                     "name": "自定义选择组合",
@@ -948,6 +962,10 @@
             "type": "input",
             "label": "$select_team",
             "description": "$select_team_description",
+            "binding": [
+                "choose_stage_dungeon",
+                "choose_stage_AP"
+            ],
             "inputs": [
                 {
                     "name": "输入队伍ID",
