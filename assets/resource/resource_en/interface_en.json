@@ -8,6 +8,8 @@
     "check_task_progress_description": "Automatically check weekly task progress, highly recommended to enable",
     "dungeon_combat": "Dungeon Combat",
     "dungeon_combat_description": "Dungeon combat stages",
+    "golden_dungeon": "Golden Cavern?",
+    "golden_dungeon_description": "Golden Cavern?",
     "AP_combat": "AP Combat",
     "AP_combat_description": "AP combat stages",
     "claim_rewards": "Claim Rewards",

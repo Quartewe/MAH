@@ -162,6 +162,19 @@
             "description": "$select_stage_description",
             "cases": [
                 {
+                    "name": "黄金洞窟?",
+                    "label": "$golden_dungeon",
+                    "description": "$golden_dungeon_description",
+                    "pipeline_override": {
+                        "Dungeon.Change2": {
+                            "next": "Dungeon.Gold.Entry"
+                        },
+                        "Global.AutoCombat.BacktoEntry": {
+                            "next": "Dungeon.Gold.Entry"
+                        }
+                    }
+                },
+                {
                     "name": "神宿学园旧校舍",
                     "label": "$shinjuku_school",
                     "description": "$shinjuku_school_description",

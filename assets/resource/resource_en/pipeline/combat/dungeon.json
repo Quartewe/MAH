@@ -61,5 +61,32 @@
                 ]
             }
         }
+    },
+    "Dungeon.Gold.Choice": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "Golden"
+                ]
+            }
+        }
+    },
+    "Dungeon.Gold.Explore": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "Exploration"
+                ]
+            }
+        }
+    },
+    "Dungeon.Gold.Episode": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "Golden"
+                ]
+            }
+        }
     }
 }
