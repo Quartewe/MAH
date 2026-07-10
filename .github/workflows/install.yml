@@ -1284,6 +1284,17 @@ jobs:
                 fi
               fi
 
+              current_internal_manifest="$tmp_dir/current_mah_internal_manifest.txt"
+              previous_internal_manifest="$tmp_dir/previous_mah_internal_manifest.txt"
+              build_internal_manifest "$f" "$current_internal_manifest"
+              build_internal_manifest "$prev_dir" "$previous_internal_manifest"
+              internal_manifest_changed="false"
+              if ! cmp -s "$current_internal_manifest" "$previous_internal_manifest"; then
+                internal_manifest_changed="true"
+                internal_changed="true"
+              fi
+              echo "[INFO] $f _internal manifest changed=$internal_manifest_changed"
+
               if [[ "$agent_changed" == "true" || "$internal_changed" == "true" || "$model_changed" == "true" || "$pipeline_changed" == "true" || "$index_changed" == "true" || "$image_changed" == "true" || "$docs_changed" == "true" || "$resource_other_changed" == "true" || "$interface_changed" == "true" || "$data_changed" == "true" || "$config_changed" == "true" || "$root_metadata_changed" == "true" || "$deps_changed" == "true" ]]; then
                 mah_changed="true"
               fi
@@ -1320,27 +1331,25 @@ jobs:
                 if [[ "$agent_changed" == "true" ]]; then
                   copy_dir_contents "$f/agent" "$inc_dir/agent"
                 fi
-                if [[ "$internal_changed" == "true" && -d "$f/_internal" ]]; then
-                  current_internal_manifest="$tmp_dir/current_mah_internal_manifest.txt"
-                  previous_internal_manifest="$tmp_dir/previous_mah_internal_manifest.txt"
-                  build_internal_manifest "$f" "$current_internal_manifest"
-                  build_internal_manifest "$prev_dir" "$previous_internal_manifest"
-                  # 基于文件级哈希对比，仅复制变更的文件（非整目录）
-                  declare -A prev_internal_hash
+                if [[ "$internal_manifest_changed" == "true" && -d "$f/_internal" ]]; then
+                  declare -A prev_internal_hash=()
                   while IFS='|' read -r path hash; do
+                    [[ -n "$path" ]] || continue
                     prev_internal_hash["$path"]="$hash"
                   done < "$previous_internal_manifest"
 
+                  changed_count=0
                   while IFS='|' read -r path hash; do
+                    [[ -n "$path" ]] || continue
                     if [[ "${prev_internal_hash[$path]:-}" != "$hash" ]]; then
                       dest="$inc_dir/$path"
                       mkdir -p "$(dirname "$dest")"
                       cp "$f/$path" "$dest"
+                      changed_count=$((changed_count + 1))
                     fi
                   done < "$current_internal_manifest"
 
-                  changed_count=$(find "$inc_dir/_internal" -type f 2>/dev/null | wc -l)
-                  echo "[INFO] $f _internal incremental: changed ${changed_count} files"
+                  echo "[INFO] $f _internal incremental: included ${changed_count} changed files"
                 fi
                 if [[ "$docs_changed" == "true" ]]; then
                   copy_dir_contents "$f/docs" "$inc_dir/docs"
@@ -1393,8 +1402,7 @@ jobs:
               fi
             fi
 
-            # _internal/ 已纳入增量包（通过文件级哈希对比），依赖变更时可增量更新。
-            # 不再因 requirements.txt 变更跳过增量包。
+            # _internal/ 始终与上一正式完整包逐文件比较，只打包新增或哈希变化的文件。
 
             (cd "$inc_dir" && zip -r "../$f-incremental-${{ needs.meta.outputs.tag }}.zip" .)
             rm -rf "$inc_dir" "$tmp_dir"
