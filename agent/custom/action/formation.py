@@ -3,6 +3,8 @@ from maa.custom_action import CustomAction
 from maa.context import Context
 from pathlib import Path
 import json
+import re
+import time
 from utils import logger, timeout_mgr, data_io, act_mgr, match_mgr, proj_path, info_share
 
 @AgentServer.custom_action("Formation")
@@ -15,18 +17,336 @@ class Formation(CustomAction):
         self.AR_DATA = data_io.read_data(proj_path.AR_FILE)
         self.UI_DATA = data_io.read_data(proj_path.UI_FILE)
         self.TITLE_ROI = [20, 95, 1035, 55]
+        # 1280x720 编队界面右下角的 TOTAL COST 数值区域。
+        # 只读取数值区域，避免把角色卡片上的 9/35、1/30 等等级文本当成队伍消耗。
+        self.TEAM_COST_ROI = [1120, 495, 155, 75]
+        self.COST_ERROR_ROI = [390, 220, 490, 170]
+        self.COST_CONFIRM_ROI = [520, 430, 270, 130]
 
     def _normalize_template_path(self, raw_path):
-        if not raw_path:
+        return act_mgr.normalize_template_path(raw_path) or ""
+
+    @staticmethod
+    def _normalize_character_id(char_id):
+        if isinstance(char_id, int):
+            return f"{char_id:02d}"
+        if char_id is None:
             return ""
+        char_id = str(char_id).strip()
+        return char_id.zfill(2) if char_id.isdigit() else char_id
 
-        path_str = str(raw_path).replace("\\", "/").lstrip("./")
-        image_root_rel = proj_path.IMAGE_DIR.relative_to(proj_path.PROJECT_ROOT).as_posix()
-        prefix = f"{image_root_rel}/"
+    def _get_character_info(self, character):
+        """返回角色筛选信息和是否为低星角色。"""
+        if not isinstance(character, dict):
+            return {}, False
 
-        if path_str.startswith(prefix):
-            return path_str[len(prefix):]
-        return path_str
+        name = str(character.get("name", "")).strip()
+        element = str(character.get("element", "")).strip()
+        if element:
+            lowstar_data = self.CHAR_LOWSTAR_DATA.get(name, {})
+            variant = lowstar_data.get(element, {})
+            if not isinstance(variant, dict):
+                variant = {}
+            info = dict(lowstar_data) if isinstance(lowstar_data, dict) else {}
+            info.update(variant)
+            info["element"] = element
+            if info.get("weapon") == "varies":
+                info["weapon"] = variant.get("weapon", "")
+            return info, True
+
+        char_id = self._normalize_character_id(character.get("id"))
+        char_data = self.CHAR_DATA.get(name, {})
+        if not isinstance(char_data, dict):
+            return {}, False
+        info = char_data.get(char_id, {})
+        return (info if isinstance(info, dict) else {}), False
+
+    def _template_path_exists(self, raw_path):
+        normalized_path = self._normalize_template_path(raw_path)
+        if not normalized_path:
+            return False
+
+        path = Path(normalized_path)
+        if path.is_absolute():
+            return path.exists()
+
+        roots = (
+            proj_path.IMAGE_DIR,
+            proj_path.RESOURCE_DIR / "base" / "image",
+            proj_path.RESOURCE_DIR / "image",
+        )
+        return any((root / path).exists() for root in roots)
+
+    def _validate_team_resources(self, team_data):
+        """阻止索引或模板不完整时进入无效编队。"""
+        errors = []
+        if not self.UI_DATA:
+            errors.append(f"缺少 UI 索引: {proj_path.UI_FILE}")
+
+        role_items = [
+            (key, value)
+            for key, value in team_data.items()
+            if key != "community" and isinstance(value, dict)
+        ]
+        if not role_items:
+            errors.append("队伍中没有可用角色")
+
+        for role_key, character in role_items:
+            name = str(character.get("name", "")).strip()
+            info, _ = self._get_character_info(character)
+            if not name or not info:
+                errors.append(f"{role_key}: 角色索引不存在 ({name})")
+                continue
+
+            if not self._template_path_exists(info.get("path")):
+                errors.append(f"{role_key}: 角色模板不存在 ({name})")
+
+            element = info.get("element")
+            rarity = info.get("rarity")
+            weapon = info.get("weapon")
+            if self.UI_DATA:
+                if not self.UI_DATA.get("element", {}).get(element):
+                    errors.append(f"{role_key}: 属性筛选模板不存在 ({element})")
+                if not self.UI_DATA.get("rarity", {}).get(str(rarity)):
+                    errors.append(f"{role_key}: 稀有度筛选模板不存在 ({rarity})")
+                if not self.UI_DATA.get("weapon", {}).get(weapon):
+                    errors.append(f"{role_key}: 武器筛选模板不存在 ({weapon})")
+
+            ar_name = character.get("AR")
+            if ar_name:
+                ar_data = self.AR_DATA.get(ar_name, {})
+                if not isinstance(ar_data, dict) or not ar_data.get("path"):
+                    errors.append(f"{role_key}: AR 索引不存在 ({ar_name})")
+                elif not self._template_path_exists(ar_data.get("path")):
+                    errors.append(f"{role_key}: AR 模板不存在 ({ar_name})")
+
+        community = team_data.get("community")
+        if community and not self._get_community_template_path(community):
+            errors.append(f"工会模板不存在 ({community})")
+
+        return errors
+
+    @staticmethod
+    def _collect_recognition_results(result):
+        """兼容 MaaFramework 不同识别结果集合，返回去重后的 OCR 项。"""
+        if result is None:
+            return []
+
+        candidates = []
+        for attr in ("filtered_results", "all_results"):
+            candidates.extend(list(getattr(result, attr, []) or []))
+
+        best_result = getattr(result, "best_result", None)
+        if best_result:
+            candidates.append(best_result)
+
+        output = []
+        seen = set()
+        for candidate in candidates:
+            box = tuple(getattr(candidate, "box", []) or [])
+            key = (str(getattr(candidate, "text", "")), box)
+            if key in seen:
+                continue
+            seen.add(key)
+            output.append(candidate)
+        return output
+
+    @staticmethod
+    def _normalize_ocr_text(text):
+        translation = str.maketrans(
+            {
+                "編": "编",
+                "隊": "队",
+                "組": "组",
+                "請": "请",
+                "減": "减",
+                "確": "确",
+                "認": "认",
+                "過": "过",
+                "値": "值",
+            }
+        )
+        normalized = str(text or "").lower().translate(translation)
+        return re.sub(r"[\s\u3000，。,.！？!：:；;（）()\"'“”‘’]", "", normalized)
+
+    @classmethod
+    def _is_cost_error_text(cls, text):
+        normalized = cls._normalize_ocr_text(text)
+        if not normalized:
+            return False
+
+        chinese_or_japanese = (
+            "超" in normalized
+            and any(token in normalized for token in ("编队", "编成", "编组"))
+            and any(
+                token in normalized
+                for token in ("消耗", "コスト", "cost", "上限", "最大")
+            )
+        )
+        reduce_cost = "减少" in normalized and any(
+            token in normalized for token in ("消耗", "コスト", "cost")
+        )
+        english = "cost" in normalized and any(
+            token in normalized
+            for token in ("exceed", "maximum", "limit", "reduce", "over")
+        )
+        return chinese_or_japanese or reduce_cost or english
+
+    @classmethod
+    def _is_confirm_text(cls, text):
+        normalized = cls._normalize_ocr_text(text)
+        return normalized in {
+            "确定",
+            "确认",
+            "ok",
+            "confirm",
+            "close",
+            "閉じる",
+        }
+
+    @staticmethod
+    def _parse_team_cost_text(text):
+        """解析编队界面上的“当前消耗/最大消耗”，不依赖账号等级。"""
+        if not text:
+            return None
+
+        normalized = str(text).strip()
+        normalized = normalized.replace("／", "/").replace("∕", "/")
+        normalized = normalized.replace("丨", "/").replace("|", "/")
+        match = re.search(r"(?<!\d)(\d{1,3})\s*/\s*(\d{1,3})(?!\d)", normalized)
+        if not match:
+            return None
+
+        return int(match.group(1)), int(match.group(2))
+
+    def _read_team_cost(self, context, retries=3):
+        """从当前编队画面读取动态队伍消耗上限。"""
+        for attempt in range(1, retries + 1):
+            context.tasker.controller.post_screencap().wait()
+            current_image = context.tasker.controller.cached_image
+            result = context.run_recognition(
+                "UtilsOCR",
+                current_image,
+                pipeline_override={
+                    "UtilsOCR": {
+                        "recognition": {
+                            "param": {
+                                "threshold": 0.7,
+                                "roi": self.TEAM_COST_ROI,
+                                "expected": [""],
+                            }
+                        }
+                    }
+                },
+            )
+
+            for candidate in self._collect_recognition_results(result):
+                cost = self._parse_team_cost_text(getattr(candidate, "text", ""))
+                if cost:
+                    logger.info(
+                        f"动态编队消耗: {cost[0]}/{cost[1]} "
+                        f"(第 {attempt}/{retries} 次读取)"
+                    )
+                    return cost
+
+            if attempt < retries:
+                time.sleep(0.25)
+
+        logger.warning("未能从编队界面读取动态消耗上限")
+        return None
+
+    def _dismiss_cost_error(self, context):
+        """仅在确认超限正文存在时关闭弹窗，并返回弹窗是否出现。"""
+        context.tasker.controller.post_screencap().wait()
+        current_image = context.tasker.controller.cached_image
+        message_result = context.run_recognition(
+            "UtilsOCR",
+            current_image,
+            pipeline_override={
+                "UtilsOCR": {
+                    "recognition": {
+                        "param": {
+                            "threshold": 0.7,
+                            "roi": self.COST_ERROR_ROI,
+                            "expected": [""],
+                        }
+                    }
+                }
+            },
+        )
+
+        message_text = " ".join(
+            str(getattr(candidate, "text", ""))
+            for candidate in self._collect_recognition_results(message_result)
+        )
+        if not self._is_cost_error_text(message_text):
+            return False
+
+        confirm_result = context.run_recognition(
+            "UtilsOCR",
+            current_image,
+            pipeline_override={
+                "UtilsOCR": {
+                    "recognition": {
+                        "param": {
+                            "threshold": 0.7,
+                            "roi": self.COST_CONFIRM_ROI,
+                            "expected": [""],
+                        }
+                    }
+                }
+            },
+        )
+        confirm_result = next(
+            (
+                candidate
+                for candidate in self._collect_recognition_results(confirm_result)
+                if self._is_confirm_text(getattr(candidate, "text", ""))
+            ),
+            None,
+        )
+        if not confirm_result:
+            logger.error("检测到编队消耗超限提示，但未识别到确认按钮")
+            return True
+
+        confirm_box = getattr(confirm_result, "box", None)
+        if not confirm_box or len(confirm_box) < 4:
+            logger.error(f"编队消耗超限确认按钮位置无效: {confirm_box}")
+            return True
+
+        context.run_action(
+            "UtilsClick",
+            confirm_box,
+            pipeline_override={
+                "UtilsClick": {
+                    "action": {
+                        "param": {
+                            "target": confirm_box,
+                        }
+                    }
+                }
+            },
+        )
+        logger.info("已关闭编队消耗超限提示")
+        return True
+
+    def _get_community_template_path(self, community):
+        """优先使用索引，索引未生成时回退到仓库内的标准工会图片路径。"""
+        indexed_path = self._normalize_template_path(
+            self.UI_DATA.get("community", {}).get(community, "")
+        )
+        if indexed_path and self._template_path_exists(indexed_path):
+            return indexed_path
+        if indexed_path:
+            logger.warning(f"工会索引路径不存在: {community} -> {indexed_path}")
+
+        fallback = f"fight/community/community_{community}.png"
+        if self._template_path_exists(fallback):
+            logger.warning(
+                f"未找到工会索引 {community}，使用标准模板路径: {fallback}"
+            )
+            return fallback
+        return ""
 
     def run(
         self,
@@ -92,15 +412,29 @@ class Formation(CustomAction):
             logger.warning(f"无team数据, 跳过角色选择")
             timeout_mgr.stop_monitoring(argv.node_name)
             return True
-        lang_mode = act_mgr.detect_lang(context, [1087,88,191,633])
-        if lang_mode == "jp":
-            markers = ["編成解散", "OK", "OK"]
-        if lang_mode == "cn":
+
+        resource_errors = self._validate_team_resources(team_data)
+        if resource_errors:
+            logger.error(
+                "编队资源未就绪，未执行解散队伍: " + "; ".join(resource_errors)
+            )
+            timeout_mgr.stop_monitoring(argv.node_name)
+            return False
+
+        lang_mode = act_mgr.detect_lang(
+            context,
+            [1087, 88, 191, 633],
+            ignore=info_share.IGNORE_LIST,
+        )
+        markers = {
+            "jp": ["編成解散", "OK", "OK"],
+            "cn": ["解散队伍", "OK", "确定"],
+            "tw": ["解散編組", "OK", "OK"],
+            "en": ["Disband", "OK", "OK"],
+        }.get(lang_mode)
+        if markers is None:
+            logger.warning(f"未能确定编队界面语言: {lang_mode}，默认使用简体中文")
             markers = ["解散队伍", "OK", "确定"]
-        if lang_mode == "tw":
-            markers = ["解散編組", "OK", "OK"]
-        if lang_mode == "en":
-            markers = ["Disband", "OK", "OK"]
 
 
         # 清除可能存在的旧数据
@@ -155,6 +489,16 @@ class Formation(CustomAction):
         )
         logger.info(f"旧队伍已解散，开始新编组...")
 
+        initial_team_cost = self._read_team_cost(context)
+        if not initial_team_cost:
+            logger.error("无法读取账号动态编队消耗，停止编队以避免使用错误上限")
+            timeout_mgr.stop_monitoring(argv.node_name)
+            return False
+        logger.info(
+            f"账号当前编队消耗上限为 {initial_team_cost[1]}，"
+            "后续按界面实时值校验，不使用固定上限"
+        )
+
         context.tasker.controller.post_screencap().wait()
         current_image = context.tasker.controller.cached_image
 
@@ -172,6 +516,10 @@ class Formation(CustomAction):
                 }
             }
         )
+        if raw_title is None:
+            logger.error("无法识别编队槽位标题，未继续编队")
+            timeout_mgr.stop_monitoring(argv.node_name)
+            return False
 
         def _get_support_target_pos(team_info: dict) -> int:
             pos = 1
@@ -230,7 +578,9 @@ class Formation(CustomAction):
 
             return combat_roles
 
-        raw_title.filtered_results = sorted(raw_title.filtered_results, key=lambda x: x.box[0])
+        title_results = list(getattr(raw_title, "filtered_results", []) or [])
+        title_results = sorted(title_results, key=lambda x: x.box[0])
+        raw_title.filtered_results = title_results
 
         support_target_pos = _get_support_target_pos(team_data)
         support_source_pos = None
@@ -239,14 +589,32 @@ class Formation(CustomAction):
                 support_source_pos = idx + 1
                 break
 
+        if support_source_pos is None:
+            logger.error("未识别到当前 SUPPORT 槽位，未继续编队")
+            timeout_mgr.stop_monitoring(argv.node_name)
+            return False
+
         target_role_map = _build_target_role_map(team_data)
         combat_role_list = _build_combat_role_list(
             target_role_map,
             support_source_pos,
             support_target_pos,
-            len(raw_title.filtered_results),
+            len(title_results),
         )
         combat_role_idx = 0
+
+        expected_combat_roles = sum(
+            1
+            for key in team_data
+            if key not in ("LEADER", "SUPPORT", "community")
+        ) + (1 if team_data.get("LEADER") else 0)
+        if len(combat_role_list) != expected_combat_roles:
+            logger.error(
+                f"编队槽位识别不完整: 识别到 {len(title_results)} 个槽位，"
+                f"可配置角色 {expected_combat_roles} 个，未继续编队"
+            )
+            timeout_mgr.stop_monitoring(argv.node_name)
+            return False
 
         logger.info(f"助战来源位置={support_source_pos}, 助战目标位置={support_target_pos}")
         logger.info(f"战斗角色列表={combat_role_list}")
@@ -254,7 +622,7 @@ class Formation(CustomAction):
         
         # 计算 team_data 中的最大索引
         # 选择角色
-        for idx, title in enumerate(raw_title.filtered_results):
+        for idx, title in enumerate(title_results):
             lowstar_mode = False
             current_pos = idx + 1
             logger.info(f"当前位置标题: {title.text}")
@@ -297,31 +665,25 @@ class Formation(CustomAction):
                 )
             current_char_name = current_char.get("name", "")
             current_char_ar = current_char.get("AR", None)
-            ar_list.append(current_char_ar)
-            current_char_id = current_char.get("id", "")
-            if isinstance(current_char_id, int):
-                current_char_id = f"{current_char_id:02d}"
+            current_char_id = self._normalize_character_id(current_char.get("id"))
             current_lowchar_element = current_char.get("element", "")
-            if current_lowchar_element:
-                lowstar_mode = True
-            if not lowstar_mode:
-                current_char_info = self.CHAR_DATA.get(current_char_name, {}).get(current_char_id, {})
-                current_char_element = current_char_info.get("element", "")
-                current_char_rarity = current_char_info.get("rarity", 0)
-                current_char_weapon = current_char_info.get("weapon", "")
-            if lowstar_mode:
-                current_char_info = self.CHAR_LOWSTAR_DATA.get(current_char_name, {})
-                current_char_rarity = current_char_info.get("rarity", 0)
-                
-                current_char_weapon = current_char_info.get("weapon", "")
-                current_char_element = current_lowchar_element
-                if current_char_weapon == "varies":
-                    current_char_weapon = current_char_info.get(current_char_element, {}).get("weapon", "")
+            current_char_info, lowstar_mode = self._get_character_info(current_char)
+            current_char_element = current_char_info.get("element", "")
+            current_char_rarity = current_char_info.get("rarity", 0)
+            current_char_weapon = current_char_info.get("weapon", "")
             
             logger.info(f"当前角色稀有度: {current_char_rarity}")
             logger.info(f"当前角色属性: {current_char_element}")
             logger.info(f"当前角色武器: {current_char_weapon}")
-            act_mgr.choose_filter(context, current_char_element, current_char_rarity, current_char_weapon)
+            if not act_mgr.choose_filter(
+                context,
+                current_char_element,
+                current_char_rarity,
+                current_char_weapon,
+            ):
+                logger.error(f"角色筛选失败: {current_char_name}")
+                timeout_mgr.stop_monitoring(argv.node_name)
+                return False
             context.tasker.controller.post_screencap().wait()
             current_image = context.tasker.controller.cached_image
             choose_finish = context.run_recognition(
@@ -344,13 +706,20 @@ class Formation(CustomAction):
                 }
             )
             # 检查是否有识别结果
-            if len(choose_finish.filtered_results) > 1 or not choose_finish.filtered_results:
+            choose_results = list(
+                getattr(choose_finish, "filtered_results", []) or []
+            )
+            if len(choose_results) != 1:
                 logger.error(f"无法确认角色选择: {current_char_name} (ID: {current_char_id})")
                 timeout_mgr.stop_monitoring(argv.node_name)
                 return False
             
             # 获取第一个识别结果的位置
-            target_box = choose_finish.filtered_results[0].box
+            target_box = choose_results[0].box
+            if not target_box or len(target_box) < 4 or target_box[2] <= 0 or target_box[3] <= 0:
+                logger.error(f"角色识别框无效: {current_char_name} -> {target_box}")
+                timeout_mgr.stop_monitoring(argv.node_name)
+                return False
             logger.info(f"{current_char_name} 的目标点击框: {target_box}")
             context.run_action(
                 "UtilsClick",
@@ -365,6 +734,36 @@ class Formation(CustomAction):
                     }
                 }
             )
+
+            updated_team_cost = self._read_team_cost(context)
+            if self._dismiss_cost_error(context):
+                logger.error(
+                    f"角色 {current_char_name} 触发编队消耗限制，"
+                    "已停止当前编队，请使用更低消耗角色或调整编队文件"
+                )
+                timeout_mgr.stop_monitoring(argv.node_name)
+                return False
+
+            if updated_team_cost and updated_team_cost[0] > updated_team_cost[1]:
+                self._dismiss_cost_error(context)
+                logger.error(
+                    f"选择 {current_char_name} 后编队消耗 "
+                    f"{updated_team_cost[0]}/{updated_team_cost[1]} 超出账号动态上限，"
+                    "已停止继续编队，请使用更低消耗角色或调整编队文件"
+                )
+                timeout_mgr.stop_monitoring(argv.node_name)
+                return False
+
+            if not updated_team_cost:
+                logger.error(
+                    f"选择 {current_char_name} 后无法读取动态编队消耗，"
+                    "停止继续编队"
+                )
+                timeout_mgr.stop_monitoring(argv.node_name)
+                return False
+
+            # 只有角色确认加入队伍后才记录 AR，确保 AR 列表与已编入角色槽位一致。
+            ar_list.append(current_char_ar)
 
         # 其他槽位填充完成后，再处理 SUPPORT 槽位换位
         context.tasker.controller.post_screencap().wait()
@@ -383,22 +782,35 @@ class Formation(CustomAction):
                 }
             }
         )
-        support_title.filtered_results = sorted(support_title.filtered_results, key=lambda x: x.box[0])
+        support_results = list(
+            getattr(support_title, "filtered_results", []) or []
+        )
+        support_results = sorted(support_results, key=lambda x: x.box[0])
+        if not support_results:
+            logger.error("填充角色后无法识别编队槽位标题，未执行 SUPPORT 换位")
+            timeout_mgr.stop_monitoring(argv.node_name)
+            return False
+
         support_source_pos = None
         support_source_box = None
-        for idx, title in enumerate(support_title.filtered_results):
+        for idx, title in enumerate(support_results):
             if match_mgr.fuzzy_match(title.text, "SUPPORT"):
                 support_source_pos = idx + 1
                 support_source_box = title.box
                 break
 
+        if support_source_pos is None or not support_source_box:
+            logger.error("填充角色后未识别到 SUPPORT 槽位，未执行换位")
+            timeout_mgr.stop_monitoring(argv.node_name)
+            return False
+
         if (
             support_source_pos
             and support_source_box
             and support_source_pos != support_target_pos
-            and 1 <= support_target_pos <= len(support_title.filtered_results)
+            and 1 <= support_target_pos <= len(support_results)
         ):
-            support_target_box = support_title.filtered_results[support_target_pos - 1].box
+            support_target_box = support_results[support_target_pos - 1].box
             print(
                 f"[DEBUG] 填充后移动 SUPPORT: 来源={support_source_pos}, 目标={support_target_pos}"
             )
@@ -420,9 +832,7 @@ class Formation(CustomAction):
         # 选择工会    
         team_community = team_data.get("community", None)
         if team_community:
-            community_path = self._normalize_template_path(
-                self.UI_DATA.get("community", {}).get(team_community, "")
-            )
+            community_path = self._get_community_template_path(team_community)
             if not community_path:
                 logger.error(f"工会模板路径无效: {team_community}")
                 timeout_mgr.stop_monitoring(argv.node_name)
@@ -569,10 +979,17 @@ class Formation(CustomAction):
                     }
                 }
             )
-            for ar, pos in zip(ar_list, ar_select.filtered_results):
+            ar_results = list(getattr(ar_select, "filtered_results", []) or [])
+            for ar, pos in zip(ar_list, ar_results):
                 logger.info(f"当前 AR: {ar}")
                 logger.info(f"当前 AR 位置: {pos.box}")
+                if not ar:
+                    logger.info("当前角色未指定 AR，保留默认配置")
+                    continue
                 current_ar_data = self.AR_DATA.get(ar, "")
+                if not isinstance(current_ar_data, dict):
+                    logger.error(f"AR 索引数据无效: {ar}")
+                    continue
                 current_ar_rarity = current_ar_data.get("rarity", 0)
                 ar_path = self._normalize_template_path(current_ar_data.get("path"))
                 if not ar_path:

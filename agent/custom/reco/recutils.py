@@ -51,7 +51,21 @@ class TraverseMatch(CustomRecognition):
         self.CHAR_DATA = data_io.read_data(proj_path.CHAR_FILE)
         self.CHAR_LOWSTAR_DATA = data_io.read_data(proj_path.CHAR_LOWSTAR_FILE)
         self.AR_DATA = data_io.read_data(proj_path.AR_FILE)
-        self.ELEMENTS = ["all", "dark", "evil", "fire", "god", "hero", "infinity", "light", "none", "water", "wood", "world"]
+        self.ELEMENTS = [
+            "all",
+            "dark",
+            "evil",
+            "fire",
+            "god",
+            "hero",
+            "infinity",
+            "light",
+            "none",
+            "water",
+            "wood",
+            "world",
+            "zero",
+        ]
 
     def _detect_image_base_dir(self) -> Path:
         candidates = [
@@ -132,6 +146,8 @@ class TraverseMatch(CustomRecognition):
         char_id = param.get("id", None)
         if isinstance(param.get("id"), int):
             char_id = f"{param.get('id'):02d}"
+        elif isinstance(char_id, str) and char_id.isdigit():
+            char_id = char_id.zfill(2)
         lowstar_mode = False
         ar_mode = False
         ar_name = None
@@ -153,8 +169,14 @@ class TraverseMatch(CustomRecognition):
                 self.CHAR_LOWSTAR_DATA.get(char_name, {}).get(char_element, {}).get("path", "").strip().strip('"').strip("'")
             )
         elif char_name and char_id:
+            char_data = self.CHAR_DATA.get(char_name, {})
+            char_info = char_data.get(char_id, {}) if isinstance(char_data, dict) else {}
+            raw_path = char_info.get("path", "") if isinstance(char_info, dict) else ""
+            if not raw_path:
+                logger.error(f"角色索引或模板路径不存在: {char_name} {char_id}")
+                return CustomRecognition.AnalyzeResult(box=None, detail=None)
             template_path = self._resolve_image_path(
-                self.CHAR_DATA[char_name][char_id]["path"].strip().strip('"').strip("'")
+                raw_path.strip().strip('"').strip("'")
             )
         else:
             # 回退到 AR 模式：仅当无法走角色识别时尝试

@@ -15,6 +15,18 @@
             }
         }
     },
+    "DailyRes.Go0": {
+        "action": {
+            "param": {
+                "target": [
+                    1205,
+                    630,
+                    1,
+                    1
+                ]
+            }
+        }
+    },
     "DailyRes.Coin.Entry": {
         "action": {
             "param": {
@@ -50,6 +62,208 @@
                         "（3）",
                         "(3)"
                     ]
+                }
+            }
+        }
+    },
+    "DailyRes.Limit.Fire.Entry": {
+        "action": {
+            "param": {
+                "custom_action_param": {
+                    "name": "限界突破の試練·火",
+                    "difficulty": ["（3）", "(3)"]
+                }
+            }
+        }
+    },
+    "DailyRes.Limit.Water.Entry": {
+        "action": {
+            "param": {
+                "custom_action_param": {
+                    "name": "限界突破の試練·水",
+                    "difficulty": ["（3）", "(3)"]
+                }
+            }
+        }
+    },
+    "DailyRes.Limit.Wood.Entry": {
+        "action": {
+            "param": {
+                "custom_action_param": {
+                    "name": "限界突破の試練·木",
+                    "difficulty": ["（3）", "(3)"]
+                }
+            }
+        }
+    },
+    "DailyRes.Limit.World.Entry": {
+        "action": {
+            "param": {
+                "custom_action_param": {
+                    "name": [
+                        "限界突破の試練·世界"
+                    ],
+                    "difficulty": ["（3）", "(3)"]
+                }
+            }
+        }
+    },
+    "DailyRes.Limit.Heaven.Entry": {
+        "action": {
+            "param": {
+                "custom_action_param": {
+                    "name": "限界突破の試練·天",
+                    "difficulty": ["（3）", "(3)"]
+                }
+            }
+        }
+    },
+    "DailyRes.Limit.Underworld.Entry": {
+        "action": {
+            "param": {
+                "custom_action_param": {
+                    "name": "限界突破の試練·冥",
+                    "difficulty": ["（3）", "(3)"]
+                }
+            }
+        }
+    },
+    "DailyRes.Limit.Demon.Entry": {
+        "action": {
+            "param": {
+                "custom_action_param": {
+                    "name": "限界突破の試練·魔",
+                    "difficulty": ["（3）", "(3)"]
+                }
+            }
+        }
+    },
+    "DailyRes.Limit.Hero.Entry": {
+        "action": {
+            "param": {
+                "custom_action_param": {
+                    "name": "限界突破の試練·英雄",
+                    "difficulty": ["（3）", "(3)"]
+                }
+            }
+        }
+    },
+    "DailyRes.Limit.None.Entry": {
+        "action": {
+            "param": {
+                "custom_action_param": {
+                    "name": "限界突破の試練·無",
+                    "difficulty": ["（2）", "(2)"]
+                }
+            }
+        }
+    },
+    "DailyRes.Limit.Zero.Entry": {
+        "action": {
+            "param": {
+                "custom_action_param": {
+                    "name": "限界突破の試練·零",
+                    "difficulty": ["（3）", "(3)"]
+                }
+            }
+        }
+    },
+    "DailyRes.Limit.God.Entry": {
+        "action": {
+            "param": {
+                "custom_action_param": {
+                    "name": "限界突破の試練·神",
+                    "difficulty": ["（3）", "(3)"]
+                }
+            }
+        }
+    },
+    "DailyRes.Limit.All.Entry": {
+        "action": {
+            "param": {
+                "custom_action_param": {
+                    "name": "限界突破の試練·全",
+                    "difficulty": ["（3）", "(3)"]
+                }
+            }
+        }
+    },
+    "DailyRes.Limit.Infinity.Entry": {
+        "action": {
+            "param": {
+                "custom_action_param": {
+                    "name": "限界突破の試練·無限",
+                    "difficulty": ["（3）", "(3)"]
+                }
+            }
+        }
+    },
+    "DailyRes.Limit.Slash.Entry": {
+        "action": {
+            "param": {
+                "custom_action_param": {
+                    "name": "限界突破の試練·斬撃",
+                    "difficulty": ["（2）", "(2)"]
+                }
+            }
+        }
+    },
+    "DailyRes.Limit.Thrust.Entry": {
+        "action": {
+            "param": {
+                "custom_action_param": {
+                    "name": "限界突破の試練·突撃",
+                    "difficulty": ["（2）", "(2)"]
+                }
+            }
+        }
+    },
+    "DailyRes.Limit.Knock.Entry": {
+        "action": {
+            "param": {
+                "custom_action_param": {
+                    "name": "限界突破の試練·打撃",
+                    "difficulty": ["（2）", "(2)"]
+                }
+            }
+        }
+    },
+    "DailyRes.Limit.Shot.Entry": {
+        "action": {
+            "param": {
+                "custom_action_param": {
+                    "name": "限界突破の試練·射撃",
+                    "difficulty": ["（2）", "(2)"]
+                }
+            }
+        }
+    },
+    "DailyRes.Limit.Magic.Entry": {
+        "action": {
+            "param": {
+                "custom_action_param": {
+                    "name": "限界突破の試練·魔法",
+                    "difficulty": ["（2）", "(2)"]
+                }
+            }
+        }
+    },
+    "DailyRes.Limit.Horizontal.Entry": {
+        "action": {
+            "param": {
+                "custom_action_param": {
+                    "name": "限界突破の試練·横一文字",
+                    "difficulty": ["（2）", "(2)"]
+                }
+            }
+        }
+    },
+    "DailyRes.Limit.Snipe.Entry": {
+        "action": {
+            "param": {
+                "custom_action_param": {
+                    "name": "限界突破の試練·狙撃",
+                    "difficulty": ["（2）", "(2)"]
                 }
             }
         }

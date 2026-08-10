@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       resource_repo:
-        description: "External resource repo (owner/repo), leave empty to disable"
+        description: "External resource repo (owner/repo); empty uses the default repository"
         required: false
         default: "quartawa/mah_res"
       resource_ref:
@@ -15,9 +15,9 @@ on:
         required: false
         default: "main"
       resource_path:
-        description: "Path inside external repo to sync to assets/resource"
+        description: "Optional directory inside the downloaded resource archive"
         required: false
-        default: "assets/resource"
+        default: ""
 
 jobs:
   meta:
@@ -90,8 +90,11 @@ jobs:
         env:
           INPUT_RESOURCE_REPO: ${{ github.event.inputs.resource_repo }}
           INPUT_RESOURCE_REF: ${{ github.event.inputs.resource_ref }}
+          INPUT_RESOURCE_PATH: ${{ github.event.inputs.resource_path }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          set -euo pipefail
+
           echo "resource_version=" >> "$GITHUB_OUTPUT"
           DEFAULT_RESOURCE_REPO="quartawa/mah_res"
 
@@ -112,10 +115,11 @@ jobs:
             echo "Using specified release tag '$RESOURCE_REF' from $RESOURCE_REPO"
           fi
 
-          RELEASE_JSON=$(curl -fsSL -H "Authorization: token $GITHUB_TOKEN" "$RELEASE_API" || true)
+          RELEASE_JSON=$(curl -fsSL --retry 3 --retry-all-errors \
+            -H "Authorization: token $GITHUB_TOKEN" "$RELEASE_API" || true)
           if [[ -z "$RELEASE_JSON" ]]; then
-            echo "[WARNING] Failed to fetch release metadata from $RELEASE_API, keep local assets unchanged"
-            exit 0
+            echo "[ERROR] Failed to fetch release metadata from $RELEASE_API"
+            exit 1
           fi
 
           RESOURCE_VERSION_TAG=$(echo "$RELEASE_JSON" | jq -r '.tag_name // empty')
@@ -124,57 +128,106 @@ jobs:
           fi
 
           # 仅查找 full 包，不使用 hotfix/incremental/patch
-          PACKAGE_URL=$(echo "$RELEASE_JSON" | jq -r '.assets[] | select(.name | contains("full")) | .browser_download_url' | head -1)
+          PACKAGE_URL=$(echo "$RELEASE_JSON" | jq -r \
+            '[.assets[] | select(.name | contains("full")) | .browser_download_url][0] // empty')
 
           if [[ -z "$PACKAGE_URL" ]]; then
             # 最后兜底：任意 zip/tar.gz，且排除 hotfix/incremental/patch
-            PACKAGE_URL=$(echo "$RELEASE_JSON" | jq -r '.assets[] | select(.name | endswith(".zip") or endswith(".tar.gz")) | select((.name | contains("hotfix") or contains("incremental") or contains("patch")) | not) | .browser_download_url' | head -1)
+            PACKAGE_URL=$(echo "$RELEASE_JSON" | jq -r \
+              '[.assets[] | select(.name | endswith(".zip") or endswith(".tar.gz")) | select((.name | contains("hotfix") or contains("incremental") or contains("patch")) | not) | .browser_download_url][0] // empty')
           fi
 
           if [[ -z "$PACKAGE_URL" ]]; then
-            echo "[WARNING] No resource package found in releases, keep local assets unchanged"
-            exit 0
-          fi
-
-          echo "Downloading from: $PACKAGE_URL"
-          TEMP_PACKAGE="/tmp/mah_res_package.$(echo $PACKAGE_URL | grep -oE '\.[^.]+$' | tr -d '.')"
-          curl -L -H "Authorization: token $GITHUB_TOKEN" -o "$TEMP_PACKAGE" "$PACKAGE_URL"
-
-          if [[ ! -f "$TEMP_PACKAGE" ]]; then
-            echo "[ERROR] Failed to download resource package"
+            echo "[ERROR] No full resource package found in releases for $RESOURCE_REPO"
             exit 1
           fi
 
-          # 解压到 assets/resource（不删除本地已有文件，只增量更新）
-          if [[ "$TEMP_PACKAGE" == *.zip ]]; then
-            unzip -o -q "$TEMP_PACKAGE" -d "assets/resource/"
-          elif [[ "$TEMP_PACKAGE" == *.tar.gz ]]; then
-            tar -xzf "$TEMP_PACKAGE" -C "assets/resource/"
+          echo "Downloading from: $PACKAGE_URL"
+          PACKAGE_NAME=$(echo "$RELEASE_JSON" | jq -r \
+            --arg url "$PACKAGE_URL" '[.assets[] | select(.browser_download_url == $url) | .name][0] // empty')
+          case "$PACKAGE_URL" in
+            *.zip) ARCHIVE_SUFFIX=".zip" ;;
+            *.tar.gz) ARCHIVE_SUFFIX=".tar.gz" ;;
+            *)
+              echo "[ERROR] Unsupported resource package format: $PACKAGE_NAME"
+              exit 1
+              ;;
+          esac
+
+          TEMP_DIR="$(mktemp -d)"
+          TEMP_PACKAGE="$TEMP_DIR/package$ARCHIVE_SUFFIX"
+          EXTRACT_DIR="$TEMP_DIR/extracted"
+          mkdir -p "$EXTRACT_DIR"
+          trap 'rm -rf "$TEMP_DIR"' EXIT
+
+          curl -fL --retry 3 --retry-all-errors \
+            -H "Authorization: token $GITHUB_TOKEN" \
+            -o "$TEMP_PACKAGE" "$PACKAGE_URL"
+
+          case "$ARCHIVE_SUFFIX" in
+            .zip) unzip -q "$TEMP_PACKAGE" -d "$EXTRACT_DIR" ;;
+            .tar.gz) tar -xzf "$TEMP_PACKAGE" -C "$EXTRACT_DIR" ;;
+          esac
+
+          RESOURCE_ROOT="$EXTRACT_DIR"
+          RESOURCE_PATH="${INPUT_RESOURCE_PATH#/}"
+          RESOURCE_PATH="${RESOURCE_PATH%/}"
+          if [[ -n "$RESOURCE_PATH" ]]; then
+            if [[ ! -d "$RESOURCE_ROOT/$RESOURCE_PATH" ]]; then
+              echo "[ERROR] Resource path does not exist in archive: $RESOURCE_PATH"
+              exit 1
+            fi
+            RESOURCE_ROOT="$RESOURCE_ROOT/$RESOURCE_PATH"
           fi
 
-          # 兼容旧资源包结构：统一归并到 assets/resource/base
-          # image 应位于 base/image（不能打散到 base 根目录）
-          if [[ -d "assets/resource/image" ]]; then
-            mkdir -p assets/resource/base/image
-            rsync -a "assets/resource/image/" "assets/resource/base/image/"
-            rm -rf "assets/resource/image"
+          # Support archives with a wrapper directory while keeping the
+          # release repository's root-level index/image layout.
+          for wrapper in "assets/resource" "resource" "mah_res"; do
+            if [[ ! -d "$RESOURCE_ROOT/index" && ! -d "$RESOURCE_ROOT/image" \
+              && -d "$RESOURCE_ROOT/$wrapper" ]]; then
+              RESOURCE_ROOT="$RESOURCE_ROOT/$wrapper"
+            fi
+          done
+
+          if [[ ! -d "$RESOURCE_ROOT/index" && ! -d "$RESOURCE_ROOT/base" ]]; then
+            echo "[ERROR] Resource archive has no index or base directory: $PACKAGE_NAME"
+            exit 1
           fi
 
-          # 旧包可能将 model/pipeline 放在 resource 根目录，归并到 base 下
-          if [[ -d "assets/resource/model" ]]; then
-            mkdir -p assets/resource/base/model
-            rsync -a "assets/resource/model/" "assets/resource/base/model/"
-            rm -rf "assets/resource/model"
+          rsync -a "$RESOURCE_ROOT/" "assets/resource/"
+
+          # Maa resource configurations are loaded from resource/base.
+          for directory in image model pipeline; do
+            if [[ -d "assets/resource/$directory" ]]; then
+              mkdir -p "assets/resource/base/$directory"
+              rsync -a "assets/resource/$directory/" "assets/resource/base/$directory/"
+              rm -rf "assets/resource/$directory"
+            fi
+          done
+
+          required_indexes=(ui.json characters.json ar.json)
+          missing_indexes=()
+          for filename in "${required_indexes[@]}"; do
+            if [[ ! -f "assets/resource/index/$filename" ]]; then
+              missing_indexes+=("assets/resource/index/$filename")
+            fi
+          done
+
+          missing_images=()
+          for directory in character ar; do
+            if [[ ! -d "assets/resource/base/image/$directory" ]] \
+              || [[ -z "$(find "assets/resource/base/image/$directory" -type f -print -quit)" ]]; then
+              missing_images+=("assets/resource/base/image/$directory")
+            fi
+          done
+
+          if (( ${#missing_indexes[@]} > 0 || ${#missing_images[@]} > 0 )); then
+            echo "[ERROR] Incomplete resource package after sync:"
+            printf ' - %s\n' "${missing_indexes[@]}" "${missing_images[@]}"
+            exit 1
           fi
 
-          if [[ -d "assets/resource/pipeline" ]]; then
-            mkdir -p assets/resource/base/pipeline
-            rsync -a "assets/resource/pipeline/" "assets/resource/base/pipeline/"
-            rm -rf "assets/resource/pipeline"
-          fi
-
-          rm -f "$TEMP_PACKAGE"
-          echo "Resources synced successfully (full package mode)"
+          echo "Resources synced successfully: $RESOURCE_VERSION_TAG ($PACKAGE_NAME)"
 
       - name: Download MAH-UI (new naming)
         if: matrix.os != 'android'

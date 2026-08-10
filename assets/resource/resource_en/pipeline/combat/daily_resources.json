@@ -15,6 +15,18 @@
             }
         }
     },
+    "DailyRes.Go0": {
+        "action": {
+            "param": {
+                "target": [
+                    1205,
+                    630,
+                    1,
+                    1
+                ]
+            }
+        }
+    },
     "DailyRes.Coin.Entry": {
         "action": {
             "param": {
@@ -50,6 +62,211 @@
                         "（3）",
                         "(3)"
                     ]
+                }
+            }
+        }
+    },
+    "DailyRes.Limit.Fire.Entry": {
+        "action": {
+            "param": {
+                "custom_action_param": {
+                    "name": "Breakthrough Trials - Fire",
+                    "difficulty": ["（3）", "(3)"]
+                }
+            }
+        }
+    },
+    "DailyRes.Limit.Water.Entry": {
+        "action": {
+            "param": {
+                "custom_action_param": {
+                    "name": "Breakthrough Trials - Water",
+                    "difficulty": ["（3）", "(3)"]
+                }
+            }
+        }
+    },
+    "DailyRes.Limit.Wood.Entry": {
+        "action": {
+            "param": {
+                "custom_action_param": {
+                    "name": "Breakthrough Trials - Wood",
+                    "difficulty": ["（3）", "(3)"]
+                }
+            }
+        }
+    },
+    "DailyRes.Limit.World.Entry": {
+        "action": {
+            "param": {
+                "custom_action_param": {
+                    "name": [
+                        "Breakthrough Trials - World"
+                    ],
+                    "difficulty": ["（3）", "(3)"]
+                }
+            }
+        }
+    },
+    "DailyRes.Limit.Heaven.Entry": {
+        "action": {
+            "param": {
+                "custom_action_param": {
+                    "name": "Breakthrough Trials - Heaven",
+                    "difficulty": ["（3）", "(3)"]
+                }
+            }
+        }
+    },
+    "DailyRes.Limit.Underworld.Entry": {
+        "action": {
+            "param": {
+                "custom_action_param": {
+                    "name": "Breakthrough Trials - Underworld",
+                    "difficulty": ["（3）", "(3)"]
+                }
+            }
+        }
+    },
+    "DailyRes.Limit.Demon.Entry": {
+        "action": {
+            "param": {
+                "custom_action_param": {
+                    "name": "Breakthrough Trials - Demon",
+                    "difficulty": ["（3）", "(3)"]
+                }
+            }
+        }
+    },
+    "DailyRes.Limit.Hero.Entry": {
+        "action": {
+            "param": {
+                "custom_action_param": {
+                    "name": "Breakthrough Trials - Hero",
+                    "difficulty": ["（3）", "(3)"]
+                }
+            }
+        }
+    },
+    "DailyRes.Limit.None.Entry": {
+        "action": {
+            "param": {
+                "custom_action_param": {
+                    "name": "Breakthrough Trials - None",
+                    "difficulty": ["（2）", "(2)"]
+                }
+            }
+        }
+    },
+    "DailyRes.Limit.Zero.Entry": {
+        "action": {
+            "param": {
+                "custom_action_param": {
+                    "name": "Breakthrough Trials - Zero",
+                    "difficulty": ["（3）", "(3)"]
+                }
+            }
+        }
+    },
+    "DailyRes.Limit.God.Entry": {
+        "action": {
+            "param": {
+                "custom_action_param": {
+                    "name": "Breakthrough Trials - God",
+                    "difficulty": ["（3）", "(3)"]
+                }
+            }
+        }
+    },
+    "DailyRes.Limit.All.Entry": {
+        "action": {
+            "param": {
+                "custom_action_param": {
+                    "name": "Breakthrough Trials - All",
+                    "difficulty": ["（3）", "(3)"]
+                }
+            }
+        }
+    },
+    "DailyRes.Limit.Infinity.Entry": {
+        "action": {
+            "param": {
+                "custom_action_param": {
+                    "name": "Breakthrough Trials - Infinity",
+                    "difficulty": ["（3）", "(3)"]
+                }
+            }
+        }
+    },
+    "DailyRes.Limit.Slash.Entry": {
+        "action": {
+            "param": {
+                "custom_action_param": {
+                    "name": "Breakthrough Trials - Slash",
+                    "difficulty": ["（2）", "(2)"]
+                }
+            }
+        }
+    },
+    "DailyRes.Limit.Thrust.Entry": {
+        "action": {
+            "param": {
+                "custom_action_param": {
+                    "name": "Breakthrough Trials - Thrust",
+                    "difficulty": ["（2）", "(2)"]
+                }
+            }
+        }
+    },
+    "DailyRes.Limit.Knock.Entry": {
+        "action": {
+            "param": {
+                "custom_action_param": {
+                    "name": "Breakthrough Trials - Knock",
+                    "difficulty": ["（2）", "(2)"]
+                }
+            }
+        }
+    },
+    "DailyRes.Limit.Shot.Entry": {
+        "action": {
+            "param": {
+                "custom_action_param": {
+                    "name": "Breakthrough Trials - Shot",
+                    "difficulty": ["（2）", "(2)"]
+                }
+            }
+        }
+    },
+    "DailyRes.Limit.Magic.Entry": {
+        "action": {
+            "param": {
+                "custom_action_param": {
+                    "name": "Breakthrough Trials - Magic",
+                    "difficulty": ["（2）", "(2)"]
+                }
+            }
+        }
+    },
+    "DailyRes.Limit.Horizontal.Entry": {
+        "action": {
+            "param": {
+                "custom_action_param": {
+                    "name": [
+                        "Breakthrough Trials - Horizontal Slash",
+                        "Breakthrough Trials - Long Slash"
+                    ],
+                    "difficulty": ["（2）", "(2)"]
+                }
+            }
+        }
+    },
+    "DailyRes.Limit.Snipe.Entry": {
+        "action": {
+            "param": {
+                "custom_action_param": {
+                    "name": "Breakthrough Trials - Snipe",
+                    "difficulty": ["（2）", "(2)"]
                 }
             }
         }

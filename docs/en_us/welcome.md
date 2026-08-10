@@ -70,7 +70,7 @@ Perform dungeon combat, including the following options:
 
 Most properties are identical to Dungeon Combat. Here are the differences:
 
-- Level Selection: Supports Chapter 14 Flower Nodes, 3 permanent daily quests. Event quests are supported, and it is `recommended` to manually fill in partial keywords.
+- Level Selection: Supports Chapter 14 Flower Nodes, coin/experience/skill quests, and breakthrough trials. Event quests are supported, and it is `recommended` to manually fill in partial keywords.
 
   - Custom Daily Quests: Select by manually typing `related keywords` from the daily quests. Can be filled like the following example `Breakthrough Trials - Aether（3）`:
 
