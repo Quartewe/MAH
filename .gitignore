@@ -457,6 +457,7 @@ debug
 /config/config.json
 
 /.codex
+/AGENTS.md
 
 ar.json
 characters.json
