@@ -17,14 +17,7 @@
     },
     "DailyRes.Go0": {
         "action": {
-            "param": {
-                "target": [
-                    1205,
-                    630,
-                    1,
-                    1
-                ]
-            }
+            "param": {}
         }
     },
     "DailyRes.Coin.Entry": {
@@ -70,7 +63,7 @@
         "action": {
             "param": {
                 "custom_action_param": {
-                    "name": "限界突破の試練·火",
+                    "name": "火",
                     "difficulty": ["（3）", "(3)"]
                 }
             }
@@ -80,7 +73,7 @@
         "action": {
             "param": {
                 "custom_action_param": {
-                    "name": "限界突破の試練·水",
+                    "name": "水",
                     "difficulty": ["（3）", "(3)"]
                 }
             }
@@ -90,7 +83,7 @@
         "action": {
             "param": {
                 "custom_action_param": {
-                    "name": "限界突破の試練·木",
+                    "name": "木",
                     "difficulty": ["（3）", "(3)"]
                 }
             }
@@ -100,9 +93,7 @@
         "action": {
             "param": {
                 "custom_action_param": {
-                    "name": [
-                        "限界突破の試練·世界"
-                    ],
+                    "name": "世界",
                     "difficulty": ["（3）", "(3)"]
                 }
             }
@@ -112,7 +103,7 @@
         "action": {
             "param": {
                 "custom_action_param": {
-                    "name": "限界突破の試練·天",
+                    "name": "天",
                     "difficulty": ["（3）", "(3)"]
                 }
             }
@@ -122,7 +113,7 @@
         "action": {
             "param": {
                 "custom_action_param": {
-                    "name": "限界突破の試練·冥",
+                    "name": "冥",
                     "difficulty": ["（3）", "(3)"]
                 }
             }
@@ -132,7 +123,7 @@
         "action": {
             "param": {
                 "custom_action_param": {
-                    "name": "限界突破の試練·魔",
+                    "name": "魔",
                     "difficulty": ["（3）", "(3)"]
                 }
             }
@@ -142,7 +133,7 @@
         "action": {
             "param": {
                 "custom_action_param": {
-                    "name": "限界突破の試練·英雄",
+                    "name": "英雄",
                     "difficulty": ["（3）", "(3)"]
                 }
             }
@@ -152,7 +143,7 @@
         "action": {
             "param": {
                 "custom_action_param": {
-                    "name": "限界突破の試練·無",
+                    "name": "無",
                     "difficulty": ["（2）", "(2)"]
                 }
             }
@@ -162,7 +153,7 @@
         "action": {
             "param": {
                 "custom_action_param": {
-                    "name": "限界突破の試練·零",
+                    "name": "零",
                     "difficulty": ["（3）", "(3)"]
                 }
             }
@@ -172,7 +163,7 @@
         "action": {
             "param": {
                 "custom_action_param": {
-                    "name": "限界突破の試練·神",
+                    "name": "神",
                     "difficulty": ["（3）", "(3)"]
                 }
             }
@@ -182,7 +173,7 @@
         "action": {
             "param": {
                 "custom_action_param": {
-                    "name": "限界突破の試練·全",
+                    "name": "全",
                     "difficulty": ["（3）", "(3)"]
                 }
             }
@@ -192,7 +183,7 @@
         "action": {
             "param": {
                 "custom_action_param": {
-                    "name": "限界突破の試練·無限",
+                    "name": "無限",
                     "difficulty": ["（3）", "(3)"]
                 }
             }
@@ -202,7 +193,7 @@
         "action": {
             "param": {
                 "custom_action_param": {
-                    "name": "限界突破の試練·斬撃",
+                    "name": "斬撃",
                     "difficulty": ["（2）", "(2)"]
                 }
             }
@@ -212,7 +203,7 @@
         "action": {
             "param": {
                 "custom_action_param": {
-                    "name": "限界突破の試練·突撃",
+                    "name": "突撃",
                     "difficulty": ["（2）", "(2)"]
                 }
             }
@@ -222,7 +213,7 @@
         "action": {
             "param": {
                 "custom_action_param": {
-                    "name": "限界突破の試練·打撃",
+                    "name": "打撃",
                     "difficulty": ["（2）", "(2)"]
                 }
             }
@@ -232,7 +223,7 @@
         "action": {
             "param": {
                 "custom_action_param": {
-                    "name": "限界突破の試練·射撃",
+                    "name": "射撃",
                     "difficulty": ["（2）", "(2)"]
                 }
             }
@@ -242,7 +233,7 @@
         "action": {
             "param": {
                 "custom_action_param": {
-                    "name": "限界突破の試練·魔法",
+                    "name": "魔法",
                     "difficulty": ["（2）", "(2)"]
                 }
             }
@@ -252,7 +243,7 @@
         "action": {
             "param": {
                 "custom_action_param": {
-                    "name": "限界突破の試練·横一文字",
+                    "name": "横一文字",
                     "difficulty": ["（2）", "(2)"]
                 }
             }
@@ -262,7 +253,7 @@
         "action": {
             "param": {
                 "custom_action_param": {
-                    "name": "限界突破の試練·狙撃",
+                    "name": "狙撃",
                     "difficulty": ["（2）", "(2)"]
                 }
             }

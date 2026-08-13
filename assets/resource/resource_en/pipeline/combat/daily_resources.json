@@ -17,14 +17,7 @@
     },
     "DailyRes.Go0": {
         "action": {
-            "param": {
-                "target": [
-                    1205,
-                    630,
-                    1,
-                    1
-                ]
-            }
+            "param": {}
         }
     },
     "DailyRes.Coin.Entry": {
@@ -112,7 +105,7 @@
         "action": {
             "param": {
                 "custom_action_param": {
-                    "name": "Breakthrough Trials - Heaven",
+                    "name": "Breakthrough Trials - Aether",
                     "difficulty": ["（3）", "(3)"]
                 }
             }
@@ -122,7 +115,7 @@
         "action": {
             "param": {
                 "custom_action_param": {
-                    "name": "Breakthrough Trials - Underworld",
+                    "name": "Breakthrough Trials - Nether",
                     "difficulty": ["（3）", "(3)"]
                 }
             }
@@ -132,7 +125,7 @@
         "action": {
             "param": {
                 "custom_action_param": {
-                    "name": "Breakthrough Trials - Demon",
+                    "name": "Breakthrough Trials - Infernal",
                     "difficulty": ["（3）", "(3)"]
                 }
             }
@@ -142,7 +135,7 @@
         "action": {
             "param": {
                 "custom_action_param": {
-                    "name": "Breakthrough Trials - Hero",
+                    "name": "Breakthrough Trials - Valiant",
                     "difficulty": ["（3）", "(3)"]
                 }
             }
@@ -162,7 +155,7 @@
         "action": {
             "param": {
                 "custom_action_param": {
-                    "name": "Breakthrough Trials - Zero",
+                    "name": "Breakthrough Trials - Null",
                     "difficulty": ["（3）", "(3)"]
                 }
             }
@@ -172,7 +165,7 @@
         "action": {
             "param": {
                 "custom_action_param": {
-                    "name": "Breakthrough Trials - God",
+                    "name": "Breakthrough Trials - Divine",
                     "difficulty": ["（3）", "(3)"]
                 }
             }
@@ -182,7 +175,7 @@
         "action": {
             "param": {
                 "custom_action_param": {
-                    "name": "Breakthrough Trials - All",
+                    "name": "Breakthrough Trials - All-Round",
                     "difficulty": ["（3）", "(3)"]
                 }
             }
@@ -222,7 +215,7 @@
         "action": {
             "param": {
                 "custom_action_param": {
-                    "name": "Breakthrough Trials - Knock",
+                    "name": "Breakthrough Trials - Blow",
                     "difficulty": ["（2）", "(2)"]
                 }
             }

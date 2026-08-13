@@ -17,14 +17,7 @@
     },
     "DailyRes.Go0": {
         "action": {
-            "param": {
-                "target": [
-                    1205,
-                    630,
-                    1,
-                    1
-                ]
-            }
+            "param": {}
         }
     },
     "DailyRes.Coin.Entry": {

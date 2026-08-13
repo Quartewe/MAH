@@ -127,31 +127,6 @@ class Formation(CustomAction):
         return errors
 
     @staticmethod
-    def _collect_recognition_results(result):
-        """兼容 MaaFramework 不同识别结果集合，返回去重后的 OCR 项。"""
-        if result is None:
-            return []
-
-        candidates = []
-        for attr in ("filtered_results", "all_results"):
-            candidates.extend(list(getattr(result, attr, []) or []))
-
-        best_result = getattr(result, "best_result", None)
-        if best_result:
-            candidates.append(best_result)
-
-        output = []
-        seen = set()
-        for candidate in candidates:
-            box = tuple(getattr(candidate, "box", []) or [])
-            key = (str(getattr(candidate, "text", "")), box)
-            if key in seen:
-                continue
-            seen.add(key)
-            output.append(candidate)
-        return output
-
-    @staticmethod
     def _normalize_ocr_text(text):
         translation = str.maketrans(
             {
@@ -240,7 +215,7 @@ class Formation(CustomAction):
                 },
             )
 
-            for candidate in self._collect_recognition_results(result):
+            for candidate in result.all_results:
                 cost = self._parse_team_cost_text(getattr(candidate, "text", ""))
                 if cost:
                     logger.info(
@@ -277,7 +252,7 @@ class Formation(CustomAction):
 
         message_text = " ".join(
             str(getattr(candidate, "text", ""))
-            for candidate in self._collect_recognition_results(message_result)
+            for candidate in message_result.all_results
         )
         if not self._is_cost_error_text(message_text):
             return False
@@ -300,7 +275,7 @@ class Formation(CustomAction):
         confirm_result = next(
             (
                 candidate
-                for candidate in self._collect_recognition_results(confirm_result)
+                for candidate in confirm_result.all_results
                 if self._is_confirm_text(getattr(candidate, "text", ""))
             ),
             None,

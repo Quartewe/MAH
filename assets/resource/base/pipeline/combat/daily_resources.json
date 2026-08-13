@@ -56,14 +56,7 @@
         },
         "action": {
             "type": "Click",
-            "param": {
-                "target": [
-                    1205,
-                    630,
-                    1,
-                    1
-                ]
-            }
+            "param": {}
         },
         "post_delay": 10000,
         "next": [
