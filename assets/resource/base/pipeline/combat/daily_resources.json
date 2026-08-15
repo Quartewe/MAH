@@ -161,10 +161,7 @@
             "param": {
                 "custom_action": "QuestSelect",
                 "custom_action_param": {
-                    "name": [
-                        "突破界限的试炼·火",
-                        "突破界限的試煉·火"
-                    ],
+                    "name": "火",
                     "difficulty": [
                         "（3）",
                         "(3)"
@@ -185,10 +182,7 @@
             "param": {
                 "custom_action": "QuestSelect",
                 "custom_action_param": {
-                    "name": [
-                        "突破界限的试炼·水",
-                        "突破界限的試煉·水"
-                    ],
+                    "name": "水",
                     "difficulty": [
                         "（3）",
                         "(3)"
@@ -209,10 +203,7 @@
             "param": {
                 "custom_action": "QuestSelect",
                 "custom_action_param": {
-                    "name": [
-                        "突破界限的试炼·木",
-                        "突破界限的試煉·木"
-                    ],
+                    "name": "木",
                     "difficulty": [
                         "（3）",
                         "(3)"
@@ -233,10 +224,7 @@
             "param": {
                 "custom_action": "QuestSelect",
                 "custom_action_param": {
-                    "name": [
-                        "突破界限的试炼·世界",
-                        "突破界限的試煉·世界"
-                    ],
+                    "name": "世界",
                     "difficulty": [
                         "（3）",
                         "(3)"
@@ -257,10 +245,7 @@
             "param": {
                 "custom_action": "QuestSelect",
                 "custom_action_param": {
-                    "name": [
-                        "突破界限的试炼·天",
-                        "突破界限的試煉·天"
-                    ],
+                    "name": "天",
                     "difficulty": [
                         "（3）",
                         "(3)"
@@ -281,10 +266,7 @@
             "param": {
                 "custom_action": "QuestSelect",
                 "custom_action_param": {
-                    "name": [
-                        "突破界限的试炼·冥",
-                        "突破界限的試煉·冥"
-                    ],
+                    "name": "冥",
                     "difficulty": [
                         "（3）",
                         "(3)"
@@ -305,10 +287,7 @@
             "param": {
                 "custom_action": "QuestSelect",
                 "custom_action_param": {
-                    "name": [
-                        "突破界限的试炼·魔",
-                        "突破界限的試煉·魔"
-                    ],
+                    "name": "魔",
                     "difficulty": [
                         "（3）",
                         "(3)"
@@ -329,10 +308,7 @@
             "param": {
                 "custom_action": "QuestSelect",
                 "custom_action_param": {
-                    "name": [
-                        "突破界限的试炼·英雄",
-                        "突破界限的試煉·英雄"
-                    ],
+                    "name": "英雄",
                     "difficulty": [
                         "（3）",
                         "(3)"
@@ -353,10 +329,7 @@
             "param": {
                 "custom_action": "QuestSelect",
                 "custom_action_param": {
-                    "name": [
-                        "突破界限的试炼·无",
-                        "突破界限的試煉·無"
-                    ],
+                    "name": "无",
                     "difficulty": [
                         "（2）",
                         "(2)"
@@ -377,10 +350,7 @@
             "param": {
                 "custom_action": "QuestSelect",
                 "custom_action_param": {
-                    "name": [
-                        "突破界限的试炼·零",
-                        "突破界限的試煉·零"
-                    ],
+                    "name": "零",
                     "difficulty": [
                         "（3）",
                         "(3)"
@@ -401,10 +371,7 @@
             "param": {
                 "custom_action": "QuestSelect",
                 "custom_action_param": {
-                    "name": [
-                        "突破界限的试炼·神",
-                        "突破界限的試煉·神"
-                    ],
+                    "name": "神",
                     "difficulty": [
                         "（3）",
                         "(3)"
@@ -425,10 +392,7 @@
             "param": {
                 "custom_action": "QuestSelect",
                 "custom_action_param": {
-                    "name": [
-                        "突破界限的试炼·全",
-                        "突破界限的試煉·全"
-                    ],
+                    "name": "全",
                     "difficulty": [
                         "（3）",
                         "(3)"
@@ -449,10 +413,7 @@
             "param": {
                 "custom_action": "QuestSelect",
                 "custom_action_param": {
-                    "name": [
-                        "突破界限的试炼·无限",
-                        "突破界限的試煉·無限"
-                    ],
+                    "name": "无限",
                     "difficulty": [
                         "（3）",
                         "(3)"
@@ -473,10 +434,7 @@
             "param": {
                 "custom_action": "QuestSelect",
                 "custom_action_param": {
-                    "name": [
-                        "突破界限的试炼·斩击",
-                        "突破界限的試煉·斬擊"
-                    ],
+                    "name": "斩击",
                     "difficulty": [
                         "（2）",
                         "(2)"
@@ -497,10 +455,7 @@
             "param": {
                 "custom_action": "QuestSelect",
                 "custom_action_param": {
-                    "name": [
-                        "突破界限的试炼·刺击",
-                        "突破界限的試煉·刺擊"
-                    ],
+                    "name": "刺击",
                     "difficulty": [
                         "（2）",
                         "(2)"
@@ -521,10 +476,7 @@
             "param": {
                 "custom_action": "QuestSelect",
                 "custom_action_param": {
-                    "name": [
-                        "突破界限的试炼·打击",
-                        "突破界限的試煉·打擊"
-                    ],
+                    "name": "打击",
                     "difficulty": [
                         "（2）",
                         "(2)"
@@ -545,10 +497,7 @@
             "param": {
                 "custom_action": "QuestSelect",
                 "custom_action_param": {
-                    "name": [
-                        "突破界限的试炼·射击",
-                        "突破界限的試煉·射擊"
-                    ],
+                    "name": "射击",
                     "difficulty": [
                         "（2）",
                         "(2)"
@@ -569,10 +518,7 @@
             "param": {
                 "custom_action": "QuestSelect",
                 "custom_action_param": {
-                    "name": [
-                        "突破界限的试炼·魔法",
-                        "突破界限的試煉·魔法"
-                    ],
+                    "name": "魔法",
                     "difficulty": [
                         "（2）",
                         "(2)"
@@ -593,10 +539,7 @@
             "param": {
                 "custom_action": "QuestSelect",
                 "custom_action_param": {
-                    "name": [
-                        "突破界限的试炼·横一文字",
-                        "突破界限的試煉·橫一文字"
-                    ],
+                    "name": "横一文字",
                     "difficulty": [
                         "（2）",
                         "(2)"
@@ -617,10 +560,7 @@
             "param": {
                 "custom_action": "QuestSelect",
                 "custom_action_param": {
-                    "name": [
-                        "突破界限的试炼·狙击",
-                        "突破界限的試煉·狙擊"
-                    ],
+                    "name": "狙击",
                     "difficulty": [
                         "（2）",
                         "(2)"

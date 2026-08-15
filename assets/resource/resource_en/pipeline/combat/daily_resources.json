@@ -63,7 +63,7 @@
         "action": {
             "param": {
                 "custom_action_param": {
-                    "name": "Breakthrough Trials - Fire",
+                    "name": "Fire",
                     "difficulty": ["（3）", "(3)"]
                 }
             }
@@ -73,7 +73,7 @@
         "action": {
             "param": {
                 "custom_action_param": {
-                    "name": "Breakthrough Trials - Water",
+                    "name": "Water",
                     "difficulty": ["（3）", "(3)"]
                 }
             }
@@ -83,7 +83,7 @@
         "action": {
             "param": {
                 "custom_action_param": {
-                    "name": "Breakthrough Trials - Wood",
+                    "name": "Wood",
                     "difficulty": ["（3）", "(3)"]
                 }
             }
@@ -93,9 +93,7 @@
         "action": {
             "param": {
                 "custom_action_param": {
-                    "name": [
-                        "Breakthrough Trials - World"
-                    ],
+                    "name": "World",
                     "difficulty": ["（3）", "(3)"]
                 }
             }
@@ -105,7 +103,7 @@
         "action": {
             "param": {
                 "custom_action_param": {
-                    "name": "Breakthrough Trials - Aether",
+                    "name": "Aether",
                     "difficulty": ["（3）", "(3)"]
                 }
             }
@@ -115,7 +113,7 @@
         "action": {
             "param": {
                 "custom_action_param": {
-                    "name": "Breakthrough Trials - Nether",
+                    "name": "Nether",
                     "difficulty": ["（3）", "(3)"]
                 }
             }
@@ -125,7 +123,7 @@
         "action": {
             "param": {
                 "custom_action_param": {
-                    "name": "Breakthrough Trials - Infernal",
+                    "name": "Infernal",
                     "difficulty": ["（3）", "(3)"]
                 }
             }
@@ -135,7 +133,7 @@
         "action": {
             "param": {
                 "custom_action_param": {
-                    "name": "Breakthrough Trials - Valiant",
+                    "name": "Valiant",
                     "difficulty": ["（3）", "(3)"]
                 }
             }
@@ -145,7 +143,7 @@
         "action": {
             "param": {
                 "custom_action_param": {
-                    "name": "Breakthrough Trials - None",
+                    "name": "None",
                     "difficulty": ["（2）", "(2)"]
                 }
             }
@@ -155,7 +153,7 @@
         "action": {
             "param": {
                 "custom_action_param": {
-                    "name": "Breakthrough Trials - Null",
+                    "name": "Null",
                     "difficulty": ["（3）", "(3)"]
                 }
             }
@@ -165,7 +163,7 @@
         "action": {
             "param": {
                 "custom_action_param": {
-                    "name": "Breakthrough Trials - Divine",
+                    "name": "Divine",
                     "difficulty": ["（3）", "(3)"]
                 }
             }
@@ -175,7 +173,7 @@
         "action": {
             "param": {
                 "custom_action_param": {
-                    "name": "Breakthrough Trials - All-Round",
+                    "name": "All-Round",
                     "difficulty": ["（3）", "(3)"]
                 }
             }
@@ -185,7 +183,7 @@
         "action": {
             "param": {
                 "custom_action_param": {
-                    "name": "Breakthrough Trials - Infinity",
+                    "name": "Infinity",
                     "difficulty": ["（3）", "(3)"]
                 }
             }
@@ -195,7 +193,7 @@
         "action": {
             "param": {
                 "custom_action_param": {
-                    "name": "Breakthrough Trials - Slash",
+                    "name": "Slash",
                     "difficulty": ["（2）", "(2)"]
                 }
             }
@@ -205,7 +203,7 @@
         "action": {
             "param": {
                 "custom_action_param": {
-                    "name": "Breakthrough Trials - Thrust",
+                    "name": "Thrust",
                     "difficulty": ["（2）", "(2)"]
                 }
             }
@@ -215,7 +213,7 @@
         "action": {
             "param": {
                 "custom_action_param": {
-                    "name": "Breakthrough Trials - Blow",
+                    "name": "Blow",
                     "difficulty": ["（2）", "(2)"]
                 }
             }
@@ -225,7 +223,7 @@
         "action": {
             "param": {
                 "custom_action_param": {
-                    "name": "Breakthrough Trials - Shot",
+                    "name": "Shot",
                     "difficulty": ["（2）", "(2)"]
                 }
             }
@@ -235,7 +233,7 @@
         "action": {
             "param": {
                 "custom_action_param": {
-                    "name": "Breakthrough Trials - Magic",
+                    "name": "Magic",
                     "difficulty": ["（2）", "(2)"]
                 }
             }
@@ -246,8 +244,8 @@
             "param": {
                 "custom_action_param": {
                     "name": [
-                        "Breakthrough Trials - Horizontal Slash",
-                        "Breakthrough Trials - Long Slash"
+                        "Horizontal Slash",
+                        "Long Slash"
                     ],
                     "difficulty": ["（2）", "(2)"]
                 }
@@ -258,7 +256,7 @@
         "action": {
             "param": {
                 "custom_action_param": {
-                    "name": "Breakthrough Trials - Snipe",
+                    "name": "Snipe",
                     "difficulty": ["（2）", "(2)"]
                 }
             }

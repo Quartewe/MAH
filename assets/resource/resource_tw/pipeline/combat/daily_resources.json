@@ -63,7 +63,7 @@
         "action": {
             "param": {
                 "custom_action_param": {
-                    "name": "突破界限的試煉·火",
+                    "name": "火",
                     "difficulty": ["（3）", "(3)"]
                 }
             }
@@ -73,7 +73,7 @@
         "action": {
             "param": {
                 "custom_action_param": {
-                    "name": "突破界限的試煉·水",
+                    "name": "水",
                     "difficulty": ["（3）", "(3)"]
                 }
             }
@@ -83,7 +83,7 @@
         "action": {
             "param": {
                 "custom_action_param": {
-                    "name": "突破界限的試煉·木",
+                    "name": "木",
                     "difficulty": ["（3）", "(3)"]
                 }
             }
@@ -93,9 +93,7 @@
         "action": {
             "param": {
                 "custom_action_param": {
-                    "name": [
-                        "突破界限的試煉·世界"
-                    ],
+                    "name": "世界",
                     "difficulty": ["（3）", "(3)"]
                 }
             }
@@ -105,7 +103,7 @@
         "action": {
             "param": {
                 "custom_action_param": {
-                    "name": "突破界限的試煉·天",
+                    "name": "天",
                     "difficulty": ["（3）", "(3)"]
                 }
             }
@@ -115,7 +113,7 @@
         "action": {
             "param": {
                 "custom_action_param": {
-                    "name": "突破界限的試煉·冥",
+                    "name": "冥",
                     "difficulty": ["（3）", "(3)"]
                 }
             }
@@ -125,7 +123,7 @@
         "action": {
             "param": {
                 "custom_action_param": {
-                    "name": "突破界限的試煉·魔",
+                    "name": "魔",
                     "difficulty": ["（3）", "(3)"]
                 }
             }
@@ -135,7 +133,7 @@
         "action": {
             "param": {
                 "custom_action_param": {
-                    "name": "突破界限的試煉·英雄",
+                    "name": "英雄",
                     "difficulty": ["（3）", "(3)"]
                 }
             }
@@ -145,7 +143,7 @@
         "action": {
             "param": {
                 "custom_action_param": {
-                    "name": "突破界限的試煉·無",
+                    "name": "無",
                     "difficulty": ["（2）", "(2)"]
                 }
             }
@@ -155,7 +153,7 @@
         "action": {
             "param": {
                 "custom_action_param": {
-                    "name": "突破界限的試煉·零",
+                    "name": "零",
                     "difficulty": ["（3）", "(3)"]
                 }
             }
@@ -165,7 +163,7 @@
         "action": {
             "param": {
                 "custom_action_param": {
-                    "name": "突破界限的試煉·神",
+                    "name": "神",
                     "difficulty": ["（3）", "(3)"]
                 }
             }
@@ -175,7 +173,7 @@
         "action": {
             "param": {
                 "custom_action_param": {
-                    "name": "突破界限的試煉·全",
+                    "name": "全",
                     "difficulty": ["（3）", "(3)"]
                 }
             }
@@ -185,7 +183,7 @@
         "action": {
             "param": {
                 "custom_action_param": {
-                    "name": "突破界限的試煉·無限",
+                    "name": "無限",
                     "difficulty": ["（3）", "(3)"]
                 }
             }
@@ -195,7 +193,7 @@
         "action": {
             "param": {
                 "custom_action_param": {
-                    "name": "突破界限的試煉·斬擊",
+                    "name": "斬擊",
                     "difficulty": ["（2）", "(2)"]
                 }
             }
@@ -205,7 +203,7 @@
         "action": {
             "param": {
                 "custom_action_param": {
-                    "name": "突破界限的試煉·刺擊",
+                    "name": "刺擊",
                     "difficulty": ["（2）", "(2)"]
                 }
             }
@@ -215,7 +213,7 @@
         "action": {
             "param": {
                 "custom_action_param": {
-                    "name": "突破界限的試煉·打擊",
+                    "name": "打擊",
                     "difficulty": ["（2）", "(2)"]
                 }
             }
@@ -225,7 +223,7 @@
         "action": {
             "param": {
                 "custom_action_param": {
-                    "name": "突破界限的試煉·射擊",
+                    "name": "射擊",
                     "difficulty": ["（2）", "(2)"]
                 }
             }
@@ -235,7 +233,7 @@
         "action": {
             "param": {
                 "custom_action_param": {
-                    "name": "突破界限的試煉·魔法",
+                    "name": "魔法",
                     "difficulty": ["（2）", "(2)"]
                 }
             }
@@ -245,7 +243,7 @@
         "action": {
             "param": {
                 "custom_action_param": {
-                    "name": "突破界限的試煉·橫一文字",
+                    "name": "橫一文字",
                     "difficulty": ["（2）", "(2)"]
                 }
             }
@@ -255,7 +253,7 @@
         "action": {
             "param": {
                 "custom_action_param": {
-                    "name": "突破界限的試煉·狙擊",
+                    "name": "狙擊",
                     "difficulty": ["（2）", "(2)"]
                 }
             }
