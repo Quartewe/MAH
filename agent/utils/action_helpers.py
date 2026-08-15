@@ -17,11 +17,28 @@ class ActUtils:
             return None
 
         path_str = str(path_value).replace("\\", "/").lstrip("./")
-        image_root_rel = proj_path.IMAGE_DIR.relative_to(proj_path.PROJECT_ROOT).as_posix()
-        prefix = f"{image_root_rel}/"
+        prefixes = {
+            "assets/resource/base/image/",
+            "assets/resource/image/",
+            "resource/base/image/",
+            "resource/image/",
+        }
+        for image_root in (
+            proj_path.IMAGE_DIR,
+            proj_path.RESOURCE_DIR / "base" / "image",
+            proj_path.RESOURCE_DIR / "image",
+        ):
+            try:
+                image_root_rel = image_root.relative_to(
+                    proj_path.PROJECT_ROOT
+                ).as_posix()
+            except ValueError:
+                continue
+            prefixes.add(f"{image_root_rel.rstrip('/')}/")
 
-        if path_str.startswith(prefix):
-            return path_str[len(prefix):]
+        for prefix in sorted(prefixes, key=len, reverse=True):
+            if path_str.startswith(prefix):
+                return path_str[len(prefix):]
         return path_str
 
     @staticmethod
@@ -232,8 +249,10 @@ class ActUtils:
             elif lang_id == hanzidentifier.MIXED or lang_id == hanzidentifier.BOTH:
                 cn += 1
             
-            # 检查英文
-            if re.search(r'[a-zA-Z]', text):
+            # 含有中日韩文字时，不再把同一条 OCR 结果重复计入英文。
+            # 中文界面通常同时显示 LEADER、SUPPORT、Level 等英文标签，
+            # 重复计数会让语言投票错误地偏向 en。
+            if re.search(r'[a-zA-Z]', text) and not re.search(r'[\u3400-\u9fff]', text):
                 en += 1
         
         return {"jp": jp, "cn": cn, "tw": tw, "en": en}
@@ -260,9 +279,14 @@ class ActUtils:
             tw += lang_counts["tw"]
             en += lang_counts["en"]
         
-        # 返回计数最多的语言类型
+        # 只要能识别到中日韩文字，就优先在这些语言中投票。
+        # 游戏的中文界面包含固定英文标签，不能让这些标签压过中文结果。
         lang_counts = {"jp": jp, "cn": cn, "tw": tw, "en": en}
-        result = max(lang_counts, key=lang_counts.get)
+        cjk_counts = {"jp": jp, "cn": cn, "tw": tw}
+        if any(cjk_counts.values()):
+            result = max(cjk_counts, key=cjk_counts.get)
+        else:
+            result = max(lang_counts, key=lang_counts.get)
         logger.info(f"语言检测统计: {lang_counts}, 选中: {result}")
         info_share.current_lang = result
         return result 

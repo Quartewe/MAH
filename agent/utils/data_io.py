@@ -25,8 +25,8 @@ class IOUtils:
         is_config_file = Path(file_path).resolve() == Path(CONFIG_FILE).resolve()
             
         try:
-            if not os.path.exists("data"):
-                os.makedirs("data")
+            if not proj_path.DATA_DIR.exists():
+                proj_path.DATA_DIR.mkdir(parents=True, exist_ok=True)
                 logger.info("data 文件夹已创建")
                 #
 
@@ -198,11 +198,12 @@ class IOUtils:
 
         logger.info("OCR 日志已整理完成")
 
-        if not os.path.exists("debug"):
-            os.makedirs("debug")
+        debug_dir = proj_path.DEBUG_DIR
+        if not debug_dir.exists():
+            debug_dir.mkdir(parents=True, exist_ok=True)
             logger.info("debug 文件夹不存在，正在创建...")
 
-        with open("debug/ocr_detail.log", "a", encoding="utf-8") as f:
+        with (debug_dir / "ocr_detail.log").open("a", encoding="utf-8") as f:
             f.write(time.strftime("[%Y-%m-%d %H:%M:%S]", time.localtime(time.time())))
             f.write("\n")
             f.write(node_name)

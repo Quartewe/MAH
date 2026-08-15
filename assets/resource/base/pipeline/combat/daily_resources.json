@@ -155,6 +155,426 @@
             "Global.Entry"
         ]
     },
+    "DailyRes.Limit.Fire.Entry": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "QuestSelect",
+                "custom_action_param": {
+                    "name": "火",
+                    "difficulty": [
+                        "（3）",
+                        "(3)"
+                    ]
+                }
+            }
+        },
+        "next": [
+            "Global.AutoCombat.Entry"
+        ],
+        "on_error": [
+            "Global.Entry"
+        ]
+    },
+    "DailyRes.Limit.Water.Entry": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "QuestSelect",
+                "custom_action_param": {
+                    "name": "水",
+                    "difficulty": [
+                        "（3）",
+                        "(3)"
+                    ]
+                }
+            }
+        },
+        "next": [
+            "Global.AutoCombat.Entry"
+        ],
+        "on_error": [
+            "Global.Entry"
+        ]
+    },
+    "DailyRes.Limit.Wood.Entry": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "QuestSelect",
+                "custom_action_param": {
+                    "name": "木",
+                    "difficulty": [
+                        "（3）",
+                        "(3)"
+                    ]
+                }
+            }
+        },
+        "next": [
+            "Global.AutoCombat.Entry"
+        ],
+        "on_error": [
+            "Global.Entry"
+        ]
+    },
+    "DailyRes.Limit.World.Entry": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "QuestSelect",
+                "custom_action_param": {
+                    "name": "世界",
+                    "difficulty": [
+                        "（3）",
+                        "(3)"
+                    ]
+                }
+            }
+        },
+        "next": [
+            "Global.AutoCombat.Entry"
+        ],
+        "on_error": [
+            "Global.Entry"
+        ]
+    },
+    "DailyRes.Limit.Heaven.Entry": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "QuestSelect",
+                "custom_action_param": {
+                    "name": "天",
+                    "difficulty": [
+                        "（3）",
+                        "(3)"
+                    ]
+                }
+            }
+        },
+        "next": [
+            "Global.AutoCombat.Entry"
+        ],
+        "on_error": [
+            "Global.Entry"
+        ]
+    },
+    "DailyRes.Limit.Underworld.Entry": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "QuestSelect",
+                "custom_action_param": {
+                    "name": "冥",
+                    "difficulty": [
+                        "（3）",
+                        "(3)"
+                    ]
+                }
+            }
+        },
+        "next": [
+            "Global.AutoCombat.Entry"
+        ],
+        "on_error": [
+            "Global.Entry"
+        ]
+    },
+    "DailyRes.Limit.Demon.Entry": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "QuestSelect",
+                "custom_action_param": {
+                    "name": "魔",
+                    "difficulty": [
+                        "（3）",
+                        "(3)"
+                    ]
+                }
+            }
+        },
+        "next": [
+            "Global.AutoCombat.Entry"
+        ],
+        "on_error": [
+            "Global.Entry"
+        ]
+    },
+    "DailyRes.Limit.Hero.Entry": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "QuestSelect",
+                "custom_action_param": {
+                    "name": "英雄",
+                    "difficulty": [
+                        "（3）",
+                        "(3)"
+                    ]
+                }
+            }
+        },
+        "next": [
+            "Global.AutoCombat.Entry"
+        ],
+        "on_error": [
+            "Global.Entry"
+        ]
+    },
+    "DailyRes.Limit.None.Entry": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "QuestSelect",
+                "custom_action_param": {
+                    "name": "无",
+                    "difficulty": [
+                        "（2）",
+                        "(2)"
+                    ]
+                }
+            }
+        },
+        "next": [
+            "Global.AutoCombat.Entry"
+        ],
+        "on_error": [
+            "Global.Entry"
+        ]
+    },
+    "DailyRes.Limit.Zero.Entry": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "QuestSelect",
+                "custom_action_param": {
+                    "name": "零",
+                    "difficulty": [
+                        "（3）",
+                        "(3)"
+                    ]
+                }
+            }
+        },
+        "next": [
+            "Global.AutoCombat.Entry"
+        ],
+        "on_error": [
+            "Global.Entry"
+        ]
+    },
+    "DailyRes.Limit.God.Entry": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "QuestSelect",
+                "custom_action_param": {
+                    "name": "神",
+                    "difficulty": [
+                        "（3）",
+                        "(3)"
+                    ]
+                }
+            }
+        },
+        "next": [
+            "Global.AutoCombat.Entry"
+        ],
+        "on_error": [
+            "Global.Entry"
+        ]
+    },
+    "DailyRes.Limit.All.Entry": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "QuestSelect",
+                "custom_action_param": {
+                    "name": "全",
+                    "difficulty": [
+                        "（3）",
+                        "(3)"
+                    ]
+                }
+            }
+        },
+        "next": [
+            "Global.AutoCombat.Entry"
+        ],
+        "on_error": [
+            "Global.Entry"
+        ]
+    },
+    "DailyRes.Limit.Infinity.Entry": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "QuestSelect",
+                "custom_action_param": {
+                    "name": "无限",
+                    "difficulty": [
+                        "（3）",
+                        "(3)"
+                    ]
+                }
+            }
+        },
+        "next": [
+            "Global.AutoCombat.Entry"
+        ],
+        "on_error": [
+            "Global.Entry"
+        ]
+    },
+    "DailyRes.Limit.Slash.Entry": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "QuestSelect",
+                "custom_action_param": {
+                    "name": "斩击",
+                    "difficulty": [
+                        "（2）",
+                        "(2)"
+                    ]
+                }
+            }
+        },
+        "next": [
+            "Global.AutoCombat.Entry"
+        ],
+        "on_error": [
+            "Global.Entry"
+        ]
+    },
+    "DailyRes.Limit.Thrust.Entry": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "QuestSelect",
+                "custom_action_param": {
+                    "name": "刺击",
+                    "difficulty": [
+                        "（2）",
+                        "(2)"
+                    ]
+                }
+            }
+        },
+        "next": [
+            "Global.AutoCombat.Entry"
+        ],
+        "on_error": [
+            "Global.Entry"
+        ]
+    },
+    "DailyRes.Limit.Knock.Entry": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "QuestSelect",
+                "custom_action_param": {
+                    "name": "打击",
+                    "difficulty": [
+                        "（2）",
+                        "(2)"
+                    ]
+                }
+            }
+        },
+        "next": [
+            "Global.AutoCombat.Entry"
+        ],
+        "on_error": [
+            "Global.Entry"
+        ]
+    },
+    "DailyRes.Limit.Shot.Entry": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "QuestSelect",
+                "custom_action_param": {
+                    "name": "射击",
+                    "difficulty": [
+                        "（2）",
+                        "(2)"
+                    ]
+                }
+            }
+        },
+        "next": [
+            "Global.AutoCombat.Entry"
+        ],
+        "on_error": [
+            "Global.Entry"
+        ]
+    },
+    "DailyRes.Limit.Magic.Entry": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "QuestSelect",
+                "custom_action_param": {
+                    "name": "魔法",
+                    "difficulty": [
+                        "（2）",
+                        "(2)"
+                    ]
+                }
+            }
+        },
+        "next": [
+            "Global.AutoCombat.Entry"
+        ],
+        "on_error": [
+            "Global.Entry"
+        ]
+    },
+    "DailyRes.Limit.Horizontal.Entry": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "QuestSelect",
+                "custom_action_param": {
+                    "name": "横一文字",
+                    "difficulty": [
+                        "（2）",
+                        "(2)"
+                    ]
+                }
+            }
+        },
+        "next": [
+            "Global.AutoCombat.Entry"
+        ],
+        "on_error": [
+            "Global.Entry"
+        ]
+    },
+    "DailyRes.Limit.Snipe.Entry": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "QuestSelect",
+                "custom_action_param": {
+                    "name": "狙击",
+                    "difficulty": [
+                        "（2）",
+                        "(2)"
+                    ]
+                }
+            }
+        },
+        "next": [
+            "Global.AutoCombat.Entry"
+        ],
+        "on_error": [
+            "Global.Entry"
+        ]
+    },
     "DailyRes.Custom.Entry": {
         "action": {
             "type": "Custom",

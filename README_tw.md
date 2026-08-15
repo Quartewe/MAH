@@ -35,7 +35,7 @@
 
 ## 使用說明
 
-- [使用指南 (新手必看)](./assets/docs/zh_tw/welcome.md) - 快速了解如何設定和啟動
+- [使用指南 (新手必看)](./docs/zh_tw/welcome.md) - 快速了解如何設定和啟動
 - [自動戰鬥 JSON 配置規範](./docs/zh_tw/自動戰鬥json配置.md) - 深入自定義你的戰鬥腳本與配隊
 
 在此倉庫提問相關問題，如果有 log，最好也帶上它（`debug/maa.log` 檔案）

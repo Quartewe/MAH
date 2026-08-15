@@ -11,7 +11,10 @@ def configure_ocr_model():
         print(f"[DEBUG] File Not Found: {assets_ocr_dir}")
         exit(1)
 
-    ocr_dir = assets_dir / "resource" / "model" / "ocr"
+    # MaaSupport loads the source interface against resource/base directly.
+    # Keep the default model under that bundle so development tests can use OCR
+    # without first running the packaging merge step.
+    ocr_dir = assets_dir / "resource" / "base" / "model" / "ocr"
     if not ocr_dir.exists():   # copy default OCR model only if dir does not exist
         shutil.copytree(
             assets_dir / "MaaCommonAssets" / "OCR" / "ppocr_v5" / "zh_cn",

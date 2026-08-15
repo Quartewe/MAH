@@ -21,7 +21,7 @@
     "agent": {
         "child_exec": "python",
         "child_args": [
-            "./agent/main.py"
+            "../agent/main.py"
         ],
         "identifier": "MAH"
     },
@@ -497,6 +497,326 @@
                         },
                         "DailyRes.Go1": {
                             "next": "DailyRes.Skill.Entry"
+                        }
+                    }
+                },
+                {
+                    "name": "突破界限·火n3",
+                    "label": "$limit_fire_n3",
+                    "description": "$limit_fire_n3_description",
+                    "pipeline_override": {
+                        "Combat.Entry": {
+                            "next": "DailyRes.Entry"
+                        },
+                        "Global.AutoCombat.BacktoEntry": {
+                            "next": "DailyRes.Entry"
+                        },
+                        "DailyRes.Go1": {
+                            "next": "DailyRes.Limit.Fire.Entry"
+                        }
+                    }
+                },
+                {
+                    "name": "突破界限·水n3",
+                    "label": "$limit_water_n3",
+                    "description": "$limit_water_n3_description",
+                    "pipeline_override": {
+                        "Combat.Entry": {
+                            "next": "DailyRes.Entry"
+                        },
+                        "Global.AutoCombat.BacktoEntry": {
+                            "next": "DailyRes.Entry"
+                        },
+                        "DailyRes.Go1": {
+                            "next": "DailyRes.Limit.Water.Entry"
+                        }
+                    }
+                },
+                {
+                    "name": "突破界限·木n3",
+                    "label": "$limit_wood_n3",
+                    "description": "$limit_wood_n3_description",
+                    "pipeline_override": {
+                        "Combat.Entry": {
+                            "next": "DailyRes.Entry"
+                        },
+                        "Global.AutoCombat.BacktoEntry": {
+                            "next": "DailyRes.Entry"
+                        },
+                        "DailyRes.Go1": {
+                            "next": "DailyRes.Limit.Wood.Entry"
+                        }
+                    }
+                },
+                {
+                    "name": "突破界限·世界n3",
+                    "label": "$limit_world_n3",
+                    "description": "$limit_world_n3_description",
+                    "pipeline_override": {
+                        "Combat.Entry": {
+                            "next": "DailyRes.Entry"
+                        },
+                        "Global.AutoCombat.BacktoEntry": {
+                            "next": "DailyRes.Entry"
+                        },
+                        "DailyRes.Go1": {
+                            "next": "DailyRes.Limit.World.Entry"
+                        }
+                    }
+                },
+                {
+                    "name": "突破界限·天n3",
+                    "label": "$limit_heaven_n3",
+                    "description": "$limit_heaven_n3_description",
+                    "pipeline_override": {
+                        "Combat.Entry": {
+                            "next": "DailyRes.Entry"
+                        },
+                        "Global.AutoCombat.BacktoEntry": {
+                            "next": "DailyRes.Entry"
+                        },
+                        "DailyRes.Go1": {
+                            "next": "DailyRes.Limit.Heaven.Entry"
+                        }
+                    }
+                },
+                {
+                    "name": "突破界限·冥n3",
+                    "label": "$limit_underworld_n3",
+                    "description": "$limit_underworld_n3_description",
+                    "pipeline_override": {
+                        "Combat.Entry": {
+                            "next": "DailyRes.Entry"
+                        },
+                        "Global.AutoCombat.BacktoEntry": {
+                            "next": "DailyRes.Entry"
+                        },
+                        "DailyRes.Go1": {
+                            "next": "DailyRes.Limit.Underworld.Entry"
+                        }
+                    }
+                },
+                {
+                    "name": "突破界限·魔n3",
+                    "label": "$limit_demon_n3",
+                    "description": "$limit_demon_n3_description",
+                    "pipeline_override": {
+                        "Combat.Entry": {
+                            "next": "DailyRes.Entry"
+                        },
+                        "Global.AutoCombat.BacktoEntry": {
+                            "next": "DailyRes.Entry"
+                        },
+                        "DailyRes.Go1": {
+                            "next": "DailyRes.Limit.Demon.Entry"
+                        }
+                    }
+                },
+                {
+                    "name": "突破界限·英雄n3",
+                    "label": "$limit_hero_n3",
+                    "description": "$limit_hero_n3_description",
+                    "pipeline_override": {
+                        "Combat.Entry": {
+                            "next": "DailyRes.Entry"
+                        },
+                        "Global.AutoCombat.BacktoEntry": {
+                            "next": "DailyRes.Entry"
+                        },
+                        "DailyRes.Go1": {
+                            "next": "DailyRes.Limit.Hero.Entry"
+                        }
+                    }
+                },
+                {
+                    "name": "突破界限·零n3",
+                    "label": "$limit_zero_n3",
+                    "description": "$limit_zero_n3_description",
+                    "pipeline_override": {
+                        "Combat.Entry": {
+                            "next": "DailyRes.Entry"
+                        },
+                        "Global.AutoCombat.BacktoEntry": {
+                            "next": "DailyRes.Entry"
+                        },
+                        "DailyRes.Go1": {
+                            "next": "DailyRes.Limit.Zero.Entry"
+                        }
+                    }
+                },
+                {
+                    "name": "突破界限·神n3",
+                    "label": "$limit_god_n3",
+                    "description": "$limit_god_n3_description",
+                    "pipeline_override": {
+                        "Combat.Entry": {
+                            "next": "DailyRes.Entry"
+                        },
+                        "Global.AutoCombat.BacktoEntry": {
+                            "next": "DailyRes.Entry"
+                        },
+                        "DailyRes.Go1": {
+                            "next": "DailyRes.Limit.God.Entry"
+                        }
+                    }
+                },
+                {
+                    "name": "突破界限·全n3",
+                    "label": "$limit_all_n3",
+                    "description": "$limit_all_n3_description",
+                    "pipeline_override": {
+                        "Combat.Entry": {
+                            "next": "DailyRes.Entry"
+                        },
+                        "Global.AutoCombat.BacktoEntry": {
+                            "next": "DailyRes.Entry"
+                        },
+                        "DailyRes.Go1": {
+                            "next": "DailyRes.Limit.All.Entry"
+                        }
+                    }
+                },
+                {
+                    "name": "突破界限·无限n3",
+                    "label": "$limit_infinity_n3",
+                    "description": "$limit_infinity_n3_description",
+                    "pipeline_override": {
+                        "Combat.Entry": {
+                            "next": "DailyRes.Entry"
+                        },
+                        "Global.AutoCombat.BacktoEntry": {
+                            "next": "DailyRes.Entry"
+                        },
+                        "DailyRes.Go1": {
+                            "next": "DailyRes.Limit.Infinity.Entry"
+                        }
+                    }
+                },
+                {
+                    "name": "突破界限·斩击n2",
+                    "label": "$limit_slash_n2",
+                    "description": "$limit_slash_n2_description",
+                    "pipeline_override": {
+                        "Combat.Entry": {
+                            "next": "DailyRes.Entry"
+                        },
+                        "Global.AutoCombat.BacktoEntry": {
+                            "next": "DailyRes.Entry"
+                        },
+                        "DailyRes.Go1": {
+                            "next": "DailyRes.Limit.Slash.Entry"
+                        }
+                    }
+                },
+                {
+                    "name": "突破界限·刺击n2",
+                    "label": "$limit_thrust_n2",
+                    "description": "$limit_thrust_n2_description",
+                    "pipeline_override": {
+                        "Combat.Entry": {
+                            "next": "DailyRes.Entry"
+                        },
+                        "Global.AutoCombat.BacktoEntry": {
+                            "next": "DailyRes.Entry"
+                        },
+                        "DailyRes.Go1": {
+                            "next": "DailyRes.Limit.Thrust.Entry"
+                        }
+                    }
+                },
+                {
+                    "name": "突破界限·打击n2",
+                    "label": "$limit_knock_n2",
+                    "description": "$limit_knock_n2_description",
+                    "pipeline_override": {
+                        "Combat.Entry": {
+                            "next": "DailyRes.Entry"
+                        },
+                        "Global.AutoCombat.BacktoEntry": {
+                            "next": "DailyRes.Entry"
+                        },
+                        "DailyRes.Go1": {
+                            "next": "DailyRes.Limit.Knock.Entry"
+                        }
+                    }
+                },
+                {
+                    "name": "突破界限·无n2",
+                    "label": "$limit_none_n2",
+                    "description": "$limit_none_n2_description",
+                    "pipeline_override": {
+                        "Combat.Entry": {
+                            "next": "DailyRes.Entry"
+                        },
+                        "Global.AutoCombat.BacktoEntry": {
+                            "next": "DailyRes.Entry"
+                        },
+                        "DailyRes.Go1": {
+                            "next": "DailyRes.Limit.None.Entry"
+                        }
+                    }
+                },
+                {
+                    "name": "突破界限·射击n2",
+                    "label": "$limit_shot_n2",
+                    "description": "$limit_shot_n2_description",
+                    "pipeline_override": {
+                        "Combat.Entry": {
+                            "next": "DailyRes.Entry"
+                        },
+                        "Global.AutoCombat.BacktoEntry": {
+                            "next": "DailyRes.Entry"
+                        },
+                        "DailyRes.Go1": {
+                            "next": "DailyRes.Limit.Shot.Entry"
+                        }
+                    }
+                },
+                {
+                    "name": "突破界限·魔法n2",
+                    "label": "$limit_magic_n2",
+                    "description": "$limit_magic_n2_description",
+                    "pipeline_override": {
+                        "Combat.Entry": {
+                            "next": "DailyRes.Entry"
+                        },
+                        "Global.AutoCombat.BacktoEntry": {
+                            "next": "DailyRes.Entry"
+                        },
+                        "DailyRes.Go1": {
+                            "next": "DailyRes.Limit.Magic.Entry"
+                        }
+                    }
+                },
+                {
+                    "name": "突破界限·横一文字n2",
+                    "label": "$limit_horizontal_n2",
+                    "description": "$limit_horizontal_n2_description",
+                    "pipeline_override": {
+                        "Combat.Entry": {
+                            "next": "DailyRes.Entry"
+                        },
+                        "Global.AutoCombat.BacktoEntry": {
+                            "next": "DailyRes.Entry"
+                        },
+                        "DailyRes.Go1": {
+                            "next": "DailyRes.Limit.Horizontal.Entry"
+                        }
+                    }
+                },
+                {
+                    "name": "突破界限·狙击n2",
+                    "label": "$limit_snipe_n2",
+                    "description": "$limit_snipe_n2_description",
+                    "pipeline_override": {
+                        "Combat.Entry": {
+                            "next": "DailyRes.Entry"
+                        },
+                        "Global.AutoCombat.BacktoEntry": {
+                            "next": "DailyRes.Entry"
+                        },
+                        "DailyRes.Go1": {
+                            "next": "DailyRes.Limit.Snipe.Entry"
                         }
                     }
                 },

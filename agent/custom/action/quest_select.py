@@ -6,16 +6,32 @@ import json
 from utils import logger, data_io, timeout_mgr, proj_path
 
 
+_TEXT_VARIANT_PAIRS = (
+    ("（", "("),
+    ("）", ")"),
+    ("试", "試"),
+    ("炼", "煉"),
+    ("击", "擊"),
+    ("斩", "斬"),
+    ("横", "橫"),
+    ("无", "無"),
+)
+
+
+def _text_variants(text):
+    variants = [text]
+    for left, right in _TEXT_VARIANT_PAIRS:
+        expanded = []
+        for value in variants:
+            for candidate in (value, value.replace(left, right), value.replace(right, left)):
+                if candidate not in expanded:
+                    expanded.append(candidate)
+        variants = expanded
+    return variants
+
+
 def normalize_brackets(data):
-    """
-    将文本或列表转换为包含中英文括号两种版本的列表
-    
-    例如:
-    - "赚取金币的打工（3）" → ["赚取金币的打工（3）", "赚取金币的打工(3)"]
-    - ["赚取金币的打工（3）", "副本"] → ["赚取金币的打工（3）", "赚取金币的打工(3)", "副本"]
-    - "赚取金币的打工" → ["赚取金币的打工"]
-    """
-    # 如果输入本身就是列表，对每个元素处理后合并
+    """Generate OCR aliases for mixed simplified/traditional text and brackets."""
     if not data:
         return None
 
@@ -25,29 +41,14 @@ def normalize_brackets(data):
             normalized = normalize_brackets(item)
             if normalized is None:
                 continue
-            if isinstance(normalized, list):
-                result.extend(normalized)
-            else:
-                result.append(normalized)
-        return list(set(result))  # 去重
-    
-    
+            values = normalized if isinstance(normalized, list) else [normalized]
+            for value in values:
+                if value not in result:
+                    result.append(value)
+        return result
 
-    # 输入是字符串的情况
-    text = str(data)
-    # 无括号时不做处理，直接返回原文本
-    if all(ch not in text for ch in ("（", "）", "(", ")")):
-        return text
-
-    # 中文括号 → 英文括号
-    english_version = text.replace("（", "(").replace("）", ")")
-    # 英文括号 → 中文括号
-    chinese_version = text.replace("(", "（").replace(")", "）")
-
-
-    # 返回列表（去重）
-    versions = {text, english_version, chinese_version}
-    return list(versions)
+    variants = _text_variants(str(data))
+    return variants[0] if len(variants) == 1 else variants
 
 
 @AgentServer.custom_action("QuestSelect")
@@ -55,6 +56,32 @@ class QuestSelect(CustomAction):
     def __init__(self):
         super().__init__()
         self.last_len = 0
+
+    @staticmethod
+    def _recognize_quests(context: Context, folder_name):
+        context.tasker.controller.post_screencap().wait()
+        current_image = context.tasker.controller.cached_image
+        return context.run_recognition(
+            "UtilsOCR",
+            current_image,
+            pipeline_override={
+                "UtilsOCR": {
+                    "pre_wait_freeze": {
+                        "time": 1000,
+                        "target": [0, 0, 1080, 720],
+                        "threshold": 0.999
+                    },
+                    "recognition": {
+                        "param": {
+                            "roi": [494, 3, 779, 671],
+                            "duration": 200,
+                            "expected": folder_name,
+                            "order_by": "Vertical"
+                        }
+                    }
+                }
+            }
+        )
 
     def run(
         self,
@@ -130,7 +157,18 @@ class QuestSelect(CustomAction):
                 found = False
                 for res in get_quest.filtered_results:
                     logger.info(f"检查难度匹配: OCR结果='{res.text}' vs 难度候选={difficulty_candidates}")
-                    if any(d in res.text for d in difficulty_candidates):
+                    # OCR may mix full-width and half-width brackets in one result.
+                    normalized_text = normalize_brackets(res.text)
+                    result_text_candidates = (
+                        normalized_text
+                        if isinstance(normalized_text, list)
+                        else [normalized_text]
+                    )
+                    if any(
+                        d in text
+                        for text in result_text_candidates
+                        for d in difficulty_candidates
+                    ):
                         logger.info(f"匹配")
                         context.run_action(
                             "UtilsClick",
@@ -154,9 +192,91 @@ class QuestSelect(CustomAction):
                 # for 循环结束，所有结果都不匹配
                 logger.info(f"当前屏幕的所有结果都不匹配")
                 
-                # 检查是否只识别了1个结果（可能是任务被关闭了）
-                if len(get_quest.filtered_results) == 1:
-                    logger.info(f"仅识别1个结果，判断是否任务被关闭...")
+                # 分组标题比子关卡向左缩进；标题在底部时先滚动会把它移出屏幕。
+                if (
+                    len(get_quest.filtered_results) == 1
+                    and get_quest.filtered_results[0].box[0] <= 700
+                ):
+                    header = get_quest.filtered_results[0]
+                    result_to_expand = header
+
+                    # 标题靠近底部时，先确认子关卡是否已经展开但在屏幕外。
+                    if header.box[1] >= 450:
+                        logger.info(f"分组标题位于底部，先上滑确认展开状态: {header}")
+                        context.run_action(
+                            "UtilsSwipe",
+                            pipeline_override={
+                                "UtilsSwipe": {
+                                    "begin": [933, 603, 24, 18],
+                                    "end": [927, 460, 30, 24]
+                                }
+                            }
+                        )
+                        probed_quest = self._recognize_quests(context, folder_name)
+                        if probed_quest.filtered_results:
+                            for res in probed_quest.filtered_results:
+                                normalized_text = normalize_brackets(res.text)
+                                result_text_candidates = (
+                                    normalized_text
+                                    if isinstance(normalized_text, list)
+                                    else [normalized_text]
+                                )
+                                if any(
+                                    d in text
+                                    for text in result_text_candidates
+                                    for d in difficulty_candidates
+                                ):
+                                    logger.info(f"上滑探测发现目标难度，直接选择: {res}")
+                                    context.run_action(
+                                        "UtilsClick",
+                                        res.box,
+                                        pipeline_override={
+                                            "UtilsClick": {
+                                                "action": {
+                                                    "param": {
+                                                        "target": res.box
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    )
+                                    logger.info(f"成功选择任务")
+                                    timeout_mgr.stop_monitoring(argv.node_name)
+                                    return True
+
+                            if not (
+                                len(probed_quest.filtered_results) == 1
+                                and probed_quest.filtered_results[0].box[0] <= 700
+                            ):
+                                logger.info(f"上滑探测发现子关卡，保留当前展开状态")
+                                get_quest = probed_quest
+                                result_to_expand = None
+                            else:
+                                result_to_expand = probed_quest.filtered_results[0]
+                        else:
+                            logger.info(f"上滑探测未识别到结果，暂不点击标题")
+                            result_to_expand = None
+
+                    if result_to_expand is not None:
+                        logger.info(f"仅识别到折叠分组标题，点击展开: {result_to_expand}")
+                        context.run_action(
+                            "UtilsClick",
+                            result_to_expand.box,
+                            pipeline_override={
+                                "UtilsClick": {
+                                    "action": {
+                                        "param": {
+                                            "target": result_to_expand.box
+                                        }
+                                    }
+                                }
+                            }
+                        )
+                        logger.info(f"已展开分组，返回重新识别...")
+
+                # 检查是否只识别了1个子关卡（可能是任务被关闭了）
+                elif len(get_quest.filtered_results) == 1:
+                    logger.info(f"仅识别1个子关卡，判断是否任务被关闭...")
                     # 先向下滑动看看能否打开任务
                     context.run_action(
                         "UtilsSwipe",

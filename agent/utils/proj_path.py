@@ -15,6 +15,20 @@ def _pick_existing_path(*candidates: Path) -> Path:
             return candidate
     return candidates[0]
 
+
+def _pick_index_dir(*candidates: Path) -> Path:
+    """Prefer an index directory containing generated dictionaries."""
+    existing = [candidate for candidate in candidates if candidate.is_dir()]
+    for candidate in existing:
+        if any(
+            (candidate / filename).is_file()
+            for filename in ("characters.json", "ar.json", "ui.json")
+        ):
+            return candidate
+    if existing:
+        return existing[0]
+    return candidates[0]
+
 # 数据目录
 DATA_DIR = PROJECT_ROOT / "data"
 AUTO_COMBAT_DIR = DATA_DIR / "auto_combat"
@@ -28,8 +42,9 @@ RESOURCE_DIR = _pick_existing_path(
     PROJECT_ROOT / "resource",
     PROJECT_ROOT / "assets" / "resource",
 )
-INDEX_DIR = _pick_existing_path(
+INDEX_DIR = _pick_index_dir(
     PROJECT_ROOT / "resource" / "index",
+    PROJECT_ROOT / "assets" / "resource" / "index",
     PROJECT_ROOT / "assets" / "index",
 )
 INTERFACE_PATH = _pick_existing_path(
@@ -50,11 +65,20 @@ AR_FILE = str(INDEX_DIR / "ar.json")
 UI_FILE = str(INDEX_DIR / "ui.json")
 
 # 资源目录
-IMAGE_DIR = RESOURCE_DIR / "image"
-MODEL_DIR = RESOURCE_DIR / "model"
+IMAGE_DIR = _pick_existing_path(
+    RESOURCE_DIR / "base" / "image",
+    RESOURCE_DIR / "image",
+)
+MODEL_DIR = _pick_existing_path(
+    RESOURCE_DIR / "base" / "model",
+    RESOURCE_DIR / "model",
+)
 
 # 管道配置
-PIPELINE_DIR = RESOURCE_DIR / "pipeline"
+PIPELINE_DIR = _pick_existing_path(
+    RESOURCE_DIR / "base" / "pipeline",
+    RESOURCE_DIR / "pipeline",
+)
 
 # 接口配置
 INTERFACE_FILE = str(INTERFACE_PATH)

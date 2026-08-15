@@ -15,6 +15,11 @@
             }
         }
     },
+    "DailyRes.Go0": {
+        "action": {
+            "param": {}
+        }
+    },
     "DailyRes.Coin.Entry": {
         "action": {
             "param": {
@@ -50,6 +55,209 @@
                         "（3）",
                         "(3)"
                     ]
+                }
+            }
+        }
+    },
+    "DailyRes.Limit.Fire.Entry": {
+        "action": {
+            "param": {
+                "custom_action_param": {
+                    "name": "Fire",
+                    "difficulty": ["（3）", "(3)"]
+                }
+            }
+        }
+    },
+    "DailyRes.Limit.Water.Entry": {
+        "action": {
+            "param": {
+                "custom_action_param": {
+                    "name": "Water",
+                    "difficulty": ["（3）", "(3)"]
+                }
+            }
+        }
+    },
+    "DailyRes.Limit.Wood.Entry": {
+        "action": {
+            "param": {
+                "custom_action_param": {
+                    "name": "Wood",
+                    "difficulty": ["（3）", "(3)"]
+                }
+            }
+        }
+    },
+    "DailyRes.Limit.World.Entry": {
+        "action": {
+            "param": {
+                "custom_action_param": {
+                    "name": "World",
+                    "difficulty": ["（3）", "(3)"]
+                }
+            }
+        }
+    },
+    "DailyRes.Limit.Heaven.Entry": {
+        "action": {
+            "param": {
+                "custom_action_param": {
+                    "name": "Aether",
+                    "difficulty": ["（3）", "(3)"]
+                }
+            }
+        }
+    },
+    "DailyRes.Limit.Underworld.Entry": {
+        "action": {
+            "param": {
+                "custom_action_param": {
+                    "name": "Nether",
+                    "difficulty": ["（3）", "(3)"]
+                }
+            }
+        }
+    },
+    "DailyRes.Limit.Demon.Entry": {
+        "action": {
+            "param": {
+                "custom_action_param": {
+                    "name": "Infernal",
+                    "difficulty": ["（3）", "(3)"]
+                }
+            }
+        }
+    },
+    "DailyRes.Limit.Hero.Entry": {
+        "action": {
+            "param": {
+                "custom_action_param": {
+                    "name": "Valiant",
+                    "difficulty": ["（3）", "(3)"]
+                }
+            }
+        }
+    },
+    "DailyRes.Limit.None.Entry": {
+        "action": {
+            "param": {
+                "custom_action_param": {
+                    "name": "None",
+                    "difficulty": ["（2）", "(2)"]
+                }
+            }
+        }
+    },
+    "DailyRes.Limit.Zero.Entry": {
+        "action": {
+            "param": {
+                "custom_action_param": {
+                    "name": "Null",
+                    "difficulty": ["（3）", "(3)"]
+                }
+            }
+        }
+    },
+    "DailyRes.Limit.God.Entry": {
+        "action": {
+            "param": {
+                "custom_action_param": {
+                    "name": "Divine",
+                    "difficulty": ["（3）", "(3)"]
+                }
+            }
+        }
+    },
+    "DailyRes.Limit.All.Entry": {
+        "action": {
+            "param": {
+                "custom_action_param": {
+                    "name": "All-Round",
+                    "difficulty": ["（3）", "(3)"]
+                }
+            }
+        }
+    },
+    "DailyRes.Limit.Infinity.Entry": {
+        "action": {
+            "param": {
+                "custom_action_param": {
+                    "name": "Infinity",
+                    "difficulty": ["（3）", "(3)"]
+                }
+            }
+        }
+    },
+    "DailyRes.Limit.Slash.Entry": {
+        "action": {
+            "param": {
+                "custom_action_param": {
+                    "name": "Slash",
+                    "difficulty": ["（2）", "(2)"]
+                }
+            }
+        }
+    },
+    "DailyRes.Limit.Thrust.Entry": {
+        "action": {
+            "param": {
+                "custom_action_param": {
+                    "name": "Thrust",
+                    "difficulty": ["（2）", "(2)"]
+                }
+            }
+        }
+    },
+    "DailyRes.Limit.Knock.Entry": {
+        "action": {
+            "param": {
+                "custom_action_param": {
+                    "name": "Blow",
+                    "difficulty": ["（2）", "(2)"]
+                }
+            }
+        }
+    },
+    "DailyRes.Limit.Shot.Entry": {
+        "action": {
+            "param": {
+                "custom_action_param": {
+                    "name": "Shot",
+                    "difficulty": ["（2）", "(2)"]
+                }
+            }
+        }
+    },
+    "DailyRes.Limit.Magic.Entry": {
+        "action": {
+            "param": {
+                "custom_action_param": {
+                    "name": "Magic",
+                    "difficulty": ["（2）", "(2)"]
+                }
+            }
+        }
+    },
+    "DailyRes.Limit.Horizontal.Entry": {
+        "action": {
+            "param": {
+                "custom_action_param": {
+                    "name": [
+                        "Horizontal Slash",
+                        "Long Slash"
+                    ],
+                    "difficulty": ["（2）", "(2)"]
+                }
+            }
+        }
+    },
+    "DailyRes.Limit.Snipe.Entry": {
+        "action": {
+            "param": {
+                "custom_action_param": {
+                    "name": "Snipe",
+                    "difficulty": ["（2）", "(2)"]
                 }
             }
         }

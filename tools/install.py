@@ -374,6 +374,30 @@ def install_agent_python_dependencies() -> None:
 
 
 
+def normalize_packaged_agent_args(interface: dict) -> None:
+    """Translate source-layout Agent paths to the package-root layout."""
+
+    def normalize_agent(agent_obj) -> None:
+        if not isinstance(agent_obj, dict):
+            return
+
+        child_args = agent_obj.get("child_args")
+        if not isinstance(child_args, list):
+            return
+
+        agent_obj["child_args"] = [
+            "./agent/main.py" if arg == "../agent/main.py" else arg
+            for arg in child_args
+        ]
+
+    agents = interface.get("agent")
+    if isinstance(agents, dict):
+        normalize_agent(agents)
+    elif isinstance(agents, list):
+        for agent_obj in agents:
+            normalize_agent(agent_obj)
+
+
 def install_resource():
     configure_ocr_model()
 
@@ -452,6 +476,32 @@ def install_resource():
                 dirs_exist_ok=True,
             )
 
+    index_path = install_resource_path / "index"
+    required_indexes = ("ui.json", "characters.json", "ar.json")
+    missing_indexes = [
+        str(index_path / filename)
+        for filename in required_indexes
+        if not (index_path / filename).is_file()
+    ]
+    if missing_indexes:
+        raise RuntimeError(
+            "Required MAH resource indexes are missing after resource sync: "
+            + ", ".join(missing_indexes)
+            + ". Download the matching mah_res full resource package before packaging."
+        )
+
+    missing_image_dirs = []
+    for dirname in ("character", "ar"):
+        image_dir = base_path / "image" / dirname
+        if not image_dir.is_dir() or not any(image_dir.iterdir()):
+            missing_image_dirs.append(str(image_dir))
+    if missing_image_dirs:
+        raise RuntimeError(
+            "Required MAH image resources are missing after resource sync: "
+            + ", ".join(missing_image_dirs)
+            + ". Download the matching mah_res full resource package before packaging."
+        )
+
     shutil.copy2(
         working_dir / "assets" / "interface.json",
         install_path,
@@ -463,6 +513,8 @@ def install_resource():
 
     with open(install_path / "interface.json", "r", encoding="utf-8") as f:
         interface = jsonc.load(f)
+
+    normalize_packaged_agent_args(interface)
 
     if os_name == "win":
         runtime_dir = resolve_windows_python_runtime_dir()

@@ -35,7 +35,7 @@ Powered by [MaaFramework](https://github.com/MaaXYZ/MaaFramework)!
 
 ## Guide
 
-- [User Guide (Must Read for Beginners)](./assets/docs/en_us/welcome.md) - Quickly learn how to configure and start.
+- [User Guide (Must Read for Beginners)](./docs/en_us/welcome.md) - Quickly learn how to configure and start.
 - [Auto-Battle JSON Config Guide](./docs/en_us/auto_combat_json_config.md) - Deeply customize your battle script and teams.
 
 Ask questions in this repository, if you have a log, please attach it (`debug/maa.log` file).
