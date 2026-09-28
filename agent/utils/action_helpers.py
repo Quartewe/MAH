@@ -3,6 +3,7 @@ from pathlib import Path
 import time
 import random
 import re
+import unicodedata
 import hanzidentifier
 from utils import data_io, match_mgr, proj_path, info_share, logger
 
@@ -10,6 +11,11 @@ class ActUtils:
     DEFAULT_BEGIN = [330, 530, 5, 5]
     DEFAULT_END = [330, 15, 5, 5]
     UI_DATA = data_io.read_data(proj_path.UI_FILE)
+
+    @staticmethod
+    def task_succeeded(result):
+        """TaskDetail 即使失败也为真，必须读取任务状态。"""
+        return result is not None and result.status.succeeded
 
     @staticmethod
     def normalize_template_path(path_value):
@@ -185,7 +191,8 @@ class ActUtils:
         jp = cn = tw = en = 0
         retry_count = 0
         
-        while retry_count < max_retries and not compare_list:
+        ocr_results = []
+        while retry_count < max_retries and compare_list is None:
             retry_count += 1
             context.tasker.controller.post_screencap().wait()
             current_image = context.tasker.controller.cached_image
@@ -205,6 +212,7 @@ class ActUtils:
             )
 
             logger.info(f"OCR 最佳结果: {ocrresults.best_result}, 过滤后结果总数: {len(ocrresults.filtered_results)}")
+            ocr_results = ocrresults.filtered_results
             # 如果成功获取结果，则跳出循环
             if ocrresults.best_result:
                 has_valid_text = any(res.text and res.text.strip() for res in ocrresults.filtered_results)
@@ -219,13 +227,17 @@ class ActUtils:
             logger.warning(f"OCR 已达到最大重试次数，将继续使用空结果")
         
         # 统计各语言数量
-        for res in (ocrresults.filtered_results if not compare_list else compare_list):
+        for res in (ocr_results if compare_list is None else compare_list):
             ignore_match = False
             if isinstance(res, str):
                 text = res
             else:
                 text = res.text
-            if ignore and not compare_list:
+            text = unicodedata.normalize("NFKC", text or "").strip()
+            # 道具数量中的 X/× 是乘号，不是英文。保留 Back、EXP 等真实标签。
+            if not text or re.fullmatch(r"[xX×]?\s*[\d,]+(?:\.\d+)?\s*[xX×]?", text):
+                continue
+            if ignore and compare_list is None:
                 for ign in ignore:
                     if match_mgr.fuzzy_match(ign, text):
                         logger.info(f"命中忽略关键词，跳过该结果: {ign}")
@@ -261,7 +273,8 @@ class ActUtils:
     def detect_lang(context, roi, ignore: list = None, compare_list: list = None):
         """
         returns:
-            str: "jp"（日文）、"cn"（简体中文）、"tw"（繁体中文）或 "en"（英文），表示检测到的主要语言类型
+            str: "jp"、"cn"、"tw" 或 "en"。画面无证据时沿用已知语言。
+            compare_list 只分类文字，不更新界面语言；无证据时返回空字符串。
         """
         jp = cn = tw = en = 0
         max_retries = 30
@@ -283,12 +296,19 @@ class ActUtils:
         # 游戏的中文界面包含固定英文标签，不能让这些标签压过中文结果。
         lang_counts = {"jp": jp, "cn": cn, "tw": tw, "en": en}
         cjk_counts = {"jp": jp, "cn": cn, "tw": tw}
+        if not any(lang_counts.values()):
+            if compare_list is not None:
+                return ""
+            previous = info_share.current_lang
+            logger.warning(f"未识别到有效语言文本，保留当前语言: {previous or '未知'}")
+            return previous if previous in lang_counts else ""
         if any(cjk_counts.values()):
             result = max(cjk_counts, key=cjk_counts.get)
         else:
             result = max(lang_counts, key=lang_counts.get)
         logger.info(f"语言检测统计: {lang_counts}, 选中: {result}")
-        info_share.current_lang = result
+        if compare_list is None:
+            info_share.current_lang = result
         return result 
 
     @classmethod
@@ -300,6 +320,8 @@ class ActUtils:
 
         lang_mode = act_mgr.detect_lang(context, lang_roi)
         logger.info(f"检测到的语言模式: {lang_mode}")
+        if not lang_mode:
+            return False
         if lang_mode == "jp":
             markers = ["フィルタ", "全フィルタ解除", "OK", "装備可能のみ"]
         if lang_mode == "cn":
@@ -328,9 +350,9 @@ class ActUtils:
                     }
                 }
             )
-        if not open_finish:
-            logger.error(f"点击筛选失败: {element} {rarity}* {weapon}")
-            return False
+            if not cls.task_succeeded(open_finish):
+                logger.error(f"点击筛选失败: {marker}")
+                return False
         
         # 当 AR_mode=True 时，element 和 weapon 可能为 None
         element_path = Path(cls.UI_DATA.get("element", {}).get(element, "")) if element else None
@@ -372,12 +394,12 @@ class ActUtils:
                         }
                     }
                 )
-                if not ifsuit_finish:
+                if not cls.task_succeeded(ifsuit_finish):
                     return False
                 continue
                 
             logger.info(f"尝试使用模板点击筛选: {path}")
-            context.run_task(
+            template_finish = context.run_task(
                 "UtilsTemplateMatch",
                 pipeline_override={
                     "UtilsTemplateMatch" :{
@@ -394,6 +416,8 @@ class ActUtils:
                     }
                 }
             )
+            if not cls.task_succeeded(template_finish):
+                return False
 
         filter_finish = context.run_task(
                 "UtilsOCR",
@@ -411,7 +435,7 @@ class ActUtils:
                 }
             )
         
-        if not filter_finish:
+        if not cls.task_succeeded(filter_finish):
             logger.error(f"确认筛选失败: {element} {rarity}* {weapon}")
             return False
         return True
