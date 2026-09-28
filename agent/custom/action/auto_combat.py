@@ -175,7 +175,7 @@ class AutoCombat(CustomAction):
 
     def _detect_complete(self, context):
         """检测战斗是否结束，若结束则设置 self.if_complete = True"""
-        if self.if_complete:
+        if self.if_complete or self.detect_complete_error:
             return True
         if self._check_running(context):
             return True
@@ -227,6 +227,7 @@ class AutoCombat(CustomAction):
                 logger.info(f"检测到战斗结束文本: {complete_res.best_result.text}，正在点击继续...")
                 context.run_action(
                     "UtilsClick",
+                    box=complete_res.best_result.box,
                     pipeline_override={
                         "UtilsClick": {
                             "action": {
@@ -250,7 +251,6 @@ class AutoCombat(CustomAction):
             logger.error(f"_detect_complete 异常: {e}")
             import traceback
             self.detect_complete_error = True
-            self.if_complete = True
             traceback.print_exc()
             return True
         
@@ -378,11 +378,11 @@ class AutoCombat(CustomAction):
             if lang == "en":
                 return ["Settings", "Back"]
 
-            logger.warning(f"未知语言: {lang}，默认使用英文")
-            return ["Settings", "Back"]
+            logger.warning("无法确定战斗菜单语言，尝试各语言的菜单文字")
+            return [["设定", "設定", "Settings"], ["返回", "戻る", "Back"]]
         
         def enable_options():
-            context.run_task(
+            menu = context.run_task(
                 "UtilsOCR",
                 pipeline_override={
                     "UtilsOCR": {
@@ -403,6 +403,8 @@ class AutoCombat(CustomAction):
                     }
                 },
             )
+            if not act_mgr.task_succeeded(menu):
+                return False
             logger.info("已点击菜单...")
 
             markers = get_markers_by_lang()
@@ -421,6 +423,8 @@ class AutoCombat(CustomAction):
                     }
                 },
             )
+            if not act_mgr.task_succeeded(setting):
+                return False
             logger.info(f"已点击 {markers[0]}...")
             time.sleep(5)
             context.tasker.controller.post_screencap().wait()
@@ -446,6 +450,7 @@ class AutoCombat(CustomAction):
                         logger.info(f"已点击 {res.text} 选项...")
                         context.run_action(
                             "UtilsClick",
+                            box=res.box,
                             pipeline_override={
                                 "UtilsClick": {
                                     "action": {
@@ -456,7 +461,7 @@ class AutoCombat(CustomAction):
                                 }
                             },
                         )
-            context.run_task(
+            back = context.run_task(
                 "UtilsOCR",
                 pipeline_override={
                     "UtilsOCR": {
@@ -470,6 +475,7 @@ class AutoCombat(CustomAction):
                     }
                 },
             )
+            return act_mgr.task_succeeded(back)
 
         def ensure_speed_4x():
             context.tasker.controller.post_screencap().wait()
@@ -501,6 +507,7 @@ class AutoCombat(CustomAction):
                 for _ in range(4 - speed):
                     context.run_action(
                         "UtilsClick",
+                        box=speed_res.best_result.box,
                         pipeline_override={
                             "UtilsClick": {
                                 "action": {
@@ -580,7 +587,7 @@ class AutoCombat(CustomAction):
                 return False
 
         def disable_auto_combat():
-            context.run_task(
+            result = context.run_task(
                 "UtilsOCR",
                 pipeline_override={
                     "UtilsOCR": {
@@ -594,8 +601,11 @@ class AutoCombat(CustomAction):
                     }
                 },
             )
+            if not act_mgr.task_succeeded(result):
+                return False
             logger.info("已关闭自动战斗模式")
             info_share.auto_combat_mode = False
+            return True
 
         def analyze_data(action_data):
             if not isinstance(action_data, dict):
@@ -675,7 +685,7 @@ class AutoCombat(CustomAction):
                 logger.info(f"循环战斗第 {loop_count} 轮未完成，正在重试...")
 
             logger.info("循环战斗已完成，正在退出...")
-            return True, current_pos_data
+            return not self.detect_complete_error and not context.tasker.stopping, current_pos_data
 
         def main() -> bool:
             param = argv.custom_action_param
@@ -694,13 +704,14 @@ class AutoCombat(CustomAction):
             auto_mode = not fight_data
 
             if not info_share.combat_set and not info_share.auto_combat_mode:
-                enable_options()
+                if not enable_options():
+                    return False
                 ensure_speed_4x()
                 info_share.combat_set = True
 
             elif not info_share.combat_set and info_share.auto_combat_mode:
-                disable_auto_combat()
-                enable_options()
+                if not disable_auto_combat() or not enable_options():
+                    return False
                 ensure_speed_4x()
                 info_share.combat_set = True
 
@@ -716,6 +727,8 @@ class AutoCombat(CustomAction):
                 while not self.if_complete:
                     logger.info("自动战斗模式运行中，等待战斗结束...")
                     self._detect_complete(context)
+                    if self.detect_complete_error:
+                        return False
                     if self._check_running(context):
                         timeout_mgr.stop_monitoring(argv.node_name)
                         return False
@@ -730,10 +743,14 @@ class AutoCombat(CustomAction):
                 return True
 
             if info_share.auto_combat_mode:
-                disable_auto_combat()
+                if not disable_auto_combat():
+                    return False
 
             if not info_share.auto_combat_mode:
                 posL = self._get_posL(context)
+                if not posL:
+                    logger.error("获取队长位置失败，无法继续战斗")
+                    return False
                 if not info_share.leader_pos:
                     info_share.leader_pos = posL
                 elif abs(info_share.leader_pos[0] - posL[0]) > 40 or abs(info_share.leader_pos[1] - posL[1]) > 40:
@@ -741,6 +758,9 @@ class AutoCombat(CustomAction):
                     logger.warning(f"检测到队长位置变化，正在复核位置准确性...")
                     last_posL = posL
                     current_posL = self._get_posL(context)
+                    if not current_posL:
+                        logger.error("复核队长位置失败，无法继续战斗")
+                        return False
                     if abs(last_posL[0] - current_posL[0]) > 40 or abs(last_posL[1] - current_posL[1]) > 40:
                         logger.info(f"正在修正位置误差...")
                         posL = current_posL
@@ -753,6 +773,8 @@ class AutoCombat(CustomAction):
                     return False
                 base_action_data, loop_action_data = analyze_data(action_data)
                 current_pos_data = list_combat(pos_data, base_action_data, posL)
+                if self.detect_complete_error or context.tasker.stopping:
+                    return False
                 if loop_action_data and not self.if_complete:
                     logger.info("基础执行完成，开始循环战斗...")
                     loop_completed, _ = loop_combat(current_pos_data, loop_action_data, posL)
@@ -772,7 +794,8 @@ class AutoCombat(CustomAction):
             return False
 
         try:
-            return main()
+            result = main()
+            return result and not self.detect_complete_error and not context.tasker.stopping
         finally:
             self.detect_complete_error = False
             self.if_complete = False

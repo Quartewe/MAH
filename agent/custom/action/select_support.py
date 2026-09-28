@@ -37,6 +37,8 @@ class SelectSupport(CustomAction):
         idroi = [45,190,400,530]
         param = json.loads(argv.custom_action_param)
         default_mode = False
+        support_data = None
+        keywords = []
         if isinstance(param, dict):
             # 单字典模式
             support_data = param
@@ -105,6 +107,7 @@ class SelectSupport(CustomAction):
                 logger.info(f"正在滑动到顶部，进度 {temp}/{(page // 3)}")
                 context.run_action(
                     "UtilsSwipe",
+                    box=[45, 190, 400, 530],
                     pipeline_override={
                         "UtilsSwipe": {
                             "begin":[400, 180, 5, 5],
@@ -156,6 +159,7 @@ class SelectSupport(CustomAction):
             logger.info(f"正在滑动到顶部，进度 {temp}/{(page // 3)}")
             context.run_action(
                 "UtilsSwipe",
+                box=[45, 190, 400, 530],
                 pipeline_override={
                     "UtilsSwipe": {
                         "begin":[400, 180, 5, 5],
@@ -172,6 +176,7 @@ class SelectSupport(CustomAction):
             logger.info(f"正在滑动到目标位置，进度 {temp}/{swipe_time}")
             context.run_action(
                 "UtilsSwipe",
+                box=[45, 190, 400, 530],
                 pipeline_override={
                     "UtilsSwipe": {
                         "begin":[330, 630, 5, 5],
@@ -241,7 +246,7 @@ class SelectSupport(CustomAction):
             else:
                 rbox = [recres.box[0], recres.box[1], recres.box[2], recres.box[3]] if recres.box else None
                 if rbox is None:
-                    logger.info(f"未找到角色: {support_data['name']} {support_data['id']}")
+                    logger.info(f"未找到角色: {support_data or '默认助战'}")
                     add_res = {}
                 else:
                     # 从 best_result.detail 获取结果（三层嵌套 {name: {id: {res_*: entry}}}）
@@ -250,7 +255,7 @@ class SelectSupport(CustomAction):
                     if rbox == [0, 0, 1, 1]:
                         logger.info(f"找到多个角色")
                     else:
-                        logger.info(f"找到一个角色: {support_data['name']} {support_data['id']}")
+                        logger.info(f"找到一个角色: {support_data or '默认助战'}")
 
             # 为每个 res_* 添加 pos 信息（必须在 break 之前执行，确保 add_res 已合并到 self.all_res）
             if add_res:
@@ -286,6 +291,7 @@ class SelectSupport(CustomAction):
             logger.info(f"第 {page // 3} 页，指纹: {current_fingerprint}，正在滑动...")
             context.run_action(
                 "UtilsSwipe",
+                box=[45, 190, 400, 530],
                 pipeline_override={
                     "UtilsSwipe": {
                         "begin":[330, 530, 5, 5],
@@ -322,7 +328,7 @@ class SelectSupport(CustomAction):
             return True
 
         # 选择最佳结果
-        best_res = act_mgr.choose_best(self.all_res, support_data, keywords, mode=select_mode)
+        best_res = act_mgr.choose_best(self.all_res, support_data or {}, keywords, mode=select_mode)
         logger.info(f"最佳结果: {best_res}")
         logger.info(f"页数: {page}")
 

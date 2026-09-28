@@ -323,6 +323,56 @@ class Formation(CustomAction):
             return fallback
         return ""
 
+    def _select_community(self, context, community_name):
+        community_path = self._get_community_template_path(community_name)
+        if not community_path:
+            return False
+        entered = context.run_task(
+            "UtilsFeatureMatch", pipeline_override={"UtilsFeatureMatch": {
+                "recognition": {"param": {"roi": [1086, 87, 189, 400],
+                                             "template": "fight/community/community_empty.png"}},
+                "action": {"type": "Click"}
+            }},
+        )
+        if not act_mgr.task_succeeded(entered):
+            logger.error("无法进入工会选择界面")
+            return False
+        for _ in range(6):
+            for begin, end, timeout in (
+                ([970, 642, 70, 27], [961, 39, 88, 22], 10000),
+                ([966, 100, 68, 24], [970, 642, 70, 27], 0),
+            ):
+                if context.tasker.stopping:
+                    return False
+                selected = context.run_task(
+                    "UtilsFeatureMatch", pipeline_override={"UtilsFeatureMatch": {
+                        "recognition": {"param": {"template": str(community_path)}},
+                        "action": {"type": "Click"}, "timeout": timeout
+                    }},
+                )
+                if act_mgr.task_succeeded(selected):
+                    language = act_mgr.detect_lang(context, [199, 23, 540, 51])
+                    marker = {"jp": "設定", "cn": "设定", "tw": "設定", "en": "Activate"}.get(language)
+                    if marker is None:
+                        return False
+                    confirmed = context.run_task(
+                        "UtilsOCR", pipeline_override={"UtilsOCR": {
+                            "recognition": {"param": {"roi": [403, 624, 348, 96], "expected": marker}},
+                            "action": {"type": "Click"}
+                        }},
+                    )
+                    return act_mgr.task_succeeded(confirmed)
+                swiped = context.run_action(
+                    "UtilsSwipe", box=[961, 100, 88, 540],
+                    pipeline_override={"UtilsSwipe": {"action": {
+                        "type": "Swipe", "param": {"begin": begin, "end": end}
+                    }}},
+                )
+                if swiped is None or not swiped.success:
+                    return False
+        logger.error(f"未找到工会: {community_name}")
+        return False
+
     def run(
         self,
         context: Context,
@@ -408,13 +458,14 @@ class Formation(CustomAction):
             "en": ["Disband", "OK", "OK"],
         }.get(lang_mode)
         if markers is None:
-            logger.warning(f"未能确定编队界面语言: {lang_mode}，默认使用简体中文")
-            markers = ["解散队伍", "OK", "确定"]
+            logger.error("无法确定编队界面语言")
+            timeout_mgr.stop_monitoring(argv.node_name)
+            return False
 
 
         # 清除可能存在的旧数据
         logger.info(f"正在解散旧队伍...")
-        context.run_task(
+        disband_result = context.run_task(
             "UtilsOCR",
             pipeline_override={
                 "UtilsOCR": {
@@ -430,7 +481,10 @@ class Formation(CustomAction):
                 }
             }
         )
-        context.run_task(
+        if not act_mgr.task_succeeded(disband_result):
+            timeout_mgr.stop_monitoring(argv.node_name)
+            return False
+        disband_result = context.run_task(
             "UtilsOCR",
             pipeline_override={
                 "UtilsOCR": {
@@ -446,7 +500,10 @@ class Formation(CustomAction):
                 }
             }
         )
-        context.run_task(
+        if not act_mgr.task_succeeded(disband_result):
+            timeout_mgr.stop_monitoring(argv.node_name)
+            return False
+        disband_result = context.run_task(
             "UtilsOCR",
             pipeline_override={
                 "UtilsOCR": {
@@ -462,6 +519,9 @@ class Formation(CustomAction):
                 }
             }
         )
+        if not act_mgr.task_succeeded(disband_result):
+            timeout_mgr.stop_monitoring(argv.node_name)
+            return False
         logger.info(f"旧队伍已解散，开始新编组...")
 
         initial_team_cost = self._read_team_cost(context)
@@ -791,6 +851,7 @@ class Formation(CustomAction):
             )
             context.run_action(
                 "UtilsSwipe",
+                box=self.TITLE_ROI,
                 pipeline_override={
                     "UtilsSwipe": {
                         "action": {
@@ -804,135 +865,10 @@ class Formation(CustomAction):
                 }
             )
 
-        # 选择工会    
-        team_community = team_data.get("community", None)
-        if team_community:
-            community_path = self._get_community_template_path(team_community)
-            if not community_path:
-                logger.error(f"工会模板路径无效: {team_community}")
-                timeout_mgr.stop_monitoring(argv.node_name)
-                return False
-            enter_finish = context.run_task(
-                "UtilsFeatureMatch",
-                pipeline_override={
-                    "UtilsFeatureMatch":{
-                        "recognition":{
-                            "param":{
-                                "roi": [1086,87,189,400],
-                                "template": "fight/community/community_empty.png"
-                            }
-                        },
-                        "action":{
-                            "type": "Click"
-                        }
-                    }
-                }
-            )
-            if enter_finish:
-                max_search_rounds = 6
-                community_found = False
-                for _ in range(max_search_rounds):
-                    first_page = context.run_task(
-                        "UtilsFeatureMatch",
-                        pipeline_override={
-                            "UtilsFeatureMatch": {
-                                "recognition": {
-                                    "param": {
-                                        "template": str(community_path)
-                                    }
-                                },
-                                "action": {
-                                    "type": "Click"
-                                },
-                                "timeout": 10000
-                            }
-                        }
-                    )
-                    if first_page:
-                        community_found = True
-                        break
-
-                    context.run_action(
-                        "UtilsSwipe",
-                        pipeline_override={
-                            "UtilsSwipe": {
-                                "action": {
-                                    "type": "Swipe",
-                                    "param": {
-                                        "begin": [970,642,70,27],
-                                        "end": [961,39,88,22]
-                                    }
-                                }
-                            }
-                        }
-                    )
-
-                    second_page = context.run_task(
-                        "UtilsFeatureMatch",
-                        pipeline_override={
-                            "UtilsFeatureMatch": {
-                                "recognition": {
-                                    "param": {
-                                        "template": str(community_path)
-                                    }
-                                },
-                                "action": {
-                                    "type": "Click"
-                                },
-                                "timeout": 0
-                            }
-                        }
-                    )
-                    if second_page:
-                        community_found = True
-                        break
-
-                    context.run_action(
-                        "UtilsSwipe",
-                        pipeline_override={
-                            "UtilsSwipe": {
-                                "action": {
-                                    "type": "Swipe",
-                                    "param": {
-                                        "begin": [966,100,68,24],
-                                        "end": [970,642,70,27]
-                                    }
-                                }
-                            }
-                        }
-                    )
-
-                if not community_found:
-                    logger.error(f"未找到工会: {team_community}")
-                    timeout_mgr.stop_monitoring(argv.node_name)
-                    return False
-
-                lang_mode = act_mgr.detect_lang(context, [199,23,540,51])
-                if lang_mode == "jp":
-                    markers = ["設定"]
-                if lang_mode == "cn":
-                    markers = ["设定"]
-                if lang_mode == "tw":
-                    markers = ["設定"]
-                if lang_mode == "en":
-                    markers = ["Activate"]
-                for marker, roi in zip(markers, [[403,624,348,99]]):
-                    community_finish = context.run_task(
-                        "UtilsOCR",
-                        pipeline_override={
-                            "UtilsOCR": {
-                                "recognition": {
-                                    "param": {
-                                        "roi": roi,
-                                        "expected": marker
-                                    }
-                                },
-                                "action":{
-                                    "type": "Click"
-                                }
-                            }
-                        }
-                    )
+        team_community = team_data.get("community")
+        if team_community and not self._select_community(context, team_community):
+            timeout_mgr.stop_monitoring(argv.node_name)
+            return False
 
         # 选择AR
         if ar_list:
@@ -983,7 +919,9 @@ class Formation(CustomAction):
                         }
                     }
                 )
-                act_mgr.choose_filter(context, rarity = current_ar_rarity, AR_mode=True)
+                if not act_mgr.choose_filter(context, rarity=current_ar_rarity, AR_mode=True):
+                    timeout_mgr.stop_monitoring(argv.node_name)
+                    return False
                 while True:
                     context.tasker.controller.post_screencap().wait()
                     current_image = context.tasker.controller.cached_image
@@ -1006,6 +944,7 @@ class Formation(CustomAction):
                         break_time += 1
                         context.run_action(
                             "UtilsSwipe",
+                            box=[783, 74, 140, 500],
                             pipeline_override={
                                 "UtilsSwipe": {
                                     "action": {
