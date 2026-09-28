@@ -159,6 +159,78 @@ class CommunityResultTests(unittest.TestCase):
         self.assertFalse(self.select())
 
 
+class WeeklyStateTests(unittest.TestCase):
+    def setUp(self):
+        self.shared = state()
+        self.helper = load_agent_module("agent/utils/action_helpers.py", info_share=self.shared)
+        self.module = load_agent_module("agent/custom/action/weekly_mission.py", info_share=self.shared, act_mgr=self.helper.act_mgr)
+        self.action = self.module.WeeklyMission()
+        self.saved = deepcopy(self.action.CN_MISSION)
+        self.module.data_io.read_app_state.side_effect = lambda *args: deepcopy(self.saved)
+        self.ctx = context()
+
+    def record(self, language="cn"):
+        original = self.helper.act_mgr.detect_lang
+        def detect(*args, **kwargs):
+            return original(*args, **kwargs) if kwargs.get("compare_list") is not None else language
+        with patch.object(self.module.time, "sleep"), redirect_stdout(io.StringIO()), \
+             patch.object(self.helper.act_mgr, "detect_lang", side_effect=detect):
+            return self.action.run(self.ctx, NS(node_name="CheckWeeklyMissions.Record"))
+
+    def test_empty_ocr_does_not_write_completed_records(self):
+        self.ctx.run_recognition.return_value = ocr()
+        self.assertFalse(self.record())
+        self.module.data_io.write_app_state.assert_not_called()
+        self.assertFalse(self.shared.show_support)
+
+    def test_valid_progress_preserves_unseen_tasks(self):
+        self.ctx.run_recognition.return_value = ocr("完成攻略3次地城", "1/3")
+        self.assertTrue(self.record())
+        written = self.module.data_io.write_app_state.call_args.args[1]
+        self.assertEqual(written["完成攻略3次地城"]["current"], 1)
+        self.assertFalse(written["累计消耗450点体力"]["completed"])
+
+    def test_failed_swipe_does_not_write_partial_scan(self):
+        self.ctx.run_recognition.return_value = ocr("完成攻略3次地城", "1/3")
+        self.ctx.run_action.return_value = NS(success=False)
+        self.assertFalse(self.record())
+        self.module.data_io.write_app_state.assert_not_called()
+
+    def test_language_migration_uses_current_screen_language(self):
+        self.saved = deepcopy(self.action.EN_MISSION)
+        self.ctx.run_recognition.return_value = ocr("完成攻略3次地城", "1/3")
+        self.assertTrue(self.record())
+        written = self.module.data_io.write_app_state.call_args.args[1]
+        self.assertIn("完成攻略3次地城", written)
+        self.assertNotIn("Clear 3 dungeon quests", written)
+        self.assertEqual(self.shared.current_lang, "cn")
+
+    def test_classifying_saved_text_does_not_change_screen_language(self):
+        result = self.helper.act_mgr.detect_lang(None, [0, 0, 0, 0], compare_list=list(self.action.EN_MISSION))
+        self.assertEqual(result, "en")
+        self.assertEqual(self.shared.current_lang, "cn")
+
+    def test_explicit_all_completed_node_still_completes_tasks(self):
+        with patch.object(self.helper.act_mgr, "detect_lang", return_value="cn"):
+            self.assertTrue(self.action.run(self.ctx, NS(node_name="CheckWeeklyMissions.AllCompleted")))
+        self.assertTrue(all(v["completed"] for v in self.module.data_io.write_app_state.call_args.args[1].values()))
+
+    def test_language_migration_preserves_saved_progress(self):
+        self.saved = deepcopy(self.action.EN_MISSION)
+        self.saved["Use 450 stamina points"]["current"] = 210
+        self.ctx.run_recognition.return_value = ocr("完成攻略3次地城", "1/3")
+        self.assertTrue(self.record())
+        written = self.module.data_io.write_app_state.call_args.args[1]
+        self.assertEqual(written["累计消耗450点体力"]["current"], 210)
+
+    def test_empty_frame_after_valid_page_does_not_write_partial_scan(self):
+        self.ctx.run_recognition.side_effect = [ocr("完成攻略3次地城", "1/3"), ocr(), ocr(), ocr()]
+        self.assertFalse(self.record())
+        self.module.data_io.write_app_state.assert_not_called()
+
+    def test_transient_empty_frame_can_recover(self):
+        self.ctx.run_recognition.side_effect = [ocr(), ocr("完成攻略3次地城", "1/3"), ocr("完成攻略3次地城", "1/3")]
+        self.assertTrue(self.record())
 
 
 class PotionLimitTests(unittest.TestCase):

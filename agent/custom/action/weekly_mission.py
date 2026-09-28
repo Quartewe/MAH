@@ -141,110 +141,85 @@ class WeeklyMission(CustomAction):
         return None
 
     def _catch_mission_data(self, context):
-        mission_data = self._load_mission_data()
-        ongoing_missions = set()
+        saved = deepcopy(self._load_mission_data())
+        language = act_mgr.detect_lang(context, [481, 19, 777, 613], info_share.IGNORE_LIST)
+        templates = {"cn": self.CN_MISSION, "jp": self.JP_MISSION,
+                     "tw": self.TW_MISSION, "en": self.EN_MISSION}
+        if language not in templates:
+            logger.error("无法确定周任务界面语言")
+            return None
 
-        if mission_data == {}:
-            logger.info("未找到已有任务数据，正在检测语言并初始化任务数据")
-            match act_mgr.detect_lang(context, [481,19,777,613], info_share.IGNORE_LIST):
-                case "jp":
-                    mission_data = deepcopy(self.JP_MISSION)
-                case "cn":
-                    mission_data = deepcopy(self.CN_MISSION)
-                case "tw":
-                    mission_data = deepcopy(self.TW_MISSION)
-                case "en":
-                    mission_data = deepcopy(self.EN_MISSION)
+        mission_data = deepcopy(templates[language])
+        state_language = act_mgr.detect_lang(
+            context, [0, 0, 0, 0], compare_list=list(saved)
+        ) if saved else ""
+        # 四种模板按相同任务顺序定义；切换语言时保留已有进度，不改变界面语言。
+        if state_language in templates:
+            for old_key, new_key in zip(templates[state_language], mission_data):
+                if old_key in saved:
+                    mission_data[new_key] = deepcopy(saved[old_key])
+        else:
+            for key in mission_data.keys() & saved.keys():
+                mission_data[key] = deepcopy(saved[key])
 
-        state_keys = mission_data.keys() if mission_data else None
-        state_lang = act_mgr.detect_lang(context, [0,0,0,0], info_share.IGNORE_LIST, compare_list=state_keys)
-        if state_lang != info_share.current_lang:
-            match state_lang:
-                case "jp":
-                    mission_data = deepcopy(self.JP_MISSION)
-                case "cn":
-                    mission_data = deepcopy(self.CN_MISSION)
-                case "tw":
-                    mission_data = deepcopy(self.TW_MISSION)
-                case "en":
-                    mission_data = deepcopy(self.EN_MISSION)
-
-        while True:
-            current_fingerprint = []
-            should_swipe = False
+        last_fingerprint = None
+        empty_attempts = 0
+        for _ in range(30):
+            if context.tasker.stopping:
+                return None
             context.tasker.controller.post_screencap().wait()
             current_image = context.tasker.controller.cached_image
             mission_res = context.run_recognition(
-                "UtilsOCR",
-                current_image,
-                pipeline_override={
-                    "UtilsOCR": {
-                        "recognition":{
-                            "param":{
-                                "roi": self.MISSION_ROI,
-                                "order_by": "Vertical"
-                            }
-                        }
-                    }
-                }
+                "UtilsOCR", current_image,
+                pipeline_override={"UtilsOCR": {"recognition": {"param": {
+                    "roi": self.MISSION_ROI, "order_by": "Vertical"
+                }}}},
             )
-            ocr_results = list(mission_res.all_results)
-            print(ocr_results)
-
-            for mission in mission_data.keys():
-                matched_items = [res for res in ocr_results if mission in self._normalize_ocr_text(res.text)]
+            ocr_results = list(mission_res.all_results) if mission_res is not None else []
+            current_fingerprint = []
+            for mission in mission_data:
+                matched_items = [res for res in ocr_results
+                                 if mission in self._normalize_ocr_text(res.text)]
                 if not matched_items:
                     continue
-
                 mission_item = max(matched_items, key=lambda item: item.score)
-                logger.info(f"任务 {mission} 匹配到文本: {mission_item.text}")
                 current_fingerprint.append(mission)
-                ongoing_missions.add(mission)
-                should_swipe = True
-
                 progress = self._pick_mission_info(mission_item, ocr_results)
-                if progress is None:
-                    logger.info(f"任务 {mission} 未识别到进度，保留当前记录")
-                else:
+                if progress is not None:
                     current, target = progress
-                    mission_data[mission]["current"] = current
-                    mission_data[mission]["target"] = target
-                    mission_data[mission]["completed"] = current >= target
-                    logger.info(f"任务 {mission} 当前进度: {current}/{target}")
+                    mission_data[mission].update(current=current, target=target,
+                                                 completed=current >= target)
 
-            if should_swipe:
-                context.run_action(
-                    "UtilsSwipe",
-                    pipeline_override={
-                        "UtilsSwipe": {
-                            "action": {
-                                "param": {
-                                    "begin": [770, 577, 50, 10],
-                                    "end": [770,93,50,10],
-                                    "duration": 500,
-                                    "end_hold": 500
-                                }
-                            }
-                        }
-                    }
-                )
-            
-            time.sleep(1)
-            if current_fingerprint != self.last_fingerprint:
-                logger.info("上一次指纹:", self.last_fingerprint)
-                logger.info("当前指纹:", current_fingerprint)
-                self.last_fingerprint = current_fingerprint
-            else:
-                logger.info("OCR结果与上次相同，认为已经读取完成")
-                for mission in mission_data.keys():
-                    if mission in ongoing_missions:
-                        continue
-                    mission_data[mission]["completed"] = True
-                    mission_data[mission]["current"] = mission_data[mission]["target"]
-                    if next(iter(mission_data)) == mission:
-                        info_share.show_support = True
-                    logger.info(f"任务 {mission} 不在进行中列表，标记为已完成")
+            if not current_fingerprint:
+                empty_attempts += 1
+                if empty_attempts >= 3:
+                    logger.error("周任务连续识别为空，保留原有记录")
+                    return None
+                time.sleep(1)
+                continue
+            empty_attempts = 0
+            if current_fingerprint == last_fingerprint:
+                # 未扫描到的任务保持旧值。只有明确的完成进度或 AllCompleted 节点
+                # 才能写入完成，空 OCR、漏页和滚动停滞都不是完成证据。
+                support_key = next(iter(mission_data))
+                info_share.show_support = bool(mission_data[support_key]["completed"])
                 return mission_data
+
+            last_fingerprint = current_fingerprint
+            result = context.run_action(
+                "UtilsSwipe", box=self.MISSION_ROI,
+                pipeline_override={"UtilsSwipe": {"action": {"param": {
+                    "begin": [770, 577, 50, 10], "end": [770, 93, 50, 10],
+                    "duration": 500, "end_hold": 500
+                }}}},
+            )
+            if result is None or not result.success:
+                logger.error("周任务滚动失败，保留原有记录")
+                return None
+            time.sleep(1)
+
+        logger.error("周任务扫描超过次数限制，保留原有记录")
+        return None
 
     def _reset_mission_data(self, context):
         match act_mgr.detect_lang(context, [481,19,777,613], info_share.IGNORE_LIST):
@@ -256,6 +231,9 @@ class WeeklyMission(CustomAction):
                 mission_data = deepcopy(self.TW_MISSION)
             case "en":
                 mission_data = deepcopy(self.EN_MISSION)
+            case _:
+                logger.error("无法确定周任务界面语言")
+                return None
         return mission_data
 
     def _set_to_completed(self, context):
@@ -268,6 +246,9 @@ class WeeklyMission(CustomAction):
                 mission_data = deepcopy(self.TW_MISSION)
             case "en":
                 mission_data = deepcopy(self.EN_MISSION)
+            case _:
+                logger.error("无法确定周任务界面语言")
+                return None
         for mission in mission_data.keys():
             mission_data[mission]["completed"] = True
             mission_data[mission]["current"] = mission_data[mission]["target"]
@@ -287,6 +268,9 @@ class WeeklyMission(CustomAction):
         # 选择任务
         if argv.node_name == "CheckWeeklyMissions.Record":
             mission_data = self._catch_mission_data(context)
+            if mission_data is None:
+                timeout_mgr.stop_monitoring(argv.node_name)
+                return False
             if data_io.write_app_state("weekly_missions", mission_data):
                 timeout_mgr.stop_monitoring(argv.node_name)
                 return True
@@ -297,6 +281,9 @@ class WeeklyMission(CustomAction):
                 
         elif argv.node_name == "CheckWeeklyMissions.AllCompleted":
             mission_data = self._set_to_completed(context)
+            if mission_data is None:
+                timeout_mgr.stop_monitoring(argv.node_name)
+                return False
             success = data_io.write_app_state("weekly_missions", mission_data)
             timeout_mgr.stop_monitoring(argv.node_name)
             return success
