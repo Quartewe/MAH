@@ -2,6 +2,9 @@
     "Activity.Entry": {
         "next": [
             "Activity.Go"
+        ],
+        "on_error": [
+            "Activity.Recover"
         ]
     },
     "Activity.Go": {
@@ -23,11 +26,20 @@
             "type": "Click",
             "param": {}
         },
+        "post_wait_freezes": {
+            "time": 1000,
+            "target": [
+                494,
+                3,
+                779,
+                671
+            ]
+        },
         "next": [
             "Activity.Select"
         ],
         "on_error": [
-            "[JumpBack]Global.Entry"
+            "Activity.Recover"
         ]
     },
     "Activity.Select": {
@@ -42,6 +54,19 @@
             "Global.AutoCombat.Entry"
         ],
         "on_error": [
+            "Activity.Recover"
+        ]
+    },
+    "Activity.Recover": {
+        "max_hit": 1,
+        "next": [
+            "Activity.Go",
+            "[JumpBack]Activity.RecoverHome"
+        ]
+    },
+    "Activity.RecoverHome": {
+        "max_hit": 1,
+        "next": [
             "Global.Entry"
         ]
     }

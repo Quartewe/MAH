@@ -112,6 +112,7 @@ class QuestSelect(CustomAction):
             logger.info(f"初始向上滑动...")
             context.run_action(
                 "UtilsSwipe",
+                box=[494, 3, 779, 671],
                 pipeline_override={
                     "UtilsSwipe": {
                         "begin":[816,120,37,26],
@@ -205,6 +206,7 @@ class QuestSelect(CustomAction):
                         logger.info(f"分组标题位于底部，先上滑确认展开状态: {header}")
                         context.run_action(
                             "UtilsSwipe",
+                            box=[494, 3, 779, 671],
                             pipeline_override={
                                 "UtilsSwipe": {
                                     "begin": [933, 603, 24, 18],
@@ -280,6 +282,7 @@ class QuestSelect(CustomAction):
                     # 先向下滑动看看能否打开任务
                     context.run_action(
                         "UtilsSwipe",
+                        box=[494, 3, 779, 671],
                         pipeline_override={
                             "UtilsSwipe": {
                                 "begin":[927,460,30,24],
@@ -336,6 +339,7 @@ class QuestSelect(CustomAction):
                     # 向上滑动
                     context.run_action(
                         "UtilsSwipe",
+                        box=[494, 3, 779, 671],
                         pipeline_override={
                             "UtilsSwipe": {
                                 "begin":[933,603,24,18],
@@ -372,6 +376,7 @@ class QuestSelect(CustomAction):
                         logger.info(f"结果数减少，说明目标已经过了，向下返回...")
                         context.run_action(
                             "UtilsSwipe",
+                            box=[494, 3, 779, 671],
                             pipeline_override={
                                 "UtilsSwipe": {
                                     "begin":[840,47,40,23],
@@ -384,6 +389,7 @@ class QuestSelect(CustomAction):
                 logger.info(f"向下滑动继续查找...")
                 context.run_action(
                     "UtilsSwipe",
+                    box=[494, 3, 779, 671],
                     pipeline_override={
                         "UtilsSwipe" : {
                             "begin":[839,551,37,25],
@@ -396,6 +402,7 @@ class QuestSelect(CustomAction):
                 logger.info(f"未识别到任何任务，向下滑动...")
                 context.run_action(
                     "UtilsSwipe",
+                    box=[494, 3, 779, 671],
                     pipeline_override={
                         "UtilsSwipe": {
                             "begin":[832,327,59,35],
@@ -454,6 +461,7 @@ class QuestSelect(CustomAction):
                 logger.info(f"未识别到任何任务")
                 context.run_action(
                     "UtilsSwipe",
+                    box=[494, 3, 779, 671],
                     pipeline_override={
                         "UtilsSwipe": {
                             "begin":[796,611,20,20],

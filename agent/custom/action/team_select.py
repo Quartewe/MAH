@@ -139,7 +139,8 @@ class TeamSelect(CustomAction):
             
             logger.info(f"第 {attempt} 次滑动寻找下一支队伍...")
             context.run_action(
-                "UtilsSwipe"
+                "UtilsSwipe",
+                box=[55, 195, 100, 470],
             )
         
         logger.info(f"达到最大尝试次数 ({max_attempts})，未找到目标团队")

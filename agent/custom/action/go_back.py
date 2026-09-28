@@ -5,113 +5,70 @@ import json
 import time
 from utils import logger, timeout_mgr
 
+
 @AgentServer.custom_action("GoBack")
 class GoBack(CustomAction):
-    def __init__(self):
-        super().__init__()
-
     def run(
         self,
         context: Context,
         argv: CustomAction.RunArg,
     ) -> bool:
-        if timeout_mgr.check_timeout(argv.node_name):
-            return False
+        try:
+            param = json.loads(argv.custom_action_param)
+            clicks = 0
+            while clicks < 15:
+                if context.tasker.stopping or timeout_mgr.check_timeout(argv.node_name):
+                    return False
 
-        param = json.loads(argv.custom_action_param)
-        i = 0
-        last_try = False
-        while i < 15:
-            context.tasker.controller.post_screencap().wait()
-            current_image = context.tasker.controller.cached_image
-            back_res = context.run_recognition(
-                "UtilsOCR",
-                current_image,
-                pipeline_override={
-                    "UtilsOCR": {
-                        "post_wait_freezes":2000,
-                        "recognition": {
-                            "param": {
-                                "roi": [4,12,301,102],
-                                "expected": param,
-                            },
-                        }
-                    }
-                }
-            )
-            print("[DEBUG]GoBack 返回识别结果:", back_res.best_result)
-            if back_res.best_result:
-                context.run_action(
-                    "UtilsClick",
-                    pipeline_override={
-                        "UtilsClick":{
-                            "action":{
-                                "param":{
-                                    "target": back_res.best_result.box
-                                }
-                            }
-                        }
-                    }
-                )
-                print("[DEBUG]GoBack 点击返回按钮")
-            else:
-                loading_res = context.run_recognition(
-                "UtilsOCR",
-                current_image,
-                pipeline_override={
-                    "UtilsOCR": {
-                        "post_wait_freezes":2000,
-                        "recognition": {
-                            "param": {
-                                "roi": [9,572,522,149],
-                                "expected": "LOADING",
-                                },
-                            }
-                        }
-                    }
-                )
-                print("[DEBUG]GoBack 加载识别结果:", loading_res.best_result)
-
-                if last_try and not back_res.best_result:
-                    logger.info("返回成功")
-                    timeout_mgr.stop_monitoring(argv.node_name)
-                    return True
-                else: 
-                    logger.info("仍在加载，继续等待")
-                    last_try = False
-
-                while loading_res.best_result:
-                    context.tasker.controller.post_screencap().wait()
-                    current_image = context.tasker.controller.cached_image
-                    loading_res = context.run_recognition(
+                context.tasker.controller.post_screencap().wait()
+                current_image = context.tasker.controller.cached_image
+                back_res = context.run_recognition(
                     "UtilsOCR",
                     current_image,
                     pipeline_override={
                         "UtilsOCR": {
-                            "post_wait_freezes":2000,
                             "recognition": {
-                                "param": {
-                                    "roi": [9,572,522,149],
-                                    "expected": "LOADING",
-                                    },
-                                }
+                                "param": {"roi": [4, 12, 301, 102], "expected": param}
                             }
                         }
+                    },
+                )
+                if back_res.best_result:
+                    result = context.run_action(
+                        "UtilsClick",
+                        back_res.best_result.box,
+                        pipeline_override={
+                            "UtilsClick": {
+                                "action": {"param": {"target": back_res.best_result.box}}
+                            }
+                        },
                     )
-                    print("[DEBUG]GoBack 加载识别结果:", loading_res.best_result)
+                    if result is None or not result.success:
+                        return False
+                    clicks += 1
+                    continue
+
+                loading_res = context.run_recognition(
+                    "UtilsOCR",
+                    current_image,
+                    pipeline_override={
+                        "UtilsOCR": {
+                            "recognition": {
+                                "param": {"roi": [9, 572, 522, 148], "expected": "LOADING"}
+                            }
+                        }
+                    },
+                )
+                if loading_res.best_result:
+                    logger.info("仍在加载，继续等待")
                     time.sleep(1)
+                    # 下一轮重新截屏，同时检查返回和加载，不能复用加载前的返回结果。
+                    continue
 
-                    if not loading_res.best_result:
-                        logger.info("进入最后一次尝试模式")
-                        last_try = True
-                        break
-
-            if not back_res.best_result and not loading_res.best_result:
                 logger.info("返回成功")
-                timeout_mgr.stop_monitoring(argv.node_name)
                 return True
 
-            i += 1
-        print("[DEBUG]GoBack 尝试 15 次后仍未返回")
-        timeout_mgr.stop_monitoring(argv.node_name)
-        return False
+            logger.warning("尝试 15 次后仍未返回")
+            return False
+        finally:
+            timeout_mgr.stop_monitoring(argv.node_name)

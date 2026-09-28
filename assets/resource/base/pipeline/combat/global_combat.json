@@ -1,18 +1,7 @@
 {
     "Global.AutoCombat.Wait": {
-        "recognition": {
-            "type": "OCR",
-            "param": {
-                "expected": [
-                    "Loading"
-                ]
-            }
-        },
-        "post_wait_freezes": 1000,
+        "timeout": 120000,
         "next": [
-            "Global.AutoCombat.Wait"
-        ],
-        "on_error": [
             "Global.AutoCombat.Replay1",
             "Global.AutoCombat.Drink1",
             "Global.AutoCombat"
@@ -190,9 +179,6 @@
             "threshold": 0.999
         },
         "next": [
-            "Global.AutoCombat.Replay1",
-            "Global.AutoCombat.Drink1",
-            "Global.AutoCombat",
             "Global.AutoCombat.Wait"
         ]
     },
@@ -281,8 +267,7 @@
             "threshold": 0.999
         },
         "next": [
-            "Global.AutoCombat.Replay1",
-            "Global.AutoCombat"
+            "Global.AutoCombat.Wait"
         ],
         "on_error": [
             "Global.AutoCombat.Back0"
