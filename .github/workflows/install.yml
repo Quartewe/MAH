@@ -82,7 +82,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        os: [win, macos, linux]
+        os: [win]
         arch: [aarch64, x86_64]
       fail-fast: false
 
@@ -1072,7 +1072,7 @@ jobs:
 
       - uses: actions/download-artifact@v4
         with:
-          pattern: MAH-{win,macos,linux}-*
+          pattern: MAH-win-*
           path: assets
 
       - name: Download Android APK

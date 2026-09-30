@@ -64,10 +64,10 @@ class AndroidReleaseWorkflowTests(unittest.TestCase):
             # Android files must not enter the desktop ZIP/incremental repacking loop.
             self.assertNotEqual(downloads[artifact], "assets")
 
-    def test_android_is_not_built_as_a_desktop_archive(self):
+    def test_desktop_archives_are_windows_only(self):
         matrix = load_workflow("install.yml")["jobs"]["install"]["strategy"]["matrix"]
         self.assertNotIn("android", matrix["os"])
-        self.assertEqual(set(matrix["os"]), {"win", "macos", "linux"})
+        self.assertEqual(set(matrix["os"]), {"win"})
 
     def test_project_package_does_not_publish_a_separate_tag_release(self):
         project = load_workflow("android-project.yml")
