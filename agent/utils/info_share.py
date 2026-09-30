@@ -12,7 +12,7 @@ class InfoShare:
     current_lang = ""
     show_support = False
     counter = 1
-    leader_pos = [] 
+    leader_pos = []  # 本局开局校准的棋盘基准，作战退出后清空。
     IGNORE_LIST = ["ATK", "DEF", "HP", "SP", "CD", "Energy", "Shield", "Damage", "Heal", "Buff", "Debuff", "进行度", "進行度", "COMPELETED", "x100"]
     drink_times = {
         "All": 0,

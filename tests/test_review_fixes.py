@@ -83,11 +83,14 @@ class BattleFailureTests(unittest.TestCase):
         self.shared.leader_pos = [700, 500]
         self.assertFalse(self.run_battle())
 
-    def test_missing_leader_during_position_recheck_returns_failure(self):
+    def test_previous_origin_does_not_trigger_position_recheck(self):
         self.script()
         self.shared.leader_pos = [700, 500]
         self.action._get_posL = Mock(side_effect=[[810, 500], None])
-        self.assertFalse(self.run_battle())
+        self.ctx.run_recognition.side_effect = [ocr(), ocr("再次挑战")]
+        self.assertTrue(self.run_battle())
+        self.action._get_posL.assert_called_once_with(self.ctx)
+        self.assertEqual(self.shared.leader_pos, [])
 
     def test_automatic_battle_recognition_error_is_failure(self):
         self.ctx.run_recognition.return_value = None

@@ -253,7 +253,22 @@ class AutoCombat(CustomAction):
             self.detect_complete_error = True
             traceback.print_exc()
             return True
-        
+
+    def _wait_for_complete(self, context, max_wait=300):
+        """脚本动作已执行完时，只等待结算，不重新定位或重放动作。"""
+        start = time.monotonic()
+        while not self.if_complete:
+            self._detect_complete(context)
+            if self.detect_complete_error or context.tasker.stopping:
+                return False
+            if self.if_complete:
+                return True
+            if time.monotonic() - start >= max_wait:
+                logger.warning(f"脚本动作已结束，等待结算 {max_wait} 秒后超时")
+                return False
+            time.sleep(1)
+        return not self.detect_complete_error and not context.tasker.stopping
+
     def _combat(
         self,
         context,
@@ -364,6 +379,8 @@ class AutoCombat(CustomAction):
         context: Context,
         argv: CustomAction.RunArg,
     ) -> bool:
+        # 每次调用覆盖一整局；不能拿上一局的队长位置校正本局棋盘。
+        info_share.leader_pos = []
         if timeout_mgr.check_timeout(argv.node_name):
             return False
 
@@ -685,7 +702,7 @@ class AutoCombat(CustomAction):
                 logger.info(f"循环战斗第 {loop_count} 轮未完成，正在重试...")
 
             logger.info("循环战斗已完成，正在退出...")
-            return not self.detect_complete_error and not context.tasker.stopping, current_pos_data
+            return self.if_complete and not self.detect_complete_error and not context.tasker.stopping, current_pos_data
 
         def main() -> bool:
             param = argv.custom_action_param
@@ -747,37 +764,21 @@ class AutoCombat(CustomAction):
                     return False
 
             if not info_share.auto_combat_mode:
-                posL = self._get_posL(context)
-                if not posL:
-                    logger.error("获取队长位置失败，无法继续战斗")
+                battle_origin = self._get_posL(context)
+                if not battle_origin:
+                    logger.error("无法通过开局队长位置确定棋盘基准，停止本局作战")
                     return False
-                if not info_share.leader_pos:
-                    info_share.leader_pos = posL
-                elif abs(info_share.leader_pos[0] - posL[0]) > 40 or abs(info_share.leader_pos[1] - posL[1]) > 40:
-                    time.sleep(3)
-                    logger.warning(f"检测到队长位置变化，正在复核位置准确性...")
-                    last_posL = posL
-                    current_posL = self._get_posL(context)
-                    if not current_posL:
-                        logger.error("复核队长位置失败，无法继续战斗")
-                        return False
-                    if abs(last_posL[0] - current_posL[0]) > 40 or abs(last_posL[1] - current_posL[1]) > 40:
-                        logger.info(f"正在修正位置误差...")
-                        posL = current_posL
-                    else:
-                        logger.warning(f"队长位置已发生变化!")
-                    
-                if not posL:
-                    logger.error("获取队长位置失败，无法继续战斗")
-                    timeout_mgr.stop_monitoring(argv.node_name)
-                    return False
+                # 基准固定到本局退出；之后只更新角色的相对格子位置。
+                # leader 移动或退场都不触发再次识别或基准修正。
+                info_share.leader_pos = battle_origin.copy()
+                logger.info(f"本局棋盘基准已固定: {battle_origin}")
                 base_action_data, loop_action_data = analyze_data(action_data)
-                current_pos_data = list_combat(pos_data, base_action_data, posL)
+                current_pos_data = list_combat(pos_data, base_action_data, battle_origin)
                 if self.detect_complete_error or context.tasker.stopping:
                     return False
                 if loop_action_data and not self.if_complete:
                     logger.info("基础执行完成，开始循环战斗...")
-                    loop_completed, _ = loop_combat(current_pos_data, loop_action_data, posL)
+                    loop_completed, _ = loop_combat(current_pos_data, loop_action_data, battle_origin)
                     if loop_completed:
                         logger.info("循环战斗已完成")
                         timeout_mgr.stop_monitoring(argv.node_name)
@@ -787,9 +788,8 @@ class AutoCombat(CustomAction):
                     timeout_mgr.stop_monitoring(argv.node_name)
                     return False
                 else:
-                    logger.info("完成当前战斗")
-                    timeout_mgr.stop_monitoring(argv.node_name)
-                    return True
+                    logger.info("脚本动作已执行完，等待本局结算")
+                    return self._wait_for_complete(context)
             timeout_mgr.stop_monitoring(argv.node_name)
             return False
 
@@ -797,6 +797,7 @@ class AutoCombat(CustomAction):
             result = main()
             return result and not self.detect_complete_error and not context.tasker.stopping
         finally:
+            info_share.leader_pos = []
             self.detect_complete_error = False
             self.if_complete = False
             timeout_mgr.stop_monitoring(argv.node_name)
