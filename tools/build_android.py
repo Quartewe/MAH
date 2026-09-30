@@ -92,7 +92,7 @@ def stage(output: Path, resources: Path, version: str, resource_version: str) ->
     interface_path = output / "interface.json"
     interface = json.loads(interface_path.read_text(encoding="utf-8"))
     interface.update(version=version, resource_version=resource_version)
-    interface["software_github"] = "https://github.com/Quartewe/MAH-UIApp"
+    interface["software_github"] = "https://github.com/Quartewe/MAH"
     # The desktop RID has no Android APK distribution configured.
     interface.pop("mirrorchyan_rid", None)
     interface["project_github"] = "https://github.com/Quartewe/MAH"

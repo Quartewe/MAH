@@ -19,6 +19,9 @@ on:
         required: false
         default: ""
 
+permissions:
+  contents: read
+
 jobs:
   meta:
     runs-on: ubuntu-latest
@@ -29,8 +32,13 @@ jobs:
       - id: set_tag
         run: |
           # 检查标签格式
-          is_release=${{ startsWith(github.ref, 'refs/tags/v') }}
-          tag=$(git describe --tags --match "v*" ${{ github.ref }} || true)
+          is_release=false
+          if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
+            is_release=true
+            tag="$GITHUB_REF_NAME"
+          else
+            tag=$(git describe --tags --match "v*" HEAD || true)
+          fi
           if [[ $tag != v* ]]; then
             tag=$(curl -sX GET "https://api.github.com/repos/${{ github.repository }}/releases/latest" --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' | awk '/tag_name/{print $4}' FS='["]')
             if [[ $tag != v* ]]; then
@@ -39,7 +47,7 @@ jobs:
             tag=$(date "+$tag-%y%m%d-$(git rev-parse --short HEAD)")
           fi
 
-          if ! $($is_release) ; then
+          if [[ "$is_release" != "true" ]]; then
             prefix=${tag%-*-*}
             suffix=${tag#$prefix-}
             tag="$prefix-ci.$suffix"
@@ -52,20 +60,29 @@ jobs:
             echo "This is a pre-release version"
           fi
 
-          echo tag=$tag | tee -a $GITHUB_OUTPUT
-          echo is_release=$is_release | tee -a $GITHUB_OUTPUT
-          echo is_prerelease=$is_prerelease | tee -a $GITHUB_OUTPUT
+          echo "tag=$tag" | tee -a "$GITHUB_OUTPUT"
+          echo "is_release=$is_release" | tee -a "$GITHUB_OUTPUT"
+          echo "is_prerelease=$is_prerelease" | tee -a "$GITHUB_OUTPUT"
     outputs:
       tag: ${{ steps.set_tag.outputs.tag }}
       is_release: ${{ steps.set_tag.outputs.is_release }}
       is_prerelease: ${{ steps.set_tag.outputs.is_prerelease }}
+
+  android:
+    needs: meta
+    uses: ./.github/workflows/android-apk.yml
+    with:
+      version: ${{ needs.meta.outputs.tag }}
+      resource_repo: ${{ inputs.resource_repo || 'quartawa/mah_res' }}
+      resource_ref: ${{ inputs.resource_ref || 'main' }}
+      resource_path: ${{ inputs.resource_path || '' }}
 
   install:
     needs: meta
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        os: [win, macos, linux, android]
+        os: [win, macos, linux]
         arch: [aarch64, x86_64]
       fail-fast: false
 
@@ -1043,8 +1060,10 @@ jobs:
 
   release:
     if: ${{ needs.meta.outputs.is_release == 'true' }}
-    needs: [meta, install, changelog]
+    needs: [meta, install, android, changelog]
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
         with:
@@ -1053,7 +1072,20 @@ jobs:
 
       - uses: actions/download-artifact@v4
         with:
+          pattern: MAH-{win,macos,linux}-*
           path: assets
+
+      - name: Download Android APK
+        uses: actions/download-artifact@v4
+        with:
+          name: MAH-Android-APK
+          path: android-assets
+
+      - name: Download Android project package
+        uses: actions/download-artifact@v4
+        with:
+          name: MAH-Android-project
+          path: android-assets
 
       - run: |
           set -euo pipefail
@@ -1465,7 +1497,10 @@ jobs:
           
       - uses: softprops/action-gh-release@v2
         with:
-          files: assets/*
+          files: |
+            assets/*.zip
+            android-assets/*.apk
+            android-assets/MAH-project-android-*.zip
           tag_name: ${{ needs.meta.outputs.tag }}
           body: ${{ needs.changelog.outputs.release_body }}
           draft: false

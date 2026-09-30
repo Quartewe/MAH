@@ -1,0 +1,145 @@
+name: Android APK
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      uiapp_ref:
+        description: "MAH-UIApp branch, tag, or commit"
+        default: main
+      resource_ref:
+        description: "mah_res branch or tag"
+        default: main
+      resource_repo:
+        description: "External resource repository (owner/repo)"
+        default: quartawa/mah_res
+      resource_path:
+        description: "Optional directory inside the resource repository"
+        default: ''
+      version:
+        description: "APK version (empty generates a CI version)"
+        required: false
+  workflow_call:
+    inputs:
+      uiapp_ref:
+        type: string
+        default: main
+      resource_ref:
+        type: string
+        default: main
+      resource_repo:
+        type: string
+        default: quartawa/mah_res
+      resource_path:
+        type: string
+        default: ''
+      version:
+        type: string
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: android-apk-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref_type != 'tag' }}
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - name: Checkout MAH
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+          persist-credentials: false
+          path: MAH
+      - name: Checkout Android app
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          repository: Quartewe/MAH-UIApp
+          ref: ${{ inputs.uiapp_ref || 'main' }}
+          fetch-depth: 0
+          persist-credentials: false
+          path: MAH-UIApp
+      - name: Checkout resources
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          repository: ${{ inputs.resource_repo || 'quartawa/mah_res' }}
+          ref: ${{ inputs.resource_ref || 'main' }}
+          fetch-depth: 0
+          persist-credentials: false
+          path: mah_res
+      - name: Set up Java
+        uses: actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3 # v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: gradle
+          cache-dependency-path: |
+            MAH-UIApp/**/*.gradle.kts
+            MAH-UIApp/gradle/libs.versions.toml
+            MAH-UIApp/gradle/wrapper/gradle-wrapper.properties
+      - name: Set up Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: '3.13'
+      - name: Prepare Android SDK
+        run: |
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --sdk_root="$ANDROID_HOME" \
+            "platforms;android-37" "build-tools;37.0.0" "cmake;3.22.1"
+      - name: Resolve APK version
+        id: version
+        working-directory: MAH
+        shell: python
+        env:
+          INPUT_VERSION: ${{ inputs.version }}
+        run: |
+          import os
+          import re
+          import subprocess
+
+          version = os.environ.get("INPUT_VERSION", "").strip()
+          if not version:
+              base = subprocess.check_output(
+                  ["git", "describe", "--tags", "--always", "--match", "v*"], text=True
+              ).strip()
+              version = f"{base}-android.ci.{os.environ['GITHUB_RUN_NUMBER']}.{os.environ['GITHUB_RUN_ATTEMPT']}"
+          if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._+-]*", version):
+              raise SystemExit("Version must contain only letters, numbers, dots, underscores, + or -")
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as output:
+              output.write(f"version={version}\n")
+          print(f"APK version: {version}")
+      - name: Build universal debug APK
+        working-directory: MAH-UIApp
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+          RESOURCE_PATH: ${{ inputs.resource_path }}
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python scripts/build_mah.py --mah ../MAH --resources "../mah_res/$RESOURCE_PATH" --abi all --version "$VERSION"
+      - name: Prepare Android deliverables
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          mkdir -p dist/android
+          cp MAH-UIApp/app/build/outputs/apk/debug/app-debug.apk "dist/android/MAH-android-universal-$VERSION-debug.apk"
+          cp "MAH/build/android/MAH-project-android-$VERSION.zip" dist/android/
+      - name: Upload APK
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: MAH-Android-APK
+          path: dist/android/*.apk
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 14
+      - name: Upload project update package
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: MAH-Android-project
+          path: dist/android/MAH-project-android-*.zip
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 14
