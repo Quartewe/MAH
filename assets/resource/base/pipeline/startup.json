@@ -12,9 +12,9 @@
   },
   "Startup.OpenGame": {
     "action": {
-      "type": "Shell",
+      "type": "StartApp",
       "param": {
-        "cmd": "am start -n jp.co.lifewonders.housamo/com.google.firebase.MessagingUnityPlayerActivity"
+        "package": "jp.co.lifewonders.housamo/com.google.firebase.MessagingUnityPlayerActivity"
       }
     },
     "post_delay": 10000,

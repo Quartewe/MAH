@@ -1,0 +1,29 @@
+assets: ../build/android/pi
+include:
+  - interface.json
+  - icon.png
+  - resource/**
+  - agent/**
+  - data/**
+  - docs/**
+  - config/maa_option.json
+  - LICENSE
+  - mah-package.json
+  - .mah-install.json
+agent:
+  sourceDir: ../build/android/agent
+  abi: [arm64-v8a, x86_64]
+  runtimes:
+    - location: bundle
+      name: MAH Agent
+      executable: bin/python3
+      args: [-u, agent/main.py]
+      env:
+        PYTHONHOME: "{bundle}/prefix"
+        PYTHONPATH: "{bundle}/site-packages/pure.zip:{bundle}/site-packages"
+        LD_LIBRARY_PATH: "{bundle}/prefix/lib:{bundle}/site-packages/chaquopy/lib:{nativeLibs}"
+        MAAFW_BINARY_PATH: "{nativeLibs}"
+app:
+  id: mah
+  label: MAH
+  icon: ../assets/icon.png

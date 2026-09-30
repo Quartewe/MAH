@@ -1,0 +1,52 @@
+name: Android project package
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Project version (must match the release tag when publishing)"
+        required: true
+      resource_ref:
+        description: "mah_res branch or tag"
+        default: main
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: recursive
+      - uses: actions/checkout@v4
+        with:
+          repository: quartawa/mah_res
+          ref: ${{ inputs.resource_ref || 'main' }}
+          fetch-depth: 0
+          path: mah_res
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Stage Android project
+        env:
+          VERSION: ${{ inputs.version || github.ref_name }}
+        run: python tools/build_android.py --resources mah_res --version "$VERSION"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: MAH-Android-project
+          path: build/android/MAH-project-android-*.zip
+      - name: Attach project package to tagged release
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ github.ref_name }}
+        run: |
+          gh release view "$VERSION" >/dev/null 2>&1 || gh release create "$VERSION" --title "$VERSION" --notes "MAH Android project package"
+          gh release upload "$VERSION" build/android/MAH-project-android-*.zip --clobber

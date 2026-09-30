@@ -3,4 +3,4 @@ hanzidentifier
 StrEnum
 numpy
 colorama
-win32_setctime
+win32_setctime; sys_platform == "win32"
