@@ -89,8 +89,9 @@ jobs:
           python-version: '3.13'
       - name: Prepare Android SDK
         run: |
+          # API 37's published SDK package includes the minor version suffix.
           "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --sdk_root="$ANDROID_HOME" \
-            "platforms;android-37" "build-tools;37.0.0" "cmake;3.22.1"
+            "platforms;android-37.0" "build-tools;37.0.0" "cmake;3.22.1"
       - name: Resolve APK version
         id: version
         working-directory: MAH
