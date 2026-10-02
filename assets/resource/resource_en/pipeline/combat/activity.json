@@ -3,7 +3,7 @@
         "recognition": {
             "param": {
                 "expected": [
-                    "Event"
+                    "Events?\\s*$"
                 ]
             }
         }

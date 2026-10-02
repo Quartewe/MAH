@@ -931,7 +931,7 @@
                     "next": "Activity.Entry"
                 },
                 "Global.AutoCombat.BacktoEntry": {
-                    "next": "Activity.Entry"
+                    "next": "Activity.Select"
                 },
                 "Activity.Select": {
                     "action": {
