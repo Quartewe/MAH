@@ -25,10 +25,19 @@ class SelectSupport(CustomAction):
         context: Context,
         argv: CustomAction.RunArg,
     ) -> bool:
-        # 检查超时
-        if timeout_mgr.check_timeout(argv.node_name):
+        try:
+            if timeout_mgr.check_timeout(argv.node_name):
+                return False
+            return self._run(context, argv)
+        except Exception:
+            # 不让异常穿过 ctypes 回调；记录堆栈并向 Pipeline 明确报告失败。
+            logger.exception(f"选择助战失败: {argv.node_name}")
             return False
-        
+        finally:
+            # 成功、无匹配、超时和异常均结束本次计时，避免污染下一次调用。
+            timeout_mgr.stop_monitoring(argv.node_name)
+
+    def _run(self, context: Context, argv: CustomAction.RunArg) -> bool:
         # 重置实例状态，防止跨调用残留
         self.all_res = {}
         self.last_fingerprint = []
@@ -47,7 +56,6 @@ class SelectSupport(CustomAction):
             logger.info(f"目标文件: {param}")
             if not param:
                 logger.info(f"未指定要搜索的目标文件")
-                timeout_mgr.stop_monitoring(argv.node_name)
                 return False
             try:
                 raw_data = data_io.find_target_files(self.DATA_PATH, param)
@@ -59,7 +67,6 @@ class SelectSupport(CustomAction):
                     support_data = None
             except Exception as e:
                 logger.error(f"查找目标文件失败: {e}")
-                timeout_mgr.stop_monitoring(argv.node_name)
                 return False
             
         if not support_data:
@@ -146,8 +153,10 @@ class SelectSupport(CustomAction):
                 )
                 if not self._scan_and_select_support(context, support_data if not default_mode else None, keywords, select_mode, idroi):
                     logger.info("属性筛选失败，未选择到助战")
-                    timeout_mgr.stop_monitoring(argv.node_name)
                     return False
+            else:
+                logger.info("未找到匹配助战，且无可用属性筛选，终止")
+                return False
 
         raw_box = self.raw_box
         swipe_time = self.swipe_time
@@ -186,9 +195,8 @@ class SelectSupport(CustomAction):
             )
             temp += 1
         
-        if raw_box is None:
+        if not raw_box or len(raw_box) != 4:
             logger.info("没有可点击区域，终止")
-            timeout_mgr.stop_monitoring(argv.node_name)
             return False
 
         # 点击（范围为icon左移一个单位边长）
@@ -196,7 +204,6 @@ class SelectSupport(CustomAction):
         y1 = max(0, raw_box[1] + random.randint(0, int(raw_box[3])))
         context.tasker.controller.post_click(x1, y1).wait()
 
-        timeout_mgr.stop_monitoring(argv.node_name)
         return True
 
     def _scan_and_select_support(self, context, support_data, keywords, select_mode, idroi):
@@ -206,7 +213,7 @@ class SelectSupport(CustomAction):
         成功时设置：self.raw_box, self.swipe_time, self.page
         """
         current_fingerprint = [0]
-        self.raw_box = []
+        self.raw_box = None
         self.swipe_time = 0
         self.page = 0
         page = 0
