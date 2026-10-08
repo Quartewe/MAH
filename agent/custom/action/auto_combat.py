@@ -374,6 +374,103 @@ class AutoCombat(CustomAction):
         return current_pos_data
 
 
+    def _enable_options(self, context, node_name):
+        """确认菜单、设置内容和返回战斗三个状态，不把点击成功当成页面已切换。"""
+        deadline = time.monotonic() + 45
+        closing = False
+        clicked_options = set()
+
+        def running():
+            return (not context.tasker.stopping
+                    and time.monotonic() < deadline
+                    and not timeout_mgr.check_timeout(node_name))
+
+        def recognize(image, roi, expected):
+            result = context.run_recognition(
+                "UtilsOCR", image,
+                pipeline_override={"UtilsOCR": {"recognition": {"param": {
+                    "roi": roi, "expected": expected,
+                }}}},
+            )
+            return result.filtered_results if result is not None else None
+
+        def click(box):
+            if not running():
+                return False
+            result = context.run_action(
+                "UtilsClick", box=box,
+                pipeline_override={"UtilsClick": {
+                    "pre_wait_freezes": 0,
+                    "action": {"param": {"target": box}},
+                }},
+            )
+            return result is not None and result.success
+
+        while running():
+            if not context.tasker.controller.post_screencap().wait().succeeded:
+                logger.error("战斗菜单截图失败")
+                return False
+            image = context.tasker.controller.cached_image
+            # 两个控件须在同一帧出现；战斗背景的 MENU 文字始终可能可见。
+            settings = recognize(image, [500, 70, 220, 65], ["^设定$", "^設定$", "^Settings$"])
+            back = recognize(image, [1050, 85, 190, 65], ["^返回$", "^戻る$", "^Back$"])
+            if settings is None or back is None:
+                logger.error("战斗菜单识别失败")
+                return False
+
+            if settings and back:
+                if closing:
+                    if not click(back[0].box):
+                        return False
+                else:
+                    switches = recognize(image, [170, 210, 70, 300], ["^ON$", "^OFF$"])
+                    if switches is None:
+                        logger.error("战斗设置选项识别失败")
+                        return False
+                    switches = sorted(switches, key=lambda result: result.box[1])
+                    # 每一行各有一个开关，排除漏识别以及单行重复 OCR 框。
+                    complete = len(switches) == 3 and all(
+                        top <= result.box[1] < bottom
+                        for result, (top, bottom) in zip(switches, [(210, 310), (310, 425), (425, 510)])
+                    )
+                    if complete:
+                        off = [(i, result) for i, result in enumerate(switches) if result.text.strip() == "OFF"]
+                        if not off:
+                            logger.info("已确认战斗设置三项均为 ON，正在返回战斗")
+                            closing = True
+                            if not click(back[0].box):
+                                return False
+                        else:
+                            for i, result in off:
+                                # 点击后等待新的 ON 结果，避免旧帧导致重复点击把开关关回去。
+                                if i not in clicked_options:
+                                    if not click(result.box):
+                                        return False
+                                    clicked_options.add(i)
+                                    break
+                    elif not switches:
+                        # MENU 会记住上次的页签；只有尚无设置内容时才切换页签。
+                        if not click(settings[0].box):
+                            return False
+            elif not settings and not back:
+                menu = recognize(image, self.toolbar_roi, ["^MENU$"])
+                if menu is None:
+                    return False
+                if menu:
+                    if closing:
+                        logger.info("已确认返回战斗画面")
+                        return running()
+                    if not click(menu[0].box):
+                        return False
+            # 战斗动画期间点击可能被忽略；先等新画面，再决定是否重试。
+            time.sleep(0.5)
+
+        if context.tasker.stopping:
+            logger.info("战斗设置初始化已取消")
+        else:
+            logger.error("等待战斗菜单或设置状态超时")
+        return False
+
     def run(
         self,
         context: Context,
@@ -383,116 +480,6 @@ class AutoCombat(CustomAction):
         info_share.leader_pos = []
         if timeout_mgr.check_timeout(argv.node_name):
             return False
-
-        def get_markers_by_lang():
-            lang = act_mgr.detect_lang(context, [74, 70, 640, 51])
-            if lang == "cn":
-                return ["设定", "返回"]
-            if lang == "tw":
-                return ["設定", "返回"]
-            if lang == "jp":
-                return ["設定", "戻る"]
-            if lang == "en":
-                return ["Settings", "Back"]
-
-            logger.warning("无法确定战斗菜单语言，尝试各语言的菜单文字")
-            return [["设定", "設定", "Settings"], ["返回", "戻る", "Back"]]
-        
-        def enable_options():
-            menu = context.run_task(
-                "UtilsOCR",
-                pipeline_override={
-                    "UtilsOCR": {
-                        "pre_wait_freezes":{
-                            "time": 1500,
-                            "target": [647,373,583,342],
-                            "threshold": 0.999,
-                            "timeout": 15000,
-                        },
-                        "recognition": {
-                            "param": {
-                                "roi": self.toolbar_roi,
-                                "expected": "MENU",
-                                "order_by": "Expected",
-                            }
-                        },
-                        "action": {"type": "click"},
-                    }
-                },
-            )
-            if not act_mgr.task_succeeded(menu):
-                return False
-            logger.info("已点击菜单...")
-
-            markers = get_markers_by_lang()
-
-            setting = context.run_task(
-                "UtilsOCR",
-                pipeline_override={
-                    "UtilsOCR": {
-                        "recognition": {
-                            "param": {
-                                "expected": markers[0],
-                            }
-                        },
-                        "action": {"type": "click"},
-                        "timeout": 0,
-                    }
-                },
-            )
-            if not act_mgr.task_succeeded(setting):
-                return False
-            logger.info(f"已点击 {markers[0]}...")
-            time.sleep(5)
-            context.tasker.controller.post_screencap().wait()
-            current_image = context.tasker.controller.cached_image
-            option_res = context.run_recognition(
-                "UtilsOCR",
-                current_image,
-                pipeline_override={
-                    "UtilsOCR": {
-                        "recognition": {
-                            "param": {
-                                "roi": [78, 140, 844, 422],
-                                "expected": "OFF",
-                            }
-                        }
-                    }
-                },
-            )
-            logger.info(f"选项识别结果: {option_res.filtered_results}")
-            if option_res.best_result:
-                for res in option_res.filtered_results:
-                    if "OFF" in res.text:
-                        logger.info(f"已点击 {res.text} 选项...")
-                        context.run_action(
-                            "UtilsClick",
-                            box=res.box,
-                            pipeline_override={
-                                "UtilsClick": {
-                                    "action": {
-                                        "param": {
-                                            "target": res.box,
-                                        }
-                                    }
-                                }
-                            },
-                        )
-            back = context.run_task(
-                "UtilsOCR",
-                pipeline_override={
-                    "UtilsOCR": {
-                        "recognition": {
-                            "param": {
-                                "roi": [959, 65, 304, 234],
-                                "expected": markers[1],
-                            }
-                        },
-                        "action": {"type": "click"},
-                    }
-                },
-            )
-            return act_mgr.task_succeeded(back)
 
         def ensure_speed_4x():
             context.tasker.controller.post_screencap().wait()
@@ -721,13 +708,13 @@ class AutoCombat(CustomAction):
             auto_mode = not fight_data
 
             if not info_share.combat_set and not info_share.auto_combat_mode:
-                if not enable_options():
+                if not self._enable_options(context, argv.node_name):
                     return False
                 ensure_speed_4x()
                 info_share.combat_set = True
 
             elif not info_share.combat_set and info_share.auto_combat_mode:
-                if not disable_auto_combat() or not enable_options():
+                if not disable_auto_combat() or not self._enable_options(context, argv.node_name):
                     return False
                 ensure_speed_4x()
                 info_share.combat_set = True

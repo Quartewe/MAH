@@ -115,9 +115,9 @@ class BattleFailureTests(unittest.TestCase):
     def test_failed_menu_does_not_set_combat_options(self):
         self.shared.combat_set = False
         self.shared.auto_combat_mode = False
-        self.ctx.run_task.return_value = task_result(False)
-        self.ctx.run_recognition.side_effect = [ocr("OFF"), ocr(), ocr("再次挑战")]
-        self.assertFalse(self.run_battle())
+        with patch.object(self.action, "_enable_options", return_value=False) as configure:
+            self.assertFalse(self.run_battle())
+        configure.assert_called_once_with(self.ctx, self.argv.node_name)
         self.assertFalse(self.shared.combat_set)
 
     def test_cancelled_script_does_not_report_completion(self):
