@@ -1,7 +1,7 @@
 """Stage MAH for MaaFwApp and produce an independently installable project archive.
 
-The APK also embeds the external image/index data. Project updates deliberately
-leave those files to resource_github, and never ship a user's config or combat data.
+Images and indexes are downloaded on first use from resource_github. Project
+updates leave those files to that channel and never ship user state.
 """
 from __future__ import annotations
 
@@ -81,17 +81,21 @@ def stage(output: Path, resources: Path, version: str, resource_version: str) ->
             name = f"{destination}/{path.relative_to(resources / source).as_posix()}"
             out = output / name
             out.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copy2(path, out)
-            resource_files[name] = digest(out)
+            resource_files[name] = digest(path)
+            if source in {"image", "index"}:
+                # Even an overlapping file from assets/resource must stay external.
+                out.unlink(missing_ok=True)
+            else:
+                shutil.copy2(path, out)
     for name in ("ui.json", "characters.json", "ar.json"):
-        json.loads((output / "resource" / "index" / name).read_text(encoding="utf-8"))
+        json.loads((resources / "index" / name).read_text(encoding="utf-8"))
     for name in ("character", "ar"):
-        if not any((output / "resource" / "base" / "image" / name).glob("*")):
+        if not any((resources / "image" / name).glob("*")):
             raise ValueError(f"Missing external {name} images")
 
     interface_path = output / "interface.json"
     interface = json.loads(interface_path.read_text(encoding="utf-8"))
-    interface.update(version=version, resource_version=resource_version)
+    interface.update(version=version, resource_version="")
     interface["software_github"] = "https://github.com/Quartewe/MAH"
     # The desktop RID has no Android APK distribution configured.
     interface.pop("mirrorchyan_rid", None)
@@ -107,9 +111,9 @@ def stage(output: Path, resources: Path, version: str, resource_version: str) ->
                 "framework": "v5.14.2", "agentCore": "3.13.15-maafw5.14.2",
                 "files": project_files}
     (output / "mah-package.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
-    state = {"projectVersion": version, "resourceVersion": resource_version,
+    state = {"projectVersion": version, "resourceVersion": "",
              "revision": f"bundle-{version}-{resource_version}",
-             "owners": {"project": project_files, "resource": resource_files}}
+             "owners": {"project": project_files, "resource": {}}}
     (output / ".mah-install.json").write_text(json.dumps(state, ensure_ascii=False), encoding="utf-8")
     archive = output.parent / f"MAH-project-android-{version}.zip"
     with zipfile.ZipFile(archive, "w", zipfile.ZIP_DEFLATED) as zip_file:
