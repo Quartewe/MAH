@@ -37,6 +37,15 @@ on:
       version:
         type: string
         required: true
+    secrets:
+      ANDROID_KEYSTORE_BASE64:
+        required: true
+      ANDROID_KEYSTORE_PASSWORD:
+        required: true
+      ANDROID_KEY_ALIAS:
+        required: true
+      ANDROID_KEY_PASSWORD:
+        required: true
 
 permissions:
   contents: read
@@ -114,13 +123,74 @@ jobs:
           with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as output:
               output.write(f"version={version}\n")
           print(f"APK version: {version}")
+      - name: Restore APK signing key
+        shell: python
+        env:
+          KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          import base64
+          import os
+          from pathlib import Path
+
+          names = ("KEYSTORE_BASE64", "KEYSTORE_PASSWORD", "KEY_ALIAS", "KEY_PASSWORD")
+          missing = ["ANDROID_" + name for name in names if not os.environ.get(name)]
+          if missing:
+              raise SystemExit("Missing GitHub Secrets: " + ", ".join(missing))
+          key = base64.b64decode("".join(os.environ["KEYSTORE_BASE64"].split()), validate=True)
+          path = Path(os.environ["RUNNER_TEMP"]) / "mah-signing.jks"
+          path.write_bytes(key)
+          path.chmod(0o600)
       - name: Build universal debug APK
         working-directory: MAH-UIApp
         env:
           VERSION: ${{ steps.version.outputs.version }}
           RESOURCE_PATH: ${{ inputs.resource_path }}
           GITHUB_TOKEN: ${{ github.token }}
+          MAH_CI_DEBUG_SIGNING: 'true'
+          KEYSTORE_PATH: ${{ runner.temp }}/mah-signing.jks
+          KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: python scripts/build_mah.py --mah ../MAH --resources "../mah_res/$RESOURCE_PATH" --abi all --version "$VERSION"
+      - name: Verify APK signing certificate
+        shell: python
+        env:
+          KEYSTORE_PATH: ${{ runner.temp }}/mah-signing.jks
+          KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+        run: |
+          import hashlib
+          import os
+          from pathlib import Path
+          import re
+          import subprocess
+
+          certificate = subprocess.check_output([
+              "keytool", "-exportcert", "-keystore", os.environ["KEYSTORE_PATH"],
+              "-storepass:env", "KEYSTORE_PASSWORD", "-alias", os.environ["KEY_ALIAS"],
+          ])
+          expected = hashlib.sha256(certificate).hexdigest()
+          tool = Path(os.environ["ANDROID_HOME"]) / "build-tools/37.0.0/apksigner"
+          if os.name == "nt":
+              tool = tool.with_suffix(".bat")
+          report = subprocess.check_output([
+              str(tool), "verify", "--print-certs",
+              "MAH-UIApp/app/build/outputs/apk/debug/app-debug.apk",
+          ], text=True)
+          digests = re.findall(r"Signer #\d+ certificate SHA-256 digest: ([0-9a-fA-F]+)", report)
+          if [digest.lower() for digest in digests] != [expected]:
+              raise SystemExit("APK signing certificate does not match the configured keystore")
+          print("APK signing certificate verified: " + expected)
+      - name: Remove APK signing key
+        if: always()
+        shell: python
+        run: |
+          import os
+          from pathlib import Path
+          (Path(os.environ["RUNNER_TEMP"]) / "mah-signing.jks").unlink(missing_ok=True)
       - name: Prepare Android deliverables
         env:
           VERSION: ${{ steps.version.outputs.version }}

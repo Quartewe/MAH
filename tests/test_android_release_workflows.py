@@ -1,7 +1,12 @@
 """Guard the tag -> APK build -> release upload path across workflow files."""
 from pathlib import Path
+import base64
 import fnmatch
+import hashlib
+import os
+import tempfile
 import unittest
+from unittest.mock import patch
 
 import yaml
 
@@ -28,6 +33,59 @@ def dependency_steps(workflow, job_name):
 
 
 class AndroidReleaseWorkflowTests(unittest.TestCase):
+    def test_signing_secrets_reach_the_cloud_debug_build_and_verification_precedes_upload(self):
+        names = {"ANDROID_KEYSTORE_BASE64", "ANDROID_KEYSTORE_PASSWORD", "ANDROID_KEY_ALIAS", "ANDROID_KEY_PASSWORD"}
+        apk = load_workflow("android-apk.yml")
+        self.assertEqual(set(apk["on"]["workflow_call"]["secrets"]), names)
+        caller = load_workflow("install.yml")["jobs"]["android"]
+        self.assertEqual(caller["secrets"], {name: "${{ secrets." + name + " }}" for name in names})
+        steps = apk["jobs"]["build"]["steps"]
+        build = next(step for step in steps if "build_mah.py" in step.get("run", ""))
+        self.assertEqual(build["env"]["MAH_CI_DEBUG_SIGNING"], "true")
+        self.assertEqual(build["env"]["KEYSTORE_PATH"], "${{ runner.temp }}/mah-signing.jks")
+        for name in ("KEYSTORE_PASSWORD", "KEY_ALIAS", "KEY_PASSWORD"):
+            self.assertEqual(build["env"][name], "${{ secrets.ANDROID_" + name + " }}")
+        verify = next(i for i, step in enumerate(steps) if step["name"] == "Verify APK signing certificate")
+        upload = next(i for i, step in enumerate(steps) if step.get("uses", "").startswith("actions/upload-artifact@"))
+        self.assertLess(steps.index(build), verify)
+        self.assertLess(verify, upload)
+
+    def test_cloud_key_restore_cleanup_and_missing_secret_failure(self):
+        steps = load_workflow("android-apk.yml")["jobs"]["build"]["steps"]
+        restore = next(step for step in steps if step["name"] == "Restore APK signing key")
+        cleanup = next(step for step in steps if step["name"] == "Remove APK signing key")
+        self.assertEqual(cleanup["if"], "always()")
+        with tempfile.TemporaryDirectory() as directory:
+            env = {"RUNNER_TEMP": directory, "KEYSTORE_BASE64": base64.b64encode(b"test-keystore").decode(),
+                   "KEYSTORE_PASSWORD": "test-password", "KEY_ALIAS": "test", "KEY_PASSWORD": "test-password"}
+            with patch.dict(os.environ, env):
+                exec(restore["run"], {})
+                key = Path(directory) / "mah-signing.jks"
+                self.assertEqual(key.read_bytes(), b"test-keystore")
+                exec(cleanup["run"], {})
+                self.assertFalse(key.exists())
+                with patch.dict(os.environ, {"KEY_PASSWORD": ""}):
+                    with self.assertRaisesRegex(SystemExit, "ANDROID_KEY_PASSWORD"):
+                        exec(restore["run"], {})
+                self.assertFalse(key.exists())
+
+    def test_certificate_verification_rejects_a_different_apk_key(self):
+        steps = load_workflow("android-apk.yml")["jobs"]["build"]["steps"]
+        script = next(step["run"] for step in steps if step["name"] == "Verify APK signing certificate")
+        certificate = b"configured-certificate"
+        expected = hashlib.sha256(certificate).hexdigest()
+        env = {"KEYSTORE_PATH": "test.jks", "KEY_ALIAS": "test", "ANDROID_HOME": "sdk"}
+        for matches in (True, False):
+            digest = expected if matches else "0" * 64
+            with patch.dict(os.environ, env), patch("subprocess.check_output", side_effect=[
+                certificate, f"Signer #1 certificate SHA-256 digest: {digest}\n",
+            ]), patch("builtins.print"):
+                if matches:
+                    exec(script, {})
+                else:
+                    with self.assertRaisesRegex(SystemExit, "does not match"):
+                        exec(script, {})
+
     def test_tag_release_waits_for_apk_and_project_package(self):
         install = load_workflow("install.yml")
         steps = list(dependency_steps(install, "release"))

@@ -54,6 +54,10 @@ class AndroidLightBundleTests(unittest.TestCase):
             self.assertEqual(state["resourceVersion"], "")
             self.assertEqual(state["owners"]["resource"], {})
             self.assertEqual(json.loads((output / "interface.json").read_text())["resource_version"], "")
+            interface = json.loads((output / "interface.json").read_text())
+            self.assertEqual(interface["software_github"], "https://github.com/Quartewe/MAH")
+            self.assertEqual(interface["project_github"], "https://github.com/Quartewe/MAH")
+            self.assertEqual(interface["version"], "v-test")
             with zipfile.ZipFile(archive) as package:
                 names = set(package.namelist())
                 self.assertIn("agent/main.py", names)
