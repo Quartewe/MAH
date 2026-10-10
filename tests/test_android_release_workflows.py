@@ -134,11 +134,13 @@ class AndroidReleaseWorkflowTests(unittest.TestCase):
             for step in job.get("steps", []):
                 self.assertNotIn("gh release", step.get("run", ""))
 
-    def test_main_push_and_tag_release_share_the_apk_builder(self):
+    def test_only_tag_push_triggers_apk_build_through_release_workflow(self):
         apk = load_workflow("android-apk.yml")
-        self.assertIn("main", apk["on"]["push"]["branches"])
+        self.assertNotIn("push", apk["on"])
+        self.assertIn("workflow_dispatch", apk["on"])
         self.assertIn("workflow_call", apk["on"])
         install = load_workflow("install.yml")
+        self.assertEqual(install["on"]["push"], {"tags": ["v*"]})
         caller = next(
             (job for job in install["jobs"].values()
              if job.get("uses") == "./.github/workflows/android-apk.yml"),
