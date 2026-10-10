@@ -178,9 +178,21 @@ jobs:
               str(tool), "verify", "--print-certs",
               "MAH-UIApp/app/build/outputs/apk/debug/app-debug.apk",
           ], text=True)
-          digests = re.findall(r"Signer #\d+ certificate SHA-256 digest: ([0-9a-fA-F]+)", report)
-          if [digest.lower() for digest in digests] != [expected]:
-              raise SystemExit("APK signing certificate does not match the configured keystore")
+          # Build Tools 37 reports each scheme as "V2 Signer", "V3 Signer", etc.
+          # Older versions use "Signer #1". One certificate may appear in multiple schemes.
+          digests = re.findall(
+              r"^(?:Signer #\d+|V\d+(?:\.\d+)? Signer)[^\r\n]*?"
+              r" certificate SHA-256 digest: ([0-9a-fA-F]{64})[ \t\r]*$",
+              report, re.MULTILINE,
+          )
+          actual = {digest.lower() for digest in digests}
+          if not actual:
+              raise SystemExit("No APK signing certificate SHA-256 digest found in apksigner output")
+          if actual != {expected}:
+              raise SystemExit(
+                  "APK signing certificate does not match the configured keystore: "
+                  f"expected {expected}, actual {', '.join(sorted(actual))}"
+              )
           print("APK signing certificate verified: " + expected)
       - name: Remove APK signing key
         if: always()

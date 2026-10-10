@@ -86,6 +86,34 @@ class AndroidReleaseWorkflowTests(unittest.TestCase):
                     with self.assertRaisesRegex(SystemExit, "does not match"):
                         exec(script, {})
 
+    def test_certificate_verification_supports_build_tools_37_output(self):
+        steps = load_workflow("android-apk.yml")["jobs"]["build"]["steps"]
+        script = next(step["run"] for step in steps if step["name"] == "Verify APK signing certificate")
+        certificate = b"configured-certificate"
+        expected = hashlib.sha256(certificate).hexdigest()
+        other = "0" * 64
+        env = {"KEYSTORE_PATH": "test.jks", "KEY_ALIAS": "test", "ANDROID_HOME": "sdk"}
+        cases = [
+            (f"V2 Signer: certificate SHA-256 digest: {expected}\n", None),
+            (f"V2 Signer: certificate SHA-256 digest: {expected.upper()}\r\n"
+             f"V3 Signer: (minSdkVersion=28, maxSdkVersion=32) certificate SHA-256 digest: {expected}\r\n"
+             f"V3.1 Signer: (minSdkVersion=33, maxSdkVersion=2147483647) certificate SHA-256 digest: {expected}\r\n", None),
+            (f"V2 Signer: certificate SHA-256 digest: {other}\n", "does not match"),
+            (f"V2 Signer: certificate SHA-256 digest: {expected}\n"
+             f"V2 Signer: certificate SHA-256 digest: {other}\n", "does not match"),
+            ("", "No APK signing certificate SHA-256 digest"),
+            (f"Source Stamp Signer certificate SHA-256 digest: {expected}\n", "No APK signing certificate SHA-256 digest"),
+        ]
+        for report, error in cases:
+            with self.subTest(report=report), patch.dict(os.environ, env), patch(
+                "subprocess.check_output", side_effect=[certificate, report]
+            ), patch("builtins.print"):
+                if error:
+                    with self.assertRaisesRegex(SystemExit, error):
+                        exec(script, {})
+                else:
+                    exec(script, {})
+
     def test_tag_release_waits_for_apk_and_project_package(self):
         install = load_workflow("install.yml")
         steps = list(dependency_steps(install, "release"))
