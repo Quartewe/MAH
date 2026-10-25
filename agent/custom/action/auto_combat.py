@@ -49,6 +49,37 @@ class AutoCombat(CustomAction):
         return end_points
 
     def _get_posL(self, context):
+        if self._check_running(context):
+            return None
+        # run_recognition only reads its image; opening skills must settle first.
+        wait_timeout_ms = 15000
+        wait_started = time.monotonic()
+        waited = context.run_action(
+            "UtilsTemplateMatch",
+            pipeline_override={
+                "UtilsTemplateMatch": {
+                    "action": {"type": "DoNothing"},
+                    "pre_wait_freezes": {
+                        "time": 1500,
+                        "target": [647, 373, 583, 342],
+                        "threshold": 0.99,
+                        "timeout": wait_timeout_ms,
+                        "rate_limit": 250,
+                    },
+                    "pre_delay": 0,
+                    "post_delay": 0,
+                }
+            },
+        )
+        if self._check_running(context):
+            return None
+        if not waited or not waited.success:
+            logger.error("等待开局棋盘稳定失败")
+            return None
+        # Maa reports action success even when pre_wait_freezes times out.
+        if time.monotonic() - wait_started >= wait_timeout_ms / 1000:
+            logger.error("等待开局棋盘稳定超时")
+            return None
         i = 0
         while i < 30:
             if self._check_running(context):
@@ -60,12 +91,6 @@ class AutoCombat(CustomAction):
                 current_image,
                 pipeline_override={
                     "UtilsTemplateMatch": {
-                        "pre_wait_freezes":{
-                            "time": 1500,
-                            "target": [647,373,583,342],
-                            "threshold": 0.99,
-                            "timeout": 15000,
-                        },
                         "recognition": {
                             "param": {
                                 "roi": [647,373,583,342],

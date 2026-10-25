@@ -51,6 +51,8 @@ class BattleScreen:
         return recognition()
 
     def run_action(self, entry, pipeline_override, **kwargs):
+        if entry == "UtilsTemplateMatch" and pipeline_override[entry]["action"]["type"] == "DoNothing":
+            return NS(success=True)
         if entry != "UtilsSwipe":
             raise AssertionError(f"Unexpected action: {entry}")
         self.moves.append(pipeline_override[entry]["begin"][:2])
@@ -71,7 +73,7 @@ class BattleOriginTests(unittest.TestCase):
 
     def run_battle(self, screen):
         with patch.object(self.module.time, "sleep"), \
-             patch.object(self.module.time, "monotonic", side_effect=itertools.count(0, 100)), \
+             patch.object(self.module.time, "monotonic", side_effect=itertools.chain((0, 0), itertools.count(0, 100))), \
              redirect_stdout(io.StringIO()), redirect_stderr(io.StringIO()):
             return self.action.run(screen, self.argv)
 
