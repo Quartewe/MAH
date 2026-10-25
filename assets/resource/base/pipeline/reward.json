@@ -1,5 +1,6 @@
 {
     "Reward.Back": {
+        "max_hit": 10,
         "recognition": {
             "type": "OCR",
             "param": {
@@ -28,7 +29,9 @@
             ]
         },
         "next": [
-            "Reward.Gift"
+            "Reward.Gift",
+            "Reward.Get1",
+            "Reward.Back"
         ]
     },
     "Reward.Gift": {
@@ -262,6 +265,7 @@
         ]
     },
     "Reward.Get1": {
+        "max_hit": 10,
         "recognition": {
             "type": "OCR",
             "param": {
@@ -284,6 +288,7 @@
             ]
         },
         "next": [
+            "Reward.Get1",
             "Reward.Back"
         ]
     }
