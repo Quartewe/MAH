@@ -1,4 +1,13 @@
 {
+    "select_dungeon_stage_description": "Select the dungeon quest to challenge",
+    "woods_life": "Woods of Life",
+    "woods_life_description": "Woods of Life",
+    "woods_power": "Woods of Power",
+    "woods_power_description": "Woods of Power",
+    "garden_life": "Garden of Life",
+    "garden_life_description": "Garden of Life",
+    "garden_power": "Garden of Power",
+    "garden_power_description": "Garden of Power",
     "welcome": "./docs/en_us/welcome.md",
     "welcome_description": "Tokyo Afterschool Summoners Assistant. Image technology, simulated control, freeing your hands! Powered strongly by MaaFramework!",
     "contact_info": "If you have any questions or suggestions, please submit an issue on Github first. You can also contact me via: \n\n- Email: <quarty1015@gmail.com>\n\nThank you for your support and feedback!",

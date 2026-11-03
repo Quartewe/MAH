@@ -1,4 +1,13 @@
 {
+    "select_dungeon_stage_description": "挑戦するダンジョンクエストを選択します",
+    "woods_life": "生命の樹海",
+    "woods_life_description": "生命の樹海",
+    "woods_power": "強力の樹海",
+    "woods_power_description": "強力の樹海",
+    "garden_life": "生命の花園",
+    "garden_life_description": "生命の花園",
+    "garden_power": "強力の花園",
+    "garden_power_description": "強力の花園",
     "welcome": "./docs/ja_jp/welcome.md",
     "welcome_description": "東京放課後サモナーズ 小助手。画像技術 + シミュレーション制御、両手を解放！MaaFrameworkによって強力に駆動！",
     "contact_info": "ご質問やご提案がある場合は、まずGithubからissueを提出してください。以下の方法でも連絡可能です:\n\n- メール: <quarty1015@gmail.com>\n\nサポートとフィードバックありがとうございます！",

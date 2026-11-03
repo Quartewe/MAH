@@ -158,7 +158,7 @@
         "choose_stage_dungeon": {
             "type": "select",
             "label": "$select_stage",
-            "description": "$select_stage_description",
+            "description": "$select_dungeon_stage_description",
             "cases": [
                 {
                     "name": "黄金洞窟?",
@@ -222,6 +222,58 @@
                         },
                         "Global.AutoCombat.BacktoEntry": {
                             "next": "Dungeon.Barrier.Entry"
+                        }
+                    }
+                },
+                {
+                    "name": "生命树海",
+                    "label": "$woods_life",
+                    "description": "$woods_life_description",
+                    "pipeline_override": {
+                        "Dungeon.Change2": {
+                            "next": "Dungeon.Woods.Life.Entry"
+                        },
+                        "Global.AutoCombat.BacktoEntry": {
+                            "next": "Dungeon.Woods.Life.Entry"
+                        }
+                    }
+                },
+                {
+                    "name": "强力树海",
+                    "label": "$woods_power",
+                    "description": "$woods_power_description",
+                    "pipeline_override": {
+                        "Dungeon.Change2": {
+                            "next": "Dungeon.Woods.Power.Entry"
+                        },
+                        "Global.AutoCombat.BacktoEntry": {
+                            "next": "Dungeon.Woods.Power.Entry"
+                        }
+                    }
+                },
+                {
+                    "name": "生命花园",
+                    "label": "$garden_life",
+                    "description": "$garden_life_description",
+                    "pipeline_override": {
+                        "Dungeon.Change2": {
+                            "next": "Dungeon.Garden.Life.Entry"
+                        },
+                        "Global.AutoCombat.BacktoEntry": {
+                            "next": "Dungeon.Garden.Life.Entry"
+                        }
+                    }
+                },
+                {
+                    "name": "强力花园",
+                    "label": "$garden_power",
+                    "description": "$garden_power_description",
+                    "pipeline_override": {
+                        "Dungeon.Change2": {
+                            "next": "Dungeon.Garden.Power.Entry"
+                        },
+                        "Global.AutoCombat.BacktoEntry": {
+                            "next": "Dungeon.Garden.Power.Entry"
                         }
                     }
                 },

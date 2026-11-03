@@ -1,4 +1,13 @@
 {
+    "select_dungeon_stage_description": "選擇要挑戰的地城副本",
+    "woods_life": "生命的樹海",
+    "woods_life_description": "生命的樹海",
+    "woods_power": "強力的樹海",
+    "woods_power_description": "強力的樹海",
+    "garden_life": "生命的花園",
+    "garden_life_description": "生命的花園",
+    "garden_power": "強力的花園",
+    "garden_power_description": "強力的花園",
     "welcome": "./docs/zh_tw/welcome.md",
     "welcome_description": "東京放課後召喚師 小助手。圖像技術 + 模擬控制, 解放雙手! 由 MaaFramework 強力驅動!",
     "contact_info": "如有任何問題或建議, 請優先從github提交issue, 也可以通過以下方式聯繫我:\n\n- 郵箱: <quarty1015@gmail.com>\n\n感謝您的支持和反饋!",

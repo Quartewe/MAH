@@ -1,0 +1,110 @@
+{
+    "Dungeon.Woods.Life.Choice": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "Hidden\\s+Island\\s+Thicket"
+                ]
+            }
+        }
+    },
+    "Dungeon.Woods.Life.Explore": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "^Exploration$"
+                ]
+            }
+        }
+    },
+    "Dungeon.Woods.Life.Episode": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "Exploring\\s+the\\s+Woods\\s+of\\s+Life"
+                ]
+            }
+        }
+    },
+    "Dungeon.Woods.Power.Choice": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "Hidden\\s+Island\\s+Thicket"
+                ]
+            }
+        }
+    },
+    "Dungeon.Woods.Power.Explore": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "^Exploration$"
+                ]
+            }
+        }
+    },
+    "Dungeon.Woods.Power.Episode": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "Exploring\\s+the\\s+Woods\\s+of\\s+Power"
+                ]
+            }
+        }
+    },
+    "Dungeon.Garden.Life.Choice": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "Exotic\\s+Garden"
+                ]
+            }
+        }
+    },
+    "Dungeon.Garden.Life.Explore": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "^Exploration$"
+                ]
+            }
+        }
+    },
+    "Dungeon.Garden.Life.Episode": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "Exploring\\s+the\\s+Garden\\s+of\\s+Life"
+                ]
+            }
+        }
+    },
+    "Dungeon.Garden.Power.Choice": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "Exotic\\s+Garden"
+                ]
+            }
+        }
+    },
+    "Dungeon.Garden.Power.Explore": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "^Exploration$"
+                ]
+            }
+        }
+    },
+    "Dungeon.Garden.Power.Episode": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "Exploring\\s+the\\s+Garden\\s+of\\s+Power"
+                ]
+            }
+        }
+    }
+}

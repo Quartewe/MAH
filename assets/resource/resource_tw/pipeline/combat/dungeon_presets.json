@@ -1,0 +1,110 @@
+{
+    "Dungeon.Woods.Life.Choice": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "神秘島密林"
+                ]
+            }
+        }
+    },
+    "Dungeon.Woods.Life.Explore": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "^探索$"
+                ]
+            }
+        }
+    },
+    "Dungeon.Woods.Life.Episode": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "探索\\s*[/／]\\s*生命的樹海"
+                ]
+            }
+        }
+    },
+    "Dungeon.Woods.Power.Choice": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "神秘島密林"
+                ]
+            }
+        }
+    },
+    "Dungeon.Woods.Power.Explore": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "^探索$"
+                ]
+            }
+        }
+    },
+    "Dungeon.Woods.Power.Episode": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "探索\\s*[/／]\\s*強力的樹海"
+                ]
+            }
+        }
+    },
+    "Dungeon.Garden.Life.Choice": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "異境花園"
+                ]
+            }
+        }
+    },
+    "Dungeon.Garden.Life.Explore": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "^探索$"
+                ]
+            }
+        }
+    },
+    "Dungeon.Garden.Life.Episode": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "探索\\s*[/／]\\s*生命的花園"
+                ]
+            }
+        }
+    },
+    "Dungeon.Garden.Power.Choice": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "異境花園"
+                ]
+            }
+        }
+    },
+    "Dungeon.Garden.Power.Explore": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "^探索$"
+                ]
+            }
+        }
+    },
+    "Dungeon.Garden.Power.Episode": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "探索\\s*[/／]\\s*強力的花園"
+                ]
+            }
+        }
+    }
+}

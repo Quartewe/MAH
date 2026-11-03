@@ -1,0 +1,278 @@
+{
+    "Dungeon.Woods.Life.Entry": {
+        "next": [
+            "Dungeon.Woods.Life.Episode",
+            "Dungeon.Woods.Life.Choice",
+            "Dungeon.Woods.Life.Explore"
+        ]
+    },
+    "Dungeon.Woods.Life.Choice": {
+        "recognition": {
+            "type": "OCR",
+            "param": {
+                "roi": [
+                    70,
+                    125,
+                    490,
+                    575
+                ],
+                "expected": [
+                    "秘[岛島]森林"
+                ]
+            }
+        },
+        "pre_wait_freezes": 1000,
+        "action": {
+            "type": "Click"
+        },
+        "next": [
+            "Dungeon.Woods.Life.Explore"
+        ]
+    },
+    "Dungeon.Woods.Life.Explore": {
+        "recognition": {
+            "type": "OCR",
+            "param": {
+                "roi": [
+                    400,
+                    300,
+                    460,
+                    300
+                ],
+                "expected": [
+                    "^探索$"
+                ]
+            }
+        },
+        "pre_wait_freezes": 1000,
+        "action": {
+            "type": "Click"
+        },
+        "next": [
+            "Dungeon.Woods.Life.Episode"
+        ]
+    },
+    "Dungeon.Woods.Life.Episode": {
+        "recognition": {
+            "type": "OCR",
+            "param": {
+                "expected": [
+                    "探索\\s*[/／]\\s*生命[树樹]海"
+                ]
+            }
+        },
+        "action": {
+            "type": "Click"
+        },
+        "next": [
+            "Global.AutoCombat.Entry"
+        ]
+    },
+    "Dungeon.Woods.Power.Entry": {
+        "next": [
+            "Dungeon.Woods.Power.Episode",
+            "Dungeon.Woods.Power.Choice",
+            "Dungeon.Woods.Power.Explore"
+        ]
+    },
+    "Dungeon.Woods.Power.Choice": {
+        "recognition": {
+            "type": "OCR",
+            "param": {
+                "roi": [
+                    70,
+                    125,
+                    490,
+                    575
+                ],
+                "expected": [
+                    "秘[岛島]森林"
+                ]
+            }
+        },
+        "pre_wait_freezes": 1000,
+        "action": {
+            "type": "Click"
+        },
+        "next": [
+            "Dungeon.Woods.Power.Explore"
+        ]
+    },
+    "Dungeon.Woods.Power.Explore": {
+        "recognition": {
+            "type": "OCR",
+            "param": {
+                "roi": [
+                    400,
+                    300,
+                    460,
+                    300
+                ],
+                "expected": [
+                    "^探索$"
+                ]
+            }
+        },
+        "pre_wait_freezes": 1000,
+        "action": {
+            "type": "Click"
+        },
+        "next": [
+            "Dungeon.Woods.Power.Episode"
+        ]
+    },
+    "Dungeon.Woods.Power.Episode": {
+        "recognition": {
+            "type": "OCR",
+            "param": {
+                "expected": [
+                    "探索\\s*[/／]\\s*[强強]力[树樹]海"
+                ]
+            }
+        },
+        "action": {
+            "type": "Click"
+        },
+        "next": [
+            "Global.AutoCombat.Entry"
+        ]
+    },
+    "Dungeon.Garden.Life.Entry": {
+        "next": [
+            "Dungeon.Garden.Life.Episode",
+            "Dungeon.Garden.Life.Choice",
+            "Dungeon.Garden.Life.Explore"
+        ]
+    },
+    "Dungeon.Garden.Life.Choice": {
+        "recognition": {
+            "type": "OCR",
+            "param": {
+                "roi": [
+                    70,
+                    125,
+                    490,
+                    575
+                ],
+                "expected": [
+                    "[异異]境花[园園]"
+                ]
+            }
+        },
+        "pre_wait_freezes": 1000,
+        "action": {
+            "type": "Click"
+        },
+        "next": [
+            "Dungeon.Garden.Life.Explore"
+        ]
+    },
+    "Dungeon.Garden.Life.Explore": {
+        "recognition": {
+            "type": "OCR",
+            "param": {
+                "roi": [
+                    400,
+                    300,
+                    460,
+                    300
+                ],
+                "expected": [
+                    "^探索$"
+                ]
+            }
+        },
+        "pre_wait_freezes": 1000,
+        "action": {
+            "type": "Click"
+        },
+        "next": [
+            "Dungeon.Garden.Life.Episode"
+        ]
+    },
+    "Dungeon.Garden.Life.Episode": {
+        "recognition": {
+            "type": "OCR",
+            "param": {
+                "expected": [
+                    "探索\\s*[/／]\\s*生命花[园園]"
+                ]
+            }
+        },
+        "action": {
+            "type": "Click"
+        },
+        "next": [
+            "Global.AutoCombat.Entry"
+        ]
+    },
+    "Dungeon.Garden.Power.Entry": {
+        "next": [
+            "Dungeon.Garden.Power.Episode",
+            "Dungeon.Garden.Power.Choice",
+            "Dungeon.Garden.Power.Explore"
+        ]
+    },
+    "Dungeon.Garden.Power.Choice": {
+        "recognition": {
+            "type": "OCR",
+            "param": {
+                "roi": [
+                    70,
+                    125,
+                    490,
+                    575
+                ],
+                "expected": [
+                    "[异異]境花[园園]"
+                ]
+            }
+        },
+        "pre_wait_freezes": 1000,
+        "action": {
+            "type": "Click"
+        },
+        "next": [
+            "Dungeon.Garden.Power.Explore"
+        ]
+    },
+    "Dungeon.Garden.Power.Explore": {
+        "recognition": {
+            "type": "OCR",
+            "param": {
+                "roi": [
+                    400,
+                    300,
+                    460,
+                    300
+                ],
+                "expected": [
+                    "^探索$"
+                ]
+            }
+        },
+        "pre_wait_freezes": 1000,
+        "action": {
+            "type": "Click"
+        },
+        "next": [
+            "Dungeon.Garden.Power.Episode"
+        ]
+    },
+    "Dungeon.Garden.Power.Episode": {
+        "recognition": {
+            "type": "OCR",
+            "param": {
+                "expected": [
+                    "探索\\s*[/／]\\s*[强強]力花[园園]"
+                ]
+            }
+        },
+        "action": {
+            "type": "Click"
+        },
+        "next": [
+            "Global.AutoCombat.Entry"
+        ]
+    }
+}

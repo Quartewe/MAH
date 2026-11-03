@@ -1,4 +1,13 @@
 {
+    "select_dungeon_stage_description": "选择要挑战的地城副本",
+    "woods_life": "生命树海",
+    "woods_life_description": "生命树海",
+    "woods_power": "强力树海",
+    "woods_power_description": "强力树海",
+    "garden_life": "生命花园",
+    "garden_life_description": "生命花园",
+    "garden_power": "强力花园",
+    "garden_power_description": "强力花园",
     "welcome": "./docs/zh_cn/welcome.md",
     "welcome_description": " 东京放课后召唤师 小助手。图像技术 + 模拟控制，解放双手！由 MaaFramework 强力驱动！",
     "contact_info": "如有任何问题或建议, 请优先从github提交issue, 也可以通过以下方式联系我:\n\n- 邮箱: <539945613@qq.com>\n\n感谢您的支持和反馈!",
