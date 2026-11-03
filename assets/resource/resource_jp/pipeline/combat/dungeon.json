@@ -1,4 +1,13 @@
 {
+    "Dungeon.Change2": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "マップ切り替え"
+                ]
+            }
+        }
+    },
     "Dungeon.Aoyama.Choice": {
         "recognition": {
             "param": {

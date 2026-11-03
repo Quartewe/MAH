@@ -1,4 +1,13 @@
 {
+    "Dungeon.Change2": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "切換地圖"
+                ]
+            }
+        }
+    },
     "Dungeon.Aoyama.Choice": {
         "recognition": {
             "param": {
