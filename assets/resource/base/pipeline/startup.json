@@ -4,10 +4,7 @@
       "type": "DoNothing"
     },
     "next": [
-      "Global.LoginReward",
-      "Global.HomePage",
-      "Startup.OpenGame.Title",
-      "Startup.OpenGame"
+      "Global.Entry"
     ]
   },
   "Startup.OpenGame": {
@@ -21,11 +18,10 @@
     "next": [
       "[JumpBack]Startup.Update_1",
       "Startup.OpenGame.Wait",
-      "Global.HomePage",
       "Global.Entry"
     ],
     "on_error": [
-      "[JumpBack]Global.NetworkError"
+      "Global.Entry"
     ]
   },
   "Startup.Update_1": {
@@ -41,7 +37,7 @@
     },
     "timeout": 300000,
     "on_error": [
-      "[JumpBack]Global.NetworkError"
+      "Global.Entry"
     ]
   },
   "Startup.OpenGame.Wait": {
@@ -60,7 +56,7 @@
       "[JumpBack]Startup.Update_1"
     ],
     "on_error": [
-      "[JumpBack]Global.NetworkError"
+      "Global.Entry"
     ]
   },
   "Startup.OpenGame.Title": {
@@ -90,11 +86,10 @@
     },
     "timeout": 300000,
     "next": [
-      "Global.HomePage",
-      "Global.LoginReward"
+      "Global.Entry"
     ],
     "on_error": [
-      "[JumpBack]Global.NetworkError"
+      "Global.Entry"
     ]
   }
 }

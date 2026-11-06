@@ -158,11 +158,14 @@
   },
   "Global.Entry": {
     "next": [
+      "[JumpBack]Global.NetworkError",
       "Global.GoBackToHomePage",
       "Global.LoginReward",
       "Global.HomePage",
       "Global.GoHomePage",
-      "Global.AnnouncementShutdown"
+      "Global.AnnouncementShutdown",
+      "Startup.OpenGame.Title",
+      "Startup.OpenGame"
     ]
   },
   "Global.AnnouncementShutdown": {
