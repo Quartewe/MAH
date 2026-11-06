@@ -17,6 +17,8 @@ class Formation(CustomAction):
         self.AR_DATA = data_io.read_data(proj_path.AR_FILE)
         self.UI_DATA = data_io.read_data(proj_path.UI_FILE)
         self.TITLE_ROI = [20, 95, 1035, 55]
+        # 解散队伍位于左上角，右侧相邻按钮为队伍选择。
+        self.DISBAND_ROI = [180, 0, 120, 80]
         # 1280x720 编队界面右下角的 TOTAL COST 数值区域。
         # 只读取数值区域，避免把角色卡片上的 9/35、1/30 等等级文本当成队伍消耗。
         self.TEAM_COST_ROI = [1120, 495, 155, 75]
@@ -471,7 +473,7 @@ class Formation(CustomAction):
                 "UtilsOCR": {
                     "recognition": {
                         "param": {
-                            "roi": [1087,88,191,633],
+                            "roi": self.DISBAND_ROI,
                             "expected": markers[0]
                         }
                     },
