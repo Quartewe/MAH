@@ -1,4 +1,13 @@
 {
+    "Dungeon.Babylon24.Explore": {
+        "recognition": {
+            "param": {
+                "expected": [
+                    "^Exploration$"
+                ]
+            }
+        }
+    },
     "Dungeon.Woods.Life.Choice": {
         "recognition": {
             "param": {

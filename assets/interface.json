@@ -278,6 +278,19 @@
                     }
                 },
                 {
+                    "name": "巴比伦■■24",
+                    "label": "$babylon24",
+                    "description": "$babylon24_description",
+                    "pipeline_override": {
+                        "Dungeon.Change2": {
+                            "next": "Dungeon.Babylon24.Entry"
+                        },
+                        "Global.AutoCombat.BacktoEntry": {
+                            "next": "Dungeon.Babylon24.Entry"
+                        }
+                    }
+                },
+                {
                     "name": "自定义地城",
                     "label": "$custom_stage",
                     "description": "$custom_stage_description",

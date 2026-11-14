@@ -1,4 +1,73 @@
 {
+    "Dungeon.Babylon24.Entry": {
+        "next": [
+            "Dungeon.Babylon24.Episode",
+            "Dungeon.Babylon24.Choice",
+            "Dungeon.Babylon24.Explore"
+        ]
+    },
+    "Dungeon.Babylon24.Choice": {
+        "recognition": {
+            "type": "OCR",
+            "param": {
+                "roi": [
+                    70,
+                    125,
+                    490,
+                    575
+                ],
+                "expected": [
+                    "バビロン.*24"
+                ]
+            }
+        },
+        "pre_wait_freezes": 1000,
+        "action": {
+            "type": "Click"
+        },
+        "next": [
+            "Dungeon.Babylon24.Explore"
+        ]
+    },
+    "Dungeon.Babylon24.Explore": {
+        "recognition": {
+            "type": "OCR",
+            "param": {
+                "roi": [
+                    400,
+                    300,
+                    460,
+                    300
+                ],
+                "expected": [
+                    "^探索$"
+                ]
+            }
+        },
+        "pre_wait_freezes": 1000,
+        "action": {
+            "type": "Click"
+        },
+        "next": [
+            "Dungeon.Babylon24.Episode"
+        ]
+    },
+    "Dungeon.Babylon24.Episode": {
+        "recognition": {
+            "type": "OCR",
+            "param": {
+                "expected": [
+                    "ランク経験値の登[竜龍]門\\s*[/／]\\s*上[级級]"
+                ]
+            }
+        },
+        "action": {
+            "type": "Click"
+        },
+        "next": [
+            "Global.AutoCombat.Entry"
+        ]
+    },
     "Dungeon.Woods.Life.Entry": {
         "next": [
             "Dungeon.Woods.Life.Episode",
