@@ -105,6 +105,25 @@ class RewardRecoveryTests(unittest.TestCase):
         }
         self.assertTrue(self.run_task(resource, FrameController(frame), "Replay.AfterBack", overrides))
 
+    def test_weekly_mission_entry_does_not_read_the_icon_as_text(self):
+        crop = cv2.imread(str(ROOT / "tests/fixtures/weekly_home_icons.png"))
+        self.assertIsNotNone(crop)
+        frame = np.zeros((720, 1280, 3), dtype=np.uint8)
+        # Both candidate regions affect batched OCR; keeping only the home
+        # icons makes the original failure disappear.
+        frame[445:585, :330] = crop[:140]
+        frame[80:220, 480:720] = crop[140:, :240]
+        resource = Resource()
+        self.assertTrue(resource.post_bundle(ROOT / "assets/resource/base").wait().status.succeeded)
+        overrides = {
+            "CheckWeeklyMissions.Entry": {"timeout": 100, "rate_limit": 1,
+                                          "pre_delay": 0, "post_delay": 0},
+            "CheckWeeklyMissions.OpenMissionInterface": {
+                "action": {"type": "DoNothing"}, "next": [], "pre_delay": 0,
+                "post_delay": 0, "post_wait_freezes": 0},
+        }
+        self.assertTrue(self.run_task(resource, FrameController(frame),
+                                     "CheckWeeklyMissions.Entry", overrides))
 
     def replay_entry(self, screen, after_back=False, expanded=False):
         state = {"screen": screen, "actions": [], "after_web": "menu" if expanded else "home"}
