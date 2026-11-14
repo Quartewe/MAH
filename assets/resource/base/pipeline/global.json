@@ -24,8 +24,10 @@
     "next": [
       "Global.LoginReward",
       "Global.GoHomePage",
+      "Global.AnnouncementListCollapse",
       "Global.HomePage",
-      "Global.AnnouncementShutdown"
+      "Global.AnnouncementShutdown",
+      "Global.AnnouncementWebClose"
     ],
     "on_error": [
       "Startup.Entry"
@@ -61,7 +63,8 @@
       "[JumpBack]Global.NetworkError"
     ],
     "next": [
-      "Global.AnnouncementShutdown"
+      "Global.AnnouncementShutdown",
+      "Global.AnnouncementWebClose"
     ]
   },
   "Global.NetworkError": {
@@ -153,7 +156,8 @@
     "timeout": -1,
     "on_error": [
       "Global.GoHomePage",
-      "Global.AnnouncementShutdown"
+      "Global.AnnouncementShutdown",
+      "Global.AnnouncementWebClose"
     ]
   },
   "Global.Entry": {
@@ -161,9 +165,11 @@
       "[JumpBack]Global.NetworkError",
       "Global.GoBackToHomePage",
       "Global.LoginReward",
+      "Global.AnnouncementListCollapse",
       "Global.HomePage",
       "Global.GoHomePage",
       "Global.AnnouncementShutdown",
+      "Global.AnnouncementWebClose",
       "Startup.OpenGame.Title",
       "Startup.OpenGame"
     ]
@@ -189,6 +195,57 @@
     "post_wait_freezes": 500,
     "next": [
       "Global.AnnouncementShutdown",
+      "Global.AnnouncementWebClose",
+      "Global.AnnouncementListCollapse",
+      "Global.HomePage"
+    ]
+  },
+  "Global.AnnouncementWebClose": {
+    "max_hit": 5,
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "roi": [
+          1160,
+          15,
+          105,
+          105
+        ],
+        "template": "announcement_web_close.png",
+        "threshold": 0.85
+      }
+    },
+    "action": {
+      "type": "Click"
+    },
+    "post_wait_freezes": 500,
+    "next": [
+      "Global.AnnouncementListCollapse",
+      "Global.HomePage",
+      "Global.AnnouncementShutdown",
+      "Global.AnnouncementWebClose"
+    ]
+  },
+  "Global.AnnouncementListCollapse": {
+    "max_hit": 5,
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "roi": [
+          12,
+          505,
+          88,
+          70
+        ],
+        "template": "announcement_list_collapse.png",
+        "threshold": 0.85
+      }
+    },
+    "action": {
+      "type": "Click"
+    },
+    "post_wait_freezes": 500,
+    "next": [
       "Global.HomePage"
     ]
   }

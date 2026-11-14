@@ -31,7 +31,9 @@
         "next": [
             "Reward.Gift",
             "Reward.Get1",
-            "Reward.Back"
+            "Reward.Back",
+            "[JumpBack]Global.AnnouncementWebClose",
+            "[JumpBack]Global.AnnouncementListCollapse"
         ]
     },
     "Reward.Gift": {
@@ -40,9 +42,9 @@
             "param": {
                 "roi": [
                     35,
-                    540,
+                    530,
                     154,
-                    33
+                    53
                 ],
                 "expected": [
                     "礼物"
@@ -193,7 +195,12 @@
     },
     "Reward.Entry": {
         "next": [
-            "Reward.Click"
+            "Reward.Click",
+            "[JumpBack]Global.AnnouncementWebClose",
+            "[JumpBack]Global.AnnouncementListCollapse"
+        ],
+        "on_error": [
+            "[JumpBack]Global.Entry"
         ]
     },
     "Reward.Click": {

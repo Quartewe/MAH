@@ -94,6 +94,15 @@ class RewardTests(unittest.TestCase):
                               .read_text(encoding="utf-8"))
         pipeline = {name: pipeline[name] for name in (
             "Reward.Get", "Reward.Get1", "Reward.Back", "Reward.Gift")}
+        # These dialog cases have no web overlay; the full recovery route is
+        # exercised separately in test_reward_recovery.py.
+        for name in ("Global.AnnouncementWebClose", "Global.AnnouncementListCollapse"):
+            pipeline[name] = {
+                "recognition": {"type": "Custom", "param": {
+                    "custom_recognition": "RewardScreen",
+                    "custom_recognition_param": {"expected": []},
+                }},
+            }
         # Replace OCR/input boundaries only; retain production next/max_hit.
         for name in ("Reward.Get", "Reward.Get1", "Reward.Back", "Reward.Gift"):
             node = pipeline[name]
