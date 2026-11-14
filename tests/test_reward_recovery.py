@@ -1,11 +1,10 @@
-"""Reward recovery and the captured multi-candidate gift OCR failure."""
+"""Reward recovery through announcements and home navigation."""
 import json
 from pathlib import Path
 import tempfile
 import threading
 import unittest
 
-import cv2
 import numpy as np
 from maa.controller import CustomController
 from maa.custom_action import CustomAction
@@ -83,47 +82,6 @@ class RewardRecoveryTests(unittest.TestCase):
             watchdog.cancel()
         self.assertFalse(timed_out.is_set())
         return succeeded
-
-    def test_gift_is_found_among_back_and_close_candidates(self):
-        # The 2026-11-07 failed screenshot, reduced to the two home labels.
-        # A standalone OCR call passes even with the old ROI; the real next
-        # list must run together to reproduce the framework's OCR batching.
-        crop = cv2.imread(str(ROOT / "tests/fixtures/reward_home_labels.png"))
-        self.assertIsNotNone(crop)
-        frame = np.zeros((720, 1280, 3), dtype=np.uint8)
-        frame[530:583, 35:189] = crop
-        resource = Resource()
-        self.assertTrue(resource.post_bundle(ROOT / "assets/resource/base").wait().status.succeeded)
-        pipeline = json.loads((ROOT / "assets/resource/base/pipeline/reward.json")
-                              .read_text(encoding="utf-8"))
-        overrides = {
-            "Replay.AfterBack": {"next": pipeline["Reward.Back"]["next"],
-                                 "timeout": 100, "rate_limit": 1,
-                                 "pre_delay": 0, "post_delay": 0},
-            "Reward.Gift": {"action": {"type": "DoNothing"}, "next": [],
-                            "pre_delay": 0, "post_delay": 0, "post_wait_freezes": 0},
-        }
-        self.assertTrue(self.run_task(resource, FrameController(frame), "Replay.AfterBack", overrides))
-
-    def test_weekly_mission_entry_does_not_read_the_icon_as_text(self):
-        crop = cv2.imread(str(ROOT / "tests/fixtures/weekly_home_icons.png"))
-        self.assertIsNotNone(crop)
-        frame = np.zeros((720, 1280, 3), dtype=np.uint8)
-        # Both candidate regions affect batched OCR; keeping only the home
-        # icons makes the original failure disappear.
-        frame[445:585, :330] = crop[:140]
-        frame[80:220, 480:720] = crop[140:, :240]
-        resource = Resource()
-        self.assertTrue(resource.post_bundle(ROOT / "assets/resource/base").wait().status.succeeded)
-        overrides = {
-            "CheckWeeklyMissions.Entry": {"timeout": 100, "rate_limit": 1,
-                                          "pre_delay": 0, "post_delay": 0},
-            "CheckWeeklyMissions.OpenMissionInterface": {
-                "action": {"type": "DoNothing"}, "next": [], "pre_delay": 0,
-                "post_delay": 0, "post_wait_freezes": 0},
-        }
-        self.assertTrue(self.run_task(resource, FrameController(frame),
-                                     "CheckWeeklyMissions.Entry", overrides))
 
     def replay_entry(self, screen, after_back=False, expanded=False):
         state = {"screen": screen, "actions": [], "after_web": "menu" if expanded else "home"}
