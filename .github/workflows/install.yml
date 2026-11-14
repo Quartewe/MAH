@@ -799,6 +799,7 @@ jobs:
           INPUT_RESOURCE_REPO: ${{ github.event.inputs.resource_repo }}
           INPUT_RESOURCE_REF: ${{ github.event.inputs.resource_ref }}
           TARGET_TAG: ${{ needs.meta.outputs.tag }}
+          IS_PRERELEASE: ${{ needs.meta.outputs.is_prerelease }}
         run: |
           set -euo pipefail
 
@@ -841,23 +842,52 @@ jobs:
             echo "[WARNING] 未读取到 MAH-UI 更新内容，将跳过 UI更新 段落"
           fi
 
-          # 获取上一个 MAH release 公告体，用于 UI 更新去重
-          previous_release_json=$(curl -fsSL -H "Authorization: token $GITHUB_TOKEN" \
-            "https://api.github.com/repos/${GITHUB_REPOSITORY}/releases/latest" || true)
-          previous_release_body=$(echo "$previous_release_json" | jq -r '.body // empty' || true)
-          previous_body_file=$(mktemp)
-          printf '%s\n' "$previous_release_body" > "$previous_body_file"
-
           ui_body_file=$(mktemp)
           printf '%s\n' "$ui_body" > "$ui_body_file"
 
-          RESOURCE_VERSION="$resource_version" UI_VERSION="$ui_version" UI_BODY_FILE="$ui_body_file" PREVIOUS_BODY_FILE="$previous_body_file" python - <<'PY'
+          RESOURCE_VERSION="$resource_version" UI_VERSION="$ui_version" UI_BODY_FILE="$ui_body_file" python - <<'PY'
+          import json
           import os
           import re
           from pathlib import Path
+          from urllib.request import Request, urlopen
 
 
           HEADING_RE = re.compile(r"^(#{1,6})\s+(.+?)\s*$")
+          UI_VERSION_RE = re.compile(r"<!--\s*mah-ui-version:\s*(\S+)\s*-->")
+
+
+          def load_release_history():
+              releases = []
+              page = 1
+              while True:
+                  request = Request(
+                      f"https://api.github.com/repos/{os.environ['GITHUB_REPOSITORY']}/releases?per_page=100&page={page}",
+                      headers={
+                          "Authorization": f"Bearer {os.environ['GITHUB_TOKEN']}",
+                          "Accept": "application/vnd.github+json",
+                      },
+                  )
+                  with urlopen(request, timeout=30) as response:
+                      batch = json.load(response)
+                  releases.extend(batch)
+                  if len(batch) < 100:
+                      return releases
+                  page += 1
+
+
+          def previous_release_bodies(releases, target_tag: str, is_prerelease: bool):
+              target = next((release for release in releases if release["tag_name"] == target_tag), {})
+              published_at = target.get("published_at")
+              return [
+                  release.get("body") or ""
+                  for release in releases
+                  if not release["draft"]
+                  and release["tag_name"] != target_tag
+                  and (is_prerelease or not release["prerelease"])
+                  # 重跑时只比较当前版本发布前的历史，保留本版应有的 UI 公告。
+                  and (not published_at or (release.get("published_at") or "") < published_at)
+              ]
 
 
           def normalize_heading_text(text: str) -> str:
@@ -963,25 +993,6 @@ jobs:
               return updated
 
 
-          def append_ui_to_section(section_lines, parent_hashes: str, ui_text: str):
-              if not ui_text.strip():
-                  return section_lines
-
-              section_text = "\n".join(section_lines)
-              if re.search(r"(?m)^\s*#{1,6}\s+UI更新[:：]?\s*$", section_text):
-                  return section_lines
-
-              updated = section_lines[:]
-              while len(updated) > 1 and not updated[-1].strip():
-                  updated.pop()
-
-              ui_heading = "#" * min(len(parent_hashes) + 1, 6) + " UI更新:"
-              updated.extend(["", ui_heading, ""])
-              updated.extend(ui_text.splitlines())
-              updated.append("")
-              return updated
-
-
           def join_sections(prefix_lines, sections) -> str:
               merged_lines = prefix_lines[:]
               for section in sections:
@@ -1017,27 +1028,47 @@ jobs:
               return join_sections(prefix_lines, sections)
 
 
-          def inject_ui_updates(body: str, ui_updates, previous_body: str = "") -> str:
-              prefix_lines, sections = split_sections(body)
-              if not sections:
+          def extract_legacy_ui_updates(body: str):
+              _, sections = split_sections(body)
+              updates = {"feat": [], "fix": []}
+              parent_group = None
+              for section in sections:
+                  title = normalize_heading_text(section["title"]).rstrip(":：")
+                  if title == "ui更新":
+                      if parent_group in updates:
+                          updates[parent_group].append(trim_blank_edges("\n".join(section["lines"][1:])))
+                  else:
+                      parent_group = classify_mah_heading(section["title"])
+              return updates
+
+
+          def inject_ui_updates(body: str, ui_updates, ui_version: str, previous_bodies) -> str:
+              if not ui_version or not any(ui_updates.values()):
                   return body
 
-              for section in sections:
-                  group = classify_mah_heading(section["title"])
-                  if group not in ("feat", "fix"):
+              published_versions = {
+                  version for previous_body in previous_bodies
+                  for version in UI_VERSION_RE.findall(previous_body)
+              }
+              # 首次迁移时，从历史 UI 段落识别已发布内容；有版本记录后按版本判断。
+              legacy_updates = [extract_legacy_ui_updates(previous_body) for previous_body in previous_bodies]
+              ui_sections = []
+              for group, title in (("feat", "新功能"), ("fix", "Bug修复")):
+                  ui_text = ui_updates.get(group, "").strip()
+                  if not ui_text or ui_version in published_versions:
                       continue
-
-                  ui_text = ui_updates.get(group, "")
-                  if not ui_text:
+                  if not published_versions and any(
+                      ui_text in previous_text
+                      for updates in legacy_updates for previous_text in updates[group]
+                  ):
                       continue
+                  ui_sections.append(f"#### {title}\n\n{ui_text}")
 
-                  # 去重：如果上一次 MAH release 公告中已包含相同 UI 内容，则跳过
-                  if previous_body and ui_text.strip() in previous_body:
-                      continue
-
-                  section["lines"] = append_ui_to_section(section["lines"], section["hashes"], ui_text)
-
-              return join_sections(prefix_lines, sections)
+              merged = body.rstrip()
+              if ui_sections:
+                  merged += "\n\n### UI更新\n\n" + "\n\n".join(ui_sections)
+              # 即使本次省略 UI 文案，也保留版本记录，供后续版本持续去重。
+              return merged + f"\n\n<!-- mah-ui-version: {ui_version} -->\n"
 
 
           base_path = Path("CHANGES.md")
@@ -1047,12 +1078,18 @@ jobs:
           ui_body_file = Path(os.environ["UI_BODY_FILE"])
           ui_raw = ui_body_file.read_text(encoding="utf-8") if ui_body_file.exists() else ""
           ui_updates = extract_ui_updates(ui_raw)
+          ui_version = os.environ.get("UI_VERSION", "").strip()
 
-          previous_body_file = Path(os.environ.get("PREVIOUS_BODY_FILE", ""))
-          previous_body = previous_body_file.read_text(encoding="utf-8") if previous_body_file.exists() else ""
+          previous_bodies = []
+          if ui_version and any(ui_updates.values()):
+              previous_bodies = previous_release_bodies(
+                  load_release_history(),
+                  os.environ["TARGET_TAG"],
+                  os.environ["IS_PRERELEASE"] == "true",
+              )
 
           merged = inject_resource_ci(base_body, resource_version)
-          merged = inject_ui_updates(merged, ui_updates, previous_body)
+          merged = inject_ui_updates(merged, ui_updates, ui_version, previous_bodies)
 
           output_path = Path(os.environ["GITHUB_OUTPUT"])
           with output_path.open("a", encoding="utf-8") as output_file:
@@ -1061,7 +1098,7 @@ jobs:
               output_file.write("EOF\n")
           PY
 
-          rm -f "$ui_body_file" "$previous_body_file"
+          rm -f "$ui_body_file"
 
   release:
     if: ${{ needs.meta.outputs.is_release == 'true' }}
