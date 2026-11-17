@@ -27,6 +27,7 @@ class CombatDrink(CustomAction):
 
     @staticmethod
     def _click(context, box):
+        box = [box[i] for i in range(4)]
         result = context.run_action(
             "UtilsClick", box,
             pipeline_override={"UtilsClick": {"action": {"param": {"target": box}}}},
@@ -130,6 +131,10 @@ class CombatDrink(CustomAction):
             return False
         
         drink_limit = json.loads(argv.custom_action_param)
+        priority = drink_limit.pop("priority", ["All", "Half", "Mini", "Ranpoil"])
+        if drink_limit.pop("use_once", False):
+            # 周年关卡每次只需补给一次；额度从当前实际用量起算。
+            drink_limit = {item: self.drink_times[item] + 1 for item in priority}
         logger.info(f"药剂使用上限: {drink_limit}")
 
         # 包含弹窗标题和返回按钮，不能只用道具数量所在的区域判断语言。
@@ -147,39 +152,35 @@ class CombatDrink(CustomAction):
                 timeout_mgr.stop_monitoring(argv.node_name)
                 return False
 
-        if self.drink(context, "All", drink_limit, markers):
-            info_share.drink_times["All"] = self.drink_times["All"]
-            timeout_mgr.stop_monitoring(argv.node_name)
-            return True
-        elif self.drink(context, "Half", drink_limit, markers):
-            info_share.drink_times["Half"] = self.drink_times["Half"]
-            timeout_mgr.stop_monitoring(argv.node_name)
-            return True
-        elif self.drink(context, "Mini", drink_limit, markers):
-            info_share.drink_times["Mini"] = self.drink_times["Mini"]
-            timeout_mgr.stop_monitoring(argv.node_name)
-            return True
-        elif self.drink(context, "Ranpoil", drink_limit, markers):
-            info_share.drink_times["Ranpoil"] = self.drink_times["Ranpoil"]
-            timeout_mgr.stop_monitoring(argv.node_name)
-            return True
-        else:
-            logger.info(f"未找到可用的补给道具")
-            context.run_task(
-                "UtilsOCR",
-                pipeline_override={
-                    "UtilsOCR": {
-                        "recognition": {
-                            "param": {
-                                "roi": [0,0,175,133],
-                                "text": markers[1]
-                            }
-                        },
-                        "action":{
-                            "type": "Click"
+        for item in priority:
+            if context.tasker.stopping:
+                timeout_mgr.stop_monitoring(argv.node_name)
+                return False
+            used_before = self.drink_times[item]
+            if self.drink(context, item, drink_limit, markers):
+                timeout_mgr.stop_monitoring(argv.node_name)
+                return True
+            # 已发送消耗请求但结果未确认时，结束本次补给。
+            if self.drink_times[item] > used_before:
+                timeout_mgr.stop_monitoring(argv.node_name)
+                return False
+
+        logger.info("未找到可用的补给道具")
+        context.run_task(
+            "UtilsOCR",
+            pipeline_override={
+                "UtilsOCR": {
+                    "recognition": {
+                        "param": {
+                            "roi": [0,0,175,133],
+                            "text": markers[1]
                         }
+                    },
+                    "action":{
+                        "type": "Click"
                     }
                 }
-            )
-            timeout_mgr.stop_monitoring(argv.node_name)
-            return False
+            }
+        )
+        timeout_mgr.stop_monitoring(argv.node_name)
+        return False

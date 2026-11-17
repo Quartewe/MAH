@@ -20,6 +20,7 @@ class LanguageConsumerTests(unittest.TestCase):
             act_mgr=self.helper.act_mgr, proj_path=SimpleNamespace(AUTO_COMBAT_DIR="unused"),
         )
         context = Mock()
+        context.tasker.stopping = False
 
         def recognize(entry, image, pipeline_override):
             x, y, width, height = pipeline_override[entry]["recognition"]["param"]["roi"]
