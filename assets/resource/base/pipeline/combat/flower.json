@@ -182,6 +182,9 @@
     "Flower.Entry": {
         "next": [
             "Flower.Go0"
+        ],
+        "on_error": [
+            "Flower.Recover"
         ]
     },
     "Flower.Go0.1": {
@@ -235,18 +238,41 @@
                 "template": [
                     "homepage/quest_off.png",
                     "homepage/quest_on.png"
-                ]
+                ],
+                "order_by": "Score"
             }
         },
         "action": {
             "type": "Click",
-            "param": {}
+            "param": {
+                "target": [
+                    1190,
+                    635,
+                    24,
+                    20
+                ]
+            }
         },
+        "post_wait_freezes": 1000,
         "next": [
             "Flower.Go0.1"
         ],
         "on_error": [
-            "[JumpBack]Global.Entry"
+            "Flower.Recover"
+        ]
+    },
+    "Flower.Recover": {
+        "max_hit": 2,
+        "next": [
+            "Flower.Go0.1",
+            "Flower.Go0",
+            "[JumpBack]Flower.RecoverHome"
+        ]
+    },
+    "Flower.RecoverHome": {
+        "max_hit": 2,
+        "next": [
+            "Global.Entry"
         ]
     }
 }
