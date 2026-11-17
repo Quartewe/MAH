@@ -17,6 +17,8 @@
     "start_game_description": "ゲームを自動的に開始し、メイン画面に入ります",
     "check_task_progress": "タスク進行状況チェック",
     "check_task_progress_description": "ウィークリータスクの進行状況を自動チェックします（有効化を推奨）",
+    "force_open_support": "サポート画面を必ず開く",
+    "force_open_support_description": "タスク状態の認識とサポートのウィークリーミッション達成状況の判定を省略し、サポート画面を直接開きます。",
     "dungeon_combat": "ダンジョン戦闘",
     "dungeon_combat_description": "ダンジョン戦闘クエスト",
     "AP_combat": "スタミナ戦闘",

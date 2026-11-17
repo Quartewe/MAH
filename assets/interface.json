@@ -128,6 +128,7 @@
             "default_check": true,
             "description": "$check_task_progress_description",
             "option": [
+                "force_open_support",
                 "show_progress"
             ]
         },
@@ -143,6 +144,27 @@
         }
     ],
     "option": {
+        "force_open_support": {
+            "type": "switch",
+            "label": "$force_open_support",
+            "description": "$force_open_support_description",
+            "default_case": "No",
+            "cases": [
+                {
+                    "name": "Yes",
+                    "pipeline_override": {
+                        "CheckWeeklyMissions.Entry": {
+                            "next": [
+                                "ShowSupporterScreen.Entry"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "No"
+                }
+            ]
+        },
         "check_special_daily": {
             "type": "switch",
             "label": "$check_special_daily",

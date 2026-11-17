@@ -17,6 +17,8 @@
     "start_game_description": "Automatically start the game and enter the main interface",
     "check_task_progress": "Check Task Progress",
     "check_task_progress_description": "Automatically check weekly task progress, highly recommended to enable",
+    "force_open_support": "Always Open Support Screen",
+    "force_open_support_description": "Open the support screen directly, skipping mission-status recognition and the weekly support completion check.",
     "dungeon_combat": "Dungeon Combat",
     "dungeon_combat_description": "Dungeon combat stages",
     "golden_dungeon": "Golden Cavern?",

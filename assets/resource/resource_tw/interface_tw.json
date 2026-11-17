@@ -17,6 +17,8 @@
     "start_game_description": "自動啟動遊戲並進入主介面",
     "check_task_progress": "檢查任務進度",
     "check_task_progress_description": "自動檢查每週任務進度，非常建議勾選",
+    "force_open_support": "強制開啟支援頁面",
+    "force_open_support_description": "直接開啟支援頁面，略過任務狀態識別及支援週常是否已完成的判斷。",
     "dungeon_combat": "地城作戰",
     "dungeon_combat_description": "地城作戰副本",
     "AP_combat": "體力作戰",

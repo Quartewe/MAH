@@ -17,6 +17,8 @@
     "start_game_description": "自动启动游戏并进入主界面",
     "check_task_progress": "检查任务进度",
     "check_task_progress_description": "自动检查每周任务进度，非常建议勾选",
+    "force_open_support": "强制打开助战页面",
+    "force_open_support_description": "直接打开助战页面，跳过任务状态识别及是否已完成助战周常的判断。",
     "dungeon_combat": "地城作战",
     "dungeon_combat_description": "地城作战副本",
     "AP_combat": "体力作战",
