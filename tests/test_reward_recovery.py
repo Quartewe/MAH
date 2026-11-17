@@ -99,6 +99,9 @@ class RewardRecoveryTests(unittest.TestCase):
                         post_wait_freezes=0, timeout=20, rate_limit=1)
         pipeline["Reward.Click"]["next"] = []
         pipeline["Reward.Gift"]["next"] = []
+        # The anniversary check has its own end-to-end replay; exercise the
+        # ordinary claiming route here, including its announcement recovery.
+        pipeline["Reward.Entry"]["next"] = ["Reward.Claim.Entry"]
         entry = "Reward.Entry"
         if after_back:
             entry = "Replay.AfterBack"

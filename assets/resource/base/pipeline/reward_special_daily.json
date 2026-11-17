@@ -1,0 +1,202 @@
+{
+    "Reward.SpecialDaily.Entry": {
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "SpecialDailyReward",
+                "custom_action_param": {
+                    "starts_at": "2026-11-14T00:00:00+09:00",
+                    "ends_at": "2026-12-04T00:00:00+09:00"
+                }
+            }
+        },
+        "next": [
+            "Reward.Claim.Entry"
+        ]
+    },
+    "Reward.SpecialDaily.Search": {
+        "recognition": {
+            "type": "OCR",
+            "param": {
+                "roi": [
+                    494,
+                    3,
+                    779,
+                    671
+                ],
+                "expected": [
+                    "10\\s*[周週]年\\s*[纪紀記]念\\s*([黄黃]金\\s*洞窟|特[别別]\\s*(授[业業]|[课課]程))",
+                    "10(th)?\\s*[Aa]nniversary\\s*([Gg]olden\\s*[Cc]avern|[Ss]pecial\\s*[Ll]esson)"
+                ],
+                "order_by": "Vertical"
+            }
+        }
+    },
+    "Reward.SpecialDaily.ScrollTop": {
+        "action": {
+            "type": "Swipe",
+            "param": {
+                "begin": [
+                    840,
+                    130,
+                    20,
+                    20
+                ],
+                "end": [
+                    840,
+                    600,
+                    20,
+                    20
+                ],
+                "duration": 500
+            }
+        },
+        "post_wait_freezes": {
+            "time": 500,
+            "target": [
+                494,
+                3,
+                779,
+                671
+            ]
+        }
+    },
+    "Reward.SpecialDaily.ScrollDown": {
+        "action": {
+            "type": "Swipe",
+            "param": {
+                "begin": [
+                    840,
+                    600,
+                    20,
+                    20
+                ],
+                "end": [
+                    840,
+                    130,
+                    20,
+                    20
+                ],
+                "duration": 500
+            }
+        },
+        "post_wait_freezes": {
+            "time": 500,
+            "target": [
+                494,
+                3,
+                779,
+                671
+            ]
+        }
+    },
+    "Reward.SpecialDaily.BattleEntry": {
+        "timeout": 20000,
+        "next": [
+            "Reward.SpecialDaily.NoStamina",
+            "Reward.SpecialDaily.SupportTab"
+        ]
+    },
+    "Reward.SpecialDaily.NoStamina": {
+        "recognition": {
+            "type": "TemplateMatch",
+            "param": {
+                "template": "fight/recovery/apRecoveryAll.png"
+            }
+        }
+    },
+    "Reward.SpecialDaily.Drink": {
+        "max_hit": 1,
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "CombatDrink",
+                "custom_action_param": {
+                    "priority": [
+                        "Mini",
+                        "Half",
+                        "All"
+                    ],
+                    "use_once": true
+                }
+            }
+        },
+        "next": [
+            "Reward.SpecialDaily.SupportTab"
+        ],
+        "on_error": [
+            "Reward.SpecialDaily.SupplyFailed"
+        ]
+    },
+    "Reward.SpecialDaily.SupplyFailed": {},
+    "Reward.SpecialDaily.SupportTab": {
+        "recognition": {
+            "type": "TemplateMatch",
+            "param": {
+                "roi": [
+                    110,
+                    93,
+                    799,
+                    72
+                ],
+                "template": "fight/support/support_default.png",
+                "threshold": 0.8
+            }
+        },
+        "action": {
+            "type": "Click"
+        },
+        "post_wait_freezes": {
+            "time": 1000,
+            "target": [
+                45,
+                190,
+                400,
+                530
+            ]
+        },
+        "next": [
+            "Reward.SpecialDaily.SupportSelect"
+        ]
+    },
+    "Reward.SpecialDaily.SupportSelect": {
+        "recognition": {
+            "type": "OCR",
+            "param": {
+                "roi": [
+                    45,
+                    190,
+                    400,
+                    530
+                ],
+                "expected": [
+                    "RANK"
+                ],
+                "order_by": "Vertical"
+            }
+        },
+        "action": {
+            "type": "Click"
+        },
+        "post_wait_freezes": {
+            "time": 1000,
+            "target": [
+                1085,
+                85,
+                194,
+                618
+            ]
+        },
+        "next": [
+            "Global.AutoCombat.Start"
+        ]
+    },
+    "Reward.SpecialDaily.Settle": {
+        "timeout": 60000,
+        "next": [
+            "Global.AutoCombat.Back1",
+            "Global.AutoCombat.FirstClear"
+        ]
+    },
+    "Reward.SpecialDaily.Done": {}
+}

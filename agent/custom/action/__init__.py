@@ -10,6 +10,7 @@ from .combat_drink import CombatDrink
 from .quest_select import QuestSelect
 from .go_back import GoBack
 from .counter import Counter
+from .special_daily_reward import SpecialDailyReward
 
 __all__ = [
     "Debug",
@@ -23,5 +24,6 @@ __all__ = [
     "CombatDrink",
     "QuestSelect",
     "GoBack",
-    "Counter"
+    "Counter",
+    "SpecialDailyReward"
 ]

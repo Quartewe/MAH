@@ -195,6 +195,11 @@
     },
     "Reward.Entry": {
         "next": [
+            "Reward.SpecialDaily.Entry"
+        ]
+    },
+    "Reward.Claim.Entry": {
+        "next": [
             "Reward.Click",
             "[JumpBack]Global.AnnouncementWebClose",
             "[JumpBack]Global.AnnouncementListCollapse"
